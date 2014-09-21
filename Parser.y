@@ -1,4 +1,8 @@
-{ module Main where import Lexer }
+-- Synt.y -*- mode: haskell -*-
+{ 
+module Parser where 
+import Lexer 
+}
 
 %name turborav
 %tokentype { Token }
@@ -11,8 +15,9 @@
   ident   { TIdent   $$ }
 %left '+' '-'
 %%
-Stmts : Stmt { Stmt [$1] }
-      | Stmts Stmt { $2 : $1 }
+Stmts :: {[Stmt]}
+      : Stmts Stmt { $2 : $1 }
+      | Stmt { [$1] }
 
 Stmt : ident '=' Exp { Stmt $1 $3 }
 
@@ -26,6 +31,7 @@ parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
 data Stmts = [Stmt]
+           | Stmt:Stmts
            deriving (Show)
 
 data Stmt = Stmt String Exp

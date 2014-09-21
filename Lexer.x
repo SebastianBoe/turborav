@@ -1,5 +1,5 @@
 {
-module Main (main) where
+module Lexer where
 }
 
 %wrapper "basic"
@@ -24,8 +24,4 @@ data Token =
         TOpAssign        |
 	TIdent String 
 	deriving (Eq,Show)
-
-main = do
-  s <- getContents
-  print (alexScanTokens s)
 }
