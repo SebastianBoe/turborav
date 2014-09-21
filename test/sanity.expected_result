@@ -1,0 +1,1 @@
+[Var "first_operand",Sym '=',Int 42,Var "second_operand",Sym '=',Int 1337,Var "__result",Sym '=',Var "first_operand",Sym '+',Var "second_operand"]

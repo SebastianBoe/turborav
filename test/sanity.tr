@@ -1,0 +1,7 @@
+first_operand = 42
+# This is a sanity test of TurboRav Tokenizer.
+# Nested comments work # I hope ...
+
+# Tested an empty line
+second_operand = 1337
+__result = first_operand +  second_operand
