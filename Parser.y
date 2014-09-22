@@ -16,8 +16,8 @@ import Lexer
 %left '+' '-'
 %%
 Stmts :: {[Stmt]}
-      : Stmts Stmt { $2 : $1 }
-      | Stmt { [$1] }
+         : {[]}
+         | Stmt Stmts { $1 : $2 }
 
 Stmt : ident '=' Exp { Stmt $1 $3 }
 
@@ -30,18 +30,19 @@ Exp : Exp '+' Exp { Plus  $1 $3 }
 parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
-data Stmts = [Stmt]
-           | Stmt:Stmts
-           deriving (Show)
+-- data Stmts = [Stmt]
+--            | Stmt:Stmts
+--            deriving (Show)
 
 data Stmt = Stmt String Exp
           deriving (Show)
 
 data Exp = Plus  Exp Exp
          | Minus Exp Exp
-         | Int
-         | String
+         | Int 
+         | String String
          deriving (Show)
 
 main = getContents >>= print . turborav . lexer
 }
+
