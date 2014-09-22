@@ -8,7 +8,7 @@ import Lexer
 %tokentype { Token }
 %error { parseError }
 %token
-  intLiteral { Int         $$ }
+  intLiteral { Parser.Int         $$ }
   '+'        { TOpPlus        }
   '-'        { TOpMinus       }
   '='        { TOpAssign      }
@@ -43,6 +43,6 @@ data Exp = Plus  Exp Exp
          | String String
          deriving (Show)
 
-main = getContents >>= print . turborav . lexer
+main = getContents >>= print . turborav . alexScanTokens
 }
 
