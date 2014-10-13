@@ -1,0 +1,9 @@
+target/
+project/
+
+*.cpp
+*.h
+*.out
+*.v
+*.hex
+*.flo
