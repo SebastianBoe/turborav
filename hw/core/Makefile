@@ -1,22 +1,35 @@
 SBT          ?= sbt
 SBT_FLAGS    ?= -Dsbt.log.noformat=true
 
-CHISEL_FLAGS := 
+SRC_DIR     = src/main/scala
+TEST_DIR    = src/test/scala
+GEN_DIR     = generated
+VLOG_DIR    = verilog
+OUTPUT_DIR  = output
 
-executables := $(notdir $(basename $(wildcard *.scala)))
+CHISEL_FLAGS   := --targetDir $(GEN_DIR)
+CHISEL_FLAGS_C := --genHarness --compile --test --backend c $(CHISEL_FLAGS)
+CHISEL_FLAGS_V := --genHarness --backend v --targetDir $(VLOG_DIR)
+
+modules := $(notdir $(basename $(wildcard $(SRC_DIR)/*.scala)))
 
 all:
-	sbt "run"
+	@echo "No good default make rule yet"
 
 clean:
-	rm -f *.cpp *.o *.h *.hex *.v *.out *.flo $(executables)
-	rm -rf target project
+	rm -rf target project $(GEN_DIR) $(VLOG_DIR) $(OUTPUT_DIR)
 
-%.out: %.scala
-	$(SBT) $(SBT_FLAGS) "run $(notdir $(basename $<)) --genHarness --compile --test --backend c $(CHISEL_FLAGS)" | tee $@
+outputdir:
+	mkdir -p $(OUTPUT_DIR)
 
-%.hex: %.scala
+%.out: $(SRC_DIR)/%.scala outputdir
+	$(SBT) $(SBT_FLAGS) "run $(notdir $(basename $<)) $(CHISEL_FLAGS_C)" | tee $(OUTPUT_DIR)/$@
+
+%.test: $(TEST_DIR)/%test.scala outputdir
+	$(SBT) $(SBT_FLAGS) "test:run $(notdir $(basename $<)) $(CHISEL_FLAGS_C)" | tee $(OUTPUT_DIR)/$@
+
+%.hex: $(SRC_DIR)/%.scala
 	$(SBT) $(SBT_FLAGS) "run $(notdir $(basename $<)) --backend flo --genHarness --compile --test $(CHISEL_FLAGS)"
 
-%.v: %.scala
-	$(SBT) $(SBT_FLAGS) "run $(notdir $(basename $<)) --genHarness --backend v $(CHISEL_FLAGS)"
+%.v: $(SRC_DIR)/%.scala
+	$(SBT) $(SBT_FLAGS) "run $(notdir $(basename $<)) $(CHISEL_FLAGS_V)"

@@ -1,5 +1,7 @@
 target/
 project/
+generated/
+output/
 
 *.cpp
 *.h
