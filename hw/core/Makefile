@@ -23,13 +23,19 @@ outputdir:
 	mkdir -p $(OUTPUT_DIR)
 
 %.out: $(SRC_DIR)/%.scala outputdir
-	$(SBT) $(SBT_FLAGS) "run $(notdir $(basename $<)) $(CHISEL_FLAGS_C)" | tee $(OUTPUT_DIR)/$@
+	$(SBT) $(SBT_FLAGS) \
+	"run $(notdir $(basename $<)) $(CHISEL_FLAGS_C)" \
+	| tee $(OUTPUT_DIR)/$@
 
 %.test: $(TEST_DIR)/%test.scala outputdir
-	$(SBT) $(SBT_FLAGS) "test:run $(notdir $(basename $<)) $(CHISEL_FLAGS_C)" | tee $(OUTPUT_DIR)/$@
+	$(SBT) $(SBT_FLAGS) \
+	"test:run $(notdir $(basename $<)) $(CHISEL_FLAGS_C)" \
+	| tee $(OUTPUT_DIR)/$@
 
 %.hex: $(SRC_DIR)/%.scala
-	$(SBT) $(SBT_FLAGS) "run $(notdir $(basename $<)) --backend flo --genHarness --compile --test $(CHISEL_FLAGS)"
+	$(SBT) $(SBT_FLAGS) \
+	"run $(notdir $(basename $<)) --backend flo --genHarness --compile --test $(CHISEL_FLAGS)"
 
 %.v: $(SRC_DIR)/%.scala
-	$(SBT) $(SBT_FLAGS) "run $(notdir $(basename $<)) $(CHISEL_FLAGS_V)"
+	$(SBT) $(SBT_FLAGS) \
+	"run $(notdir $(basename $<)) $(CHISEL_FLAGS_V)"
