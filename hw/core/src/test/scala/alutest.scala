@@ -1,5 +1,3 @@
-/* Fancy header */
-
 package TurboRav
 
 import Chisel._

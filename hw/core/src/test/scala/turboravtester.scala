@@ -2,8 +2,6 @@ package TurboRav
 
 import Chisel._
 
-
-
 object TurboRavTestRunner{
 
     def main(args: Array[String]): Unit = {
@@ -12,6 +10,10 @@ object TurboRavTestRunner{
             case "alutest" =>
                 chiselMainTest(mainArgs, () => Module(new Alu(32))){
                     c => new AluTest(c)
+                }
+            case "regbanktest" =>
+                chiselMainTest(mainArgs, () => Module(new RegBank(32))){
+                    c => new RegBankTest(c)
                 }
         }
     }
