@@ -15,6 +15,10 @@ object TurboRavTestRunner{
                 chiselMainTest(mainArgs, () => Module(new RegBank(32))){
                     c => new RegBankTest(c)
                 }
+            case "multtest" =>
+                chiselMainTest(mainArgs, () => Module(new Mult(32))){
+                    c => new MultTest(c)
+                }
         }
     }
 

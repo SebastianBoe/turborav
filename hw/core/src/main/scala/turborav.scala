@@ -10,6 +10,8 @@ object TurboRav {
                 chiselMain(mainArgs, () => Module(new Alu(32)))
             case "regbank" =>
                 chiselMain(mainArgs, () => Module(new RegBank(32)))
+            case "mult" =>
+                chiselMain(mainArgs, () => Module(new Mult(32)))
         }
     }
 }
