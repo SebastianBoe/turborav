@@ -37,14 +37,14 @@ Example:
 0111 / 0010 (xlen = 4)
 
 holding: 0 0000 0111 | divisor: 0010 (place arguments in registers)
-         0 0000 1110                 (shift holding register 1 bit right)
+         0 0000 1110                 (shift holding register 1 bit left)
          - 0010
          1 1110                      (difference < 0, do nothing)
-holding: 0 0000 1110                 (shift holding register 1 bit right)
+holding: 0 0000 1110                 (shift holding register 1 bit left)
          0 0001 1100
          - 0010
          1 1111                      (difference < 0, do nothing)
-holding: 0 0001 1100                 (shift holding register 1 bit right)
+holding: 0 0001 1100                 (shift holding register 1 bit left)
          0 0011 1000
          - 0010
          0 0001                      (difference >= 0, holding(0) = '1' )
