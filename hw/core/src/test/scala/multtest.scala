@@ -4,40 +4,76 @@ import Chisel._
 
 class MultTest(c: Mult) extends Tester(c) with Constants {
 
-    def test(a: BigInt, b: BigInt, func: Int, res: BigInt) {
+    def test(a: BigInt, b: BigInt, func: Int, resL: BigInt, resH: BigInt) {
         poke(c.io.enable, 1)
         poke(c.io.inA, a)
         poke(c.io.inB, b)
         poke(c.io.func, func)
         step(1)
         poke(c.io.enable, 0)
-        peek(c.state)
-        step(32) // ?? how many actually?
+        step(33)
         expect(c.io.done, 1)
-        expect(c.io.outL, res)
+        expect(c.io.outL, resL)
+        expect(c.io.outH, resH)
+    }
+
+    def test_unroll(a: BigInt, b: BigInt, func: Int, resL: BigInt, resH: BigInt) {
+        poke(c.io.enable, 1)
+        poke(c.io.inA, a)
+        poke(c.io.inB, b)
+        poke(c.io.func, func)
+        step(1)
+        poke(c.io.enable, 0)
+        for(i <- 0 until 33){
+            peek(c.holding)
+            step(1)
+        }
+        expect(c.io.done, 1)
+        expect(c.io.outL, resL)
+        expect(c.io.outH, resH)
     }
 
     val one = BigInt(1)
     val two = BigInt(2)
     val max = (one << c.xlen) - one
 
-    test(0, 0, MULT_MUL_VAL, 0)
-    test(one, 0, MULT_MUL_VAL, 0)
-    test(0, one, MULT_MUL_VAL, 0)
-    test(one, one, MULT_MUL_VAL, one)
-    test(two, two, MULT_MUL_VAL, BigInt(4))
+    test(0, 0, MULT_MUL_VAL, 0, 0)
+    test(one, 0, MULT_MUL_VAL, 0, 0)
+    test(0, one, MULT_MUL_VAL, 0, 0)
+    test(one, one, MULT_MUL_VAL, one, 0)
+    test(two, two, MULT_MUL_VAL, BigInt(4), 0)
 
-    test(max, one, MULT_MUL_VAL, max)
-    test(one, max, MULT_MUL_VAL, max)
-    test(max, two, MULT_MUL_VAL, max - one)
-    test(two, max, MULT_MUL_VAL, max - one)
-    test(max, max, MULT_MUL_VAL, one)
+    test(max, one, MULT_MUL_VAL, max, 0)
+    test(one, max, MULT_MUL_VAL, max, 0)
+    test(max, two, MULT_MUL_VAL, max - one, 1)
+    test(two, max, MULT_MUL_VAL, max - one, 1)
+
+    /* Tests the carry out during multiplication */
+    test(max, max, MULT_MUL_VAL, one, max - one)
+    test(max/2, max, MULT_MUL_VAL, ((max/2)*max)&max, (max/2)*max >>c.xlen)
+    test(max, max/2, MULT_MUL_VAL, ((max/2)*max)&max, (max/2)*max >>c.xlen)
+    test(max, max, MULT_MUL_VAL, one, max - one)
 
     for(i <- 0 until 10){
         val a = BigInt(c.xlen, rnd)
         val b = BigInt(c.xlen, rnd)
-        var res =  (a * b) & max
-        test(a, b, MULT_MUL_VAL, res)
+        var resL =  (a * b) & max
+        val resH = (a * b) >> c.xlen
+        test(a, b, MULT_MUL_VAL, resL, resH)
     }
 
+    test(0, one, MULT_DIV_VAL, 0, 0)
+    test(one, one, MULT_DIV_VAL, one, 0)
+    test(two, one, MULT_DIV_VAL, two, 0)
+    test(max, one, MULT_DIV_VAL, max, 0)
+    test(max, max, MULT_DIV_VAL, one, 0)
+    test(max, two, MULT_DIV_VAL, max/two, 1)
+
+    for(i <- 0 until 10){
+        val a = BigInt(c.xlen, rnd)
+        val b = BigInt(c.xlen, rnd)
+        var res =  a / b
+        val rem =  a - (a/b)*b
+        test(a, b, MULT_DIV_VAL, res, rem)
+    }
 }

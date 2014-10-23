@@ -24,7 +24,7 @@ set upper part of holding register to zero
 Loop:
 shift holding register to the left.
 difference = upper holding - divisor
-if difference >= 0:                   // msb of difference = '1'
+if difference >= 0:                   // msb of difference = '0'
     set upper holding to difference
     set holding(0) to '1'
 if not 32nd repition,

@@ -26,11 +26,7 @@ class Mult(val xlen: Int) extends Module with Constants {
 
     val state     = Reg(init = s_idle)
     val exec_func = Reg(UInt())
-    val count = Reg(UInt(width = log2Up(xlen)))
-
-    val shift_right = Bool()
-    val shift_left  = Bool()
-    val write       = Bool()
+    val count     = Reg(UInt(width = log2Up(xlen)))
 
     // Holds the product, or the combined quotient and remainder
     // plus one for overflow from the adder during computation
@@ -39,16 +35,30 @@ class Mult(val xlen: Int) extends Module with Constants {
     // Holds the multiplicand or the divisor
     val argument = Reg(UInt(xlen))
 
-    val sum = holding(xlen*2, xlen) + Mux(isDivide(exec_func), -argument, argument)
+    // Extend one bit to catch the carry
+    val operand_a = Cat(UInt(0, width = 1), holding(xlen*2, xlen))
+    val operand_b = Cat(UInt(0, width = 1), Fill(xlen, holding(0)) & argument)
 
-    val next_holding = Mux(holding(0) === UInt(1),
-                        Cat(sum, holding(xlen-1, 0)),
-                        holding)
+    // Does an implicit right shift
+    val next_holding_mult = Cat(
+                operand_a + operand_b,
+                holding(xlen-1, 1)
+            )
+
+    val holding_shift = holding << UInt(1)
+    val difference = UInt(width = xlen + 1)
+    val next_holding_div = UInt(width = 2 * xlen +1)
+
+    difference := holding_shift(xlen*2, xlen) - argument
+    next_holding_div := Mux(difference(xlen) === UInt(0),
+        Cat(difference, holding_shift(xlen-1, 1), UInt(1, width = 1)),
+        holding_shift)
 
     when(state === s_idle && io.enable){
         when(isDivide(io.func)){
             state := s_div
-            //holding := Cat(UInt(0, width = xlen + 1), io.inA)
+            argument := io.inB
+            holding := Cat(UInt(0, width = xlen + 1), io.inA)
         } .otherwise {
             state := s_mult
             argument := io.inA
@@ -59,10 +69,10 @@ class Mult(val xlen: Int) extends Module with Constants {
     }
 
     when(state === s_div){
-        state := s_done
-        when(count === UInt(xlen)){
+        when(count === UInt(xlen-1)){
             state := s_idle
         }
+        holding := next_holding_div
         count := count + UInt(1)
     }
 
@@ -70,8 +80,7 @@ class Mult(val xlen: Int) extends Module with Constants {
         when(count === UInt(xlen-1)){
            state := s_idle
         }
-
-        holding := next_holding >> UInt(1)
+        holding := next_holding_mult
         count := count + UInt(1)
     }
 
