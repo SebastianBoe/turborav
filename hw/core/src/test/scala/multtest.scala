@@ -9,25 +9,11 @@ class MultTest(c: Mult) extends Tester(c) with Constants {
         poke(c.io.inA, a)
         poke(c.io.inB, b)
         poke(c.io.func, func)
+        // step once and deassert enable
         step(1)
         poke(c.io.enable, 0)
-        step(33)
-        expect(c.io.done, 1)
-        expect(c.io.outL, resL)
-        expect(c.io.outH, resH)
-    }
-
-    def test_unroll(a: BigInt, b: BigInt, func: Int, resL: BigInt, resH: BigInt) {
-        poke(c.io.enable, 1)
-        poke(c.io.inA, a)
-        poke(c.io.inB, b)
-        poke(c.io.func, func)
-        step(1)
-        poke(c.io.enable, 0)
-        for(i <- 0 until 33){
-            peek(c.holding)
-            step(1)
-        }
+        // mult and div takes xlen + 1 cycles to complete
+        step(c.xlen)
         expect(c.io.done, 1)
         expect(c.io.outL, resL)
         expect(c.io.outH, resH)
@@ -37,6 +23,8 @@ class MultTest(c: Mult) extends Tester(c) with Constants {
     val two = BigInt(2)
     val max = (one << c.xlen) - one
 
+
+    // TEST multiplication
     test(0, 0, MULT_MUL_VAL, 0, 0)
     test(one, 0, MULT_MUL_VAL, 0, 0)
     test(0, one, MULT_MUL_VAL, 0, 0)
@@ -62,6 +50,8 @@ class MultTest(c: Mult) extends Tester(c) with Constants {
         test(a, b, MULT_MUL_VAL, resL, resH)
     }
 
+
+    // TEST division
     test(0, one, MULT_DIV_VAL, 0, 0)
     test(one, one, MULT_DIV_VAL, one, 0)
     test(two, one, MULT_DIV_VAL, two, 0)
@@ -76,4 +66,21 @@ class MultTest(c: Mult) extends Tester(c) with Constants {
         val rem =  a - (a/b)*b
         test(a, b, MULT_DIV_VAL, res, rem)
     }
+
+    // TEST abort
+    poke(c.io.enable, 1)
+    poke(c.io.inA, two)
+    poke(c.io.inB, one)
+    poke(c.io.func, MULT_DIV_VAL)
+    // step once and deassert enable
+    step(1)
+    poke(c.io.enable, 0)
+    step(c.xlen/2)
+    // abort and step once
+    poke(c.io.abort, 1)
+    step(1)
+    poke(c.io.abort, 0)
+
+    test(two, one, MULT_MUL_VAL, two, 0)
+
 }

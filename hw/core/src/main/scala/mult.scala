@@ -22,7 +22,7 @@ class Mult(val xlen: Int) extends Module with Constants {
     def isDivide(func: UInt) = func(2)
 
     /* For some reason i cannot name these with uppercase */
-    val s_idle:: s_mult :: s_div :: s_done :: Nil = Enum(UInt(), 4)
+    val s_idle:: s_mult :: s_div :: Nil = Enum(UInt(), 3)
 
     val state     = Reg(init = s_idle)
     val exec_func = Reg(UInt())
@@ -84,7 +84,7 @@ class Mult(val xlen: Int) extends Module with Constants {
         count := count + UInt(1)
     }
 
-    when(state === s_done){
+    when(io.abort){
         state := s_idle
     }
 
