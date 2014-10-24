@@ -1,6 +1,3 @@
-SBT          ?= sbt
-SBT_FLAGS    ?= -Dsbt.log.noformat=true
-
 SRC_DIR     = src/main/scala
 TEST_DIR    = src/test/scala
 GEN_DIR     = generated
@@ -13,6 +10,8 @@ CHISEL_FLAGS_V := --genHarness --backend v --targetDir $(VLOG_DIR)
 
 modules := $(notdir $(basename $(wildcard $(SRC_DIR)/*.scala)))
 
+.PHONY: all
+
 all:
 	@echo "No good default make rule yet"
 
@@ -23,19 +22,20 @@ outputdir:
 	mkdir -p $(OUTPUT_DIR)
 
 %.out: $(SRC_DIR)/%.scala outputdir
-	$(SBT) $(SBT_FLAGS) \
-	"run $(notdir $(basename $<)) $(CHISEL_FLAGS_C)" \
+	sbt "run $(notdir $(basename $<)) $(CHISEL_FLAGS_C)" \
 	| tee $(OUTPUT_DIR)/$@
+# Remove bash-style coloring from output log
+	@sed -i -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $(OUTPUT_DIR)/$@
 
 %.test: $(TEST_DIR)/%test.scala outputdir
-	$(SBT) $(SBT_FLAGS) \
-	"test:run $(notdir $(basename $<)) $(CHISEL_FLAGS_C)" \
+	sbt "test:run $(notdir $(basename $<)) $(CHISEL_FLAGS_C)" \
 	| tee $(OUTPUT_DIR)/$@
+# Remove bash-style coloring from output log
+	@sed -i -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $(OUTPUT_DIR)/$@
 
 %.hex: $(SRC_DIR)/%.scala
-	$(SBT) $(SBT_FLAGS) \
-	"run $(notdir $(basename $<)) --backend flo --genHarness --compile --test $(CHISEL_FLAGS)"
+	sbt "run $(notdir $(basename $<)) --backend flo --genHarness --compile --test $(CHISEL_FLAGS)"
 
 %.v: $(SRC_DIR)/%.scala
-	$(SBT) $(SBT_FLAGS) \
-	"run $(notdir $(basename $<)) $(CHISEL_FLAGS_V)"
+	sbt "run $(notdir $(basename $<)) $(CHISEL_FLAGS_V)"
+
