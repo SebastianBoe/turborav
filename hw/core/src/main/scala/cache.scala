@@ -13,7 +13,7 @@ class Cache(val cacheLineWidth: Int,
 
   val INSTRUCTION_WIDTH_UINT = UInt(INSTRUCTION_WIDTH)
 
-  require(isPowerOfTwo(numEntries))
+  require(isPow2(numEntries))
   require(numEntries % associativity == 0)
   require(cacheLineWidth % INSTRUCTION_WIDTH == 0)
 
@@ -23,8 +23,8 @@ class Cache(val cacheLineWidth: Int,
     Mem(UInt(width = cacheLineWidth), entriesPerBank)
   }
 
-  val numOffsetBits = log2(cacheLineWidth / INSTRUCTION_WIDTH)
-  val numIndexBits  = log2(entriesPerBank)
+  val numOffsetBits = log2Down(cacheLineWidth / INSTRUCTION_WIDTH)
+  val numIndexBits  = log2Down(entriesPerBank)
   val numTagBits    = INSTRUCTION_WIDTH - numOffsetBits - numIndexBits
 
   val tagBanks = Array.fill(associativity) {
@@ -46,7 +46,4 @@ class Cache(val cacheLineWidth: Int,
       io.data := dataBanks(0)(instrIndex)(upperInstrBitIndex, lowerInstrBitIndex)
     }
 
-  // TODO: Use Chisel's standard library
-  def isPowerOfTwo(n: Int): Boolean = (n & (n - 1)) == 0
-  def log2(n: Int): Int = (scala.math.log(n) / scala.math.log(2)).toInt
 }
