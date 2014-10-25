@@ -4,6 +4,8 @@ import Chisel._
 
 class Mult(val xlen: Int) extends Module with Constants {
 
+  require(isPow2(xlen))
+
   val io = new Bundle(){
     // multiplicand, dividend
     val inA    = UInt(INPUT, xlen)

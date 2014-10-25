@@ -6,6 +6,8 @@ import Chisel._
 
 class Alu (val xlen: Int) extends Module with Constants {
 
+  require(isPow2(xlen))
+
   val io = new Bundle {
     val func = UInt(INPUT, 4)
     val inA  = UInt(INPUT, xlen)

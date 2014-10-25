@@ -4,6 +4,8 @@ import Chisel._
 
 class RegBank(val xlen: Int) extends Module {
 
+  require(isPow2(xlen))
+
   val io = new Bundle(){
     val rs1_addr = UInt(INPUT, 5)
     val rs2_addr = UInt(INPUT, 5)
