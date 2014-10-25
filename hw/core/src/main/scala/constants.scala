@@ -4,6 +4,8 @@ import Chisel._
 
 trait Constants {
 
+  val INSTRUCTION_WIDTH = 32
+
   val ALU_ADD_VAL  = 1
   val ALU_SLT_VAL  = 2
   val ALU_SLTU_VAL = 3
