@@ -3,9 +3,14 @@ project/
 generated/
 output/
 
+*.aux
+*.log
+*.dvi
 *.cpp
 *.h
 *.out
 *.v
 *.hex
 *.flo
+
+/doc/instr-table.tex
