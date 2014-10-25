@@ -1,0 +1,5 @@
+*.aux
+*.log
+*.dvi
+
+instr-table.tex

@@ -3,9 +3,6 @@ project/
 generated/
 output/
 
-*.aux
-*.log
-*.dvi
 *.cpp
 *.h
 *.out
