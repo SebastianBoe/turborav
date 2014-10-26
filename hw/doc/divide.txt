@@ -1,0 +1,56 @@
+The divide algorithm uses two registers and does unsigned divide.
+If signed division is requested the original signs should be remembered and the
+result should be converted in the end.
+
+The divide operation is performed by the multiplication unit and can be
+instantiated with xlen as the operand bit width.
+The result will be an 2 * xlen output with the remainder in the upper part,
+and the quotient in the lower part.
+The algorithm will use xlen number of iterations to complete.
+
+Terminology: Dividend = Qoutient * Divisor + Remainder
+
+Registers:
+    - Argument: holds the divisor
+    - Holding: holds a 2*xlen + 1 bit temporary value during the algorithm
+      the extra bit is for overflow in the subtract operation.
+
+Algorithm:
+Init:
+place the divisor in argument register
+place dividend in lower part of holding register
+set upper part of holding register to zero
+
+Loop:
+shift holding register to the left.
+difference = upper holding - divisor
+if difference >= 0:                   // msb of difference = '0'
+    set upper holding to difference
+    set holding(0) to '1'
+if not 32nd repition,
+    goto start of loop
+remainder = upper holding
+quotient  = lower holding
+
+Example:
+   7 /    2
+0111 / 0010 (xlen = 4)
+
+holding: 0 0000 0111 | divisor: 0010 (place arguments in registers)
+         0 0000 1110                 (shift holding register 1 bit left)
+         - 0010
+         1 1110                      (difference < 0, do nothing)
+holding: 0 0000 1110                 (shift holding register 1 bit left)
+         0 0001 1100
+         - 0010
+         1 1111                      (difference < 0, do nothing)
+holding: 0 0001 1100                 (shift holding register 1 bit left)
+         0 0011 1000
+         - 0010
+         0 0001                      (difference >= 0, holding(0) = '1' )
+holding: 0 0001 1001                 (upper holding = difference)
+         0 0011 0010
+         - 0010
+         0 0001                      (difference >= 0, holding(0) = '1' )
+holding: 0 0001 0011                 (upper holding = difference)
+           0001 0011                 (finish)

@@ -23,6 +23,10 @@ object TurboRavTestRunner{
         chiselMainTest(mainArgs, () => Module(new Rom())){
           c => new RomTest(c, conf)
         }
+      case "multtest" =>
+        chiselMainTest(mainArgs, () => Module(new Mult(32))){
+          c => new MultTest(c)
+        }
     }
   }
 }

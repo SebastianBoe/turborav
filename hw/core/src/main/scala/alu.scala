@@ -7,6 +7,8 @@ import Common._
 
 class Alu (implicit conf: TurboravConfig) extends Module with Constants {
 
+  require(isPow2(conf.xlen))
+
   val io = new Bundle {
     val func = UInt(INPUT, 4)
     val inA  = UInt(INPUT, conf.xlen)
@@ -38,26 +40,3 @@ class Alu (implicit conf: TurboravConfig) extends Module with Constants {
     )
   )
 }
-
-// Since I can't find documentation for Lookup I will document it by
-// example here.
-
-// Lookup implements the common verilog pattern;
-
-// (Taken from the OpenCores processor Amber25)
-// assign instruction      =         instruction_sel == 2'd0 ? fetch_instruction_r       :
-//                                   instruction_sel == 2'd1 ? saved_current_instruction :
-//                                   instruction_sel == 2'd3 ? hold_instruction          :
-//                                                             pre_fetch_instruction     ;
-
-// The Lookup equivalent will look like;
-// instruction = Lookup(
-//   instruction_sel,
-//   pre_fetch_instruction,
-//   Array(
-//     UInt(0) -> fetch_instruction_r,
-//     UInt(1) -> saved_current_instruction_r,
-//     UInt(3) -> hold_instruction
-//   )
-// )
-

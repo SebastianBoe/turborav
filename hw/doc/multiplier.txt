@@ -1,0 +1,49 @@
+The multiplier algorithm uses two registers and does unsigned multiply.
+If signed multiply is requested the original signs should be remembered and the
+result should be converted in the end.
+
+The multiplication unit can be instantiated with xlen as the operand bit width.
+The result will then have bit width of 2 * xlen.
+The algorithm will use xlen number of iterations to complete.
+
+Terminology: Product = Multiplicand * Multiplier
+
+Registers:
+    - Argument: holds the multiplicand
+    - Holding: holds a 2*xlen +1 bit temporary value during the algorithm
+      the extra bit is for overflow in the addition operation.
+
+Algorithm:
+Init:
+place multiplicand in argument register
+place multiplier in lower part of holding register
+set upper part of holding register to zero
+
+Loop:
+if LSB of holding is '1':
+    add argument and upper part of holding register,
+    place the result in the upper part of the holding register
+shift holding register 1 bit to the right.
+
+if not 32nd repition,
+    goto start of loop
+product = holding
+
+Example:
+   2 *    3
+0010 x 0011 (xlen = 4)
+
+holding: 0 0000 0011 | argument: 0010 (place arguments in registers)
+         + 0010                       (holding(0) == 1, add argument)
+         0 0010 0011
+holding: 0 0001 0001 | argument: 0010 (shift value one bit to the right)
+         + 0010                       (holding(0) == 1, add argument)
+         0 0011 0001
+holding: 0 0001 1000 | argument: 0010 (shift value one bit to the right)
+         + 0000                       (holding(0) == 0, add zero)
+         0 0001 1000
+holding: 0 0000 1100 | argument: 0010 (shift value one bit to the right)
+         + 0000                       (holding(0) == 0, add zero)
+         0 0000 1100
+holding: 0 0000 0110 | argument: 0010 (shift value one bit to the right)
+           0000 0110                  (finish)

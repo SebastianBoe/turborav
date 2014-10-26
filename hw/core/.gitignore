@@ -9,3 +9,5 @@ output/
 *.v
 *.hex
 *.flo
+
+/doc/instr-table.tex
