@@ -18,6 +18,7 @@ class Cache(val cacheLineWidth: Int,
   require(cacheLineWidth % INSTRUCTION_WIDTH == 0)
 
   val entriesPerBank = numEntries / associativity
+  val instrPerCacheLine = cacheLineWidth / INSTRUCTION_WIDTH
 
   val dataBanks = Array.fill(associativity) {
     Mem(UInt(width = cacheLineWidth), entriesPerBank)
@@ -34,16 +35,33 @@ class Cache(val cacheLineWidth: Int,
     }
   }
 
-  val instrOffset = if (numOffsetBits > 0) io.address(numOffsetBits - 1, 0) else UInt(0)
+  val instrOffset = io.address(numOffsetBits - 1, 0)
   val instrIndex  = io.address(numOffsetBits + numIndexBits - 1, numOffsetBits)
   val instrTag    = io.address(numOffsetBits + numIndexBits + numTagBits - 1,
     numOffsetBits + numIndexBits)
 
   when (tagBanks(0).bank(instrIndex) === instrTag
     && tagBanks(0).isValid(instrIndex)) {
-      val upperInstrBitIndex = (instrOffset + UInt(1)) * INSTRUCTION_WIDTH_UINT- UInt(1)
-      val lowerInstrBitIndex = instrOffset * INSTRUCTION_WIDTH_UINT
-      io.data := dataBanks(0)(instrIndex)(upperInstrBitIndex, lowerInstrBitIndex)
+      //val upperInstrBitIndex = (instrOffset + UInt(1)) * INSTRUCTION_WIDTH_UINT- UInt(1)
+      //val lowerInstrBitIndex = instrOffset * INSTRUCTION_WIDTH_UINT
+      //io.data := dataBanks(0)(instrIndex)(upperInstrBitIndex, lowerInstrBitIndex)
+
+      // Create a muxer to select the bits at correct offset
+      //var muxArray = new Array[(UInt, UInt)](instrPerCacheLine)
+      var muxArray = Array(
+        UInt(0) -> dataBanks(0)(instrIndex)(31, 0),
+        UInt(1) -> dataBanks(0)(instrIndex)(63, 32),
+        UInt(2) -> dataBanks(0)(instrIndex)(95, 64),
+        UInt(3) -> dataBanks(0)(instrIndex)(127, 96)
+      )
+      //(0, INSTRUCTION_WIDTH)
+
+      io.data := Lookup(
+        instrOffset,
+        UInt(0, 32),
+        muxArray
+      )
+
     }
 
 }
