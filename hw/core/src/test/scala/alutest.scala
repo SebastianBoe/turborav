@@ -1,9 +1,10 @@
 package TurboRav
 
 import Chisel._
+import Common._
 
-class AluTest(c: Alu) extends Tester(c) with Constants {
-
+class AluTest(c: Alu, conf: TurboravConfig) extends Tester(c) with Constants {
+  val xlen = conf.xlen
     /* Testing with bigint because of possible use of 64bit
      * values would couse problems with long types
      */
@@ -14,9 +15,9 @@ class AluTest(c: Alu) extends Tester(c) with Constants {
         expect(c.io.out, result)
     }
     val one = BigInt(1)
-    val max = (one << c.xlen) - one
-    val min_signed = one << (c.xlen-1)
-    val max_signed = (one << (c.xlen-1)) - one
+    val max = (one << xlen) - one
+    val min_signed = one << (xlen-1)
+    val max_signed = (one << (xlen-1)) - one
 
     // ADD tests
     test(0,     0, ALU_ADD_VAL, 0)
@@ -24,8 +25,8 @@ class AluTest(c: Alu) extends Tester(c) with Constants {
     test(max, one, ALU_ADD_VAL, 0)
     test(max, max, ALU_ADD_VAL, max - one)
     for(i     <- 0 until 10){
-        val a = BigInt(c.xlen, rnd)
-        val b = BigInt(c.xlen, rnd)
+        val a = BigInt(xlen, rnd)
+        val b = BigInt(xlen, rnd)
         // mask out overflow bits
         val res = (a + b) & max
         test(a, b, ALU_ADD_VAL, res)
@@ -37,8 +38,8 @@ class AluTest(c: Alu) extends Tester(c) with Constants {
     test(0,   one, ALU_SUB_VAL, max)
 
     for(i <- 0 until 10){
-        val a = BigInt(c.xlen, rnd)
-        val b = BigInt(c.xlen, rnd)
+        val a = BigInt(xlen, rnd)
+        val b = BigInt(xlen, rnd)
         // mask out overflow bits
         val res = (a - b) & max
         test(a, b, ALU_SUB_VAL, res)
@@ -71,52 +72,52 @@ class AluTest(c: Alu) extends Tester(c) with Constants {
 
     // AND test
     for(i <- 0 until 10){
-        val a = BigInt(c.xlen, rnd)
-        val b = BigInt(c.xlen, rnd)
+        val a = BigInt(xlen, rnd)
+        val b = BigInt(xlen, rnd)
         test(a, b, ALU_AND_VAL, a & b)
     }
 
     // OR test
     for(i <- 0 until 10){
-        val a = BigInt(c.xlen, rnd)
-        val b = BigInt(c.xlen, rnd)
+        val a = BigInt(xlen, rnd)
+        val b = BigInt(xlen, rnd)
         test(a, b, ALU_OR_VAL, a | b)
     }
 
     // XOR test
     for(i <- 0 until 10){
-        val a = BigInt(c.xlen, rnd)
-        val b = BigInt(c.xlen, rnd)
+        val a = BigInt(xlen, rnd)
+        val b = BigInt(xlen, rnd)
         test(a, b, ALU_XOR_VAL, a ^ b)
     }
 
     // SLL test
     test( 0, 0, ALU_SLL_VAL, 0)
-    test( 0, c.xlen -1, ALU_SLL_VAL, 0)
+    test( 0, xlen -1, ALU_SLL_VAL, 0)
     test( one, 0, ALU_SLL_VAL, one)
-    test( one, c.xlen -1, ALU_SLL_VAL, min_signed)
+    test( one, xlen -1, ALU_SLL_VAL, min_signed)
     test( one, one, ALU_SLL_VAL, 2)
     test( max, one, ALU_SLL_VAL, max - one)
-    test( max, c.xlen -1, ALU_SLL_VAL, min_signed)
+    test( max, xlen -1, ALU_SLL_VAL, min_signed)
 
     // SRL test
     test( 0, 0, ALU_SRL_VAL, 0)
-    test( 0, c.xlen -1, ALU_SRL_VAL, 0)
+    test( 0, xlen -1, ALU_SRL_VAL, 0)
     test( one, 0, ALU_SRL_VAL, one)
-    test( one, c.xlen -1, ALU_SRL_VAL, 0)
+    test( one, xlen -1, ALU_SRL_VAL, 0)
     test( one, one, ALU_SRL_VAL, 0)
     test( max, one, ALU_SRL_VAL, max_signed)
-    test( max, c.xlen -1, ALU_SRL_VAL, one)
+    test( max, xlen -1, ALU_SRL_VAL, one)
 
     // SRA test
     test( 0, 0, ALU_SRA_VAL, 0)
-    test( 0, c.xlen -1, ALU_SRA_VAL, 0)
+    test( 0, xlen -1, ALU_SRA_VAL, 0)
     test( one, 0, ALU_SRA_VAL, one)
-    test( one, c.xlen -1, ALU_SRA_VAL, 0)
+    test( one, xlen -1, ALU_SRA_VAL, 0)
     test( one, one, ALU_SRA_VAL, 0)
     test( max_signed, one, ALU_SRA_VAL, max_signed / 2)
-    test( max_signed, c.xlen -1, ALU_SRA_VAL, 0)
+    test( max_signed, xlen -1, ALU_SRA_VAL, 0)
     test( max, one, ALU_SRA_VAL, max)
-    test( max, c.xlen -1, ALU_SRA_VAL, max)
+    test( max, xlen -1, ALU_SRA_VAL, max)
 
 }

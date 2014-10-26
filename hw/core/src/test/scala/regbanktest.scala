@@ -1,9 +1,10 @@
 package TurboRav
 
 import Chisel._
+import Common._
 
-class RegBankTest(c: RegBank) extends Tester(c) {
-
+class RegBankTest(c: RegBank, conf: TurboravConfig) extends Tester(c) {
+  val xlen = conf.xlen
     def read1(rx: Int, data: BigInt) = {
         poke(c.io.rs1_addr, rx)
         expect(c.io.rs1_data, data)
@@ -23,7 +24,7 @@ class RegBankTest(c: RegBank) extends Tester(c) {
     }
 
     val one = BigInt(1)
-    val max = (one << c.xlen) - one
+    val max = (one << xlen) - one
     val x0 = 0
     val x1 = 1
     val x31 = 31
