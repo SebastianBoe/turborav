@@ -34,4 +34,16 @@ class Rom(implicit conf: TurboravConfig) extends Module {
       state := s_idle
     }
   }
+
+  val rom = Vec(
+    Array(
+      UInt(1, width=conf.apb_data_len),
+      UInt(2, width=conf.apb_data_len),
+      UInt(3, width=conf.apb_data_len),
+      UInt(4, width=conf.apb_data_len)
+    )
+  )
+  io.rdata  := rom(io.addr) & Fill(conf.apb_data_len, state === s_access)
+  io.enable := state === s_access
+  io.ready  := state === s_access
 }
