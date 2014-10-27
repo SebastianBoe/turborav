@@ -48,20 +48,26 @@ class Cache(val cacheLineWidth: Int,
 
       // Create a muxer to select the bits at correct offset
       //var muxArray = new Array[(UInt, UInt)](instrPerCacheLine)
-      var muxArray = Array(
-        UInt(0) -> dataBanks(0)(instrIndex)(31, 0),
-        UInt(1) -> dataBanks(0)(instrIndex)(63, 32),
-        UInt(2) -> dataBanks(0)(instrIndex)(95, 64),
-        UInt(3) -> dataBanks(0)(instrIndex)(127, 96)
-      )
       //(0, INSTRUCTION_WIDTH)
 
-      io.data := Lookup(
-        instrOffset,
-        UInt(0, 32),
-        muxArray
-      )
 
     }
+    val muxArray = Array.ofDim[(UInt, UInt)](instrPerCacheLine)
+    for (i <- 0 until instrPerCacheLine) {
+      val upperInstrBitIndex = i * (INSTRUCTION_WIDTH + 1) - 1
+      val lowerInstrBitIndex = i * INSTRUCTION_WIDTH - 1
+      muxArray(i) = (UInt(i), dataBanks(0)(instrIndex)(upperInstrBitIndex, lowerInstrBitIndex))
+    }
+    //var muxArray = Array(
+    //  UInt(0) -> dataBanks(0)(instrIndex)(31, 0),
+    //  UInt(1) -> dataBanks(0)(instrIndex)(63, 32),
+    //  UInt(2) -> dataBanks(0)(instrIndex)(95, 64),
+    //  UInt(3) -> dataBanks(0)(instrIndex)(127, 96)
+    //)
+    io.data := Lookup(
+      instrOffset,
+      UInt(0, 32),
+      muxArray
+    )
 
 }
