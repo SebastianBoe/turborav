@@ -1,6 +1,7 @@
 package TurboRav
 
 import Chisel._
+import Common._
 
 object TurboRav {
   def main(args: Array[String]): Unit = {
@@ -10,12 +11,15 @@ object TurboRav {
 
     val mainArgs = args.slice(1, args.length)
 
+    implicit val conf = new TurboravConfig()
+
     val res = module match {
-      case "alu"      => chiselMain(mainArgs, () => Module(new Alu(32)))
-      case "regbank"  => chiselMain(mainArgs, () => Module(new RegBank(32)))
-      case "mult"     => chiselMain(mainArgs, () => Module(new Mult(32)))
+      case "alu"     => chiselMain(mainArgs, () => Module(new Alu()))
+      case "regbank" => chiselMain(mainArgs, () => Module(new RegBank()))
+      case "rom"     => chiselMain(mainArgs, () => Module(new Rom()))
+        // TODO: Use conf in Mult and Cache as well. 
+      case "mult"    => chiselMain(mainArgs, () => Module(new Mult(conf.xlen)))
       case "cache"    => chiselMain(mainArgs, () => Module(new Cache(128, 128, 1)))
     }
   }
 }
-
