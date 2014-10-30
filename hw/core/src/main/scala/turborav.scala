@@ -15,6 +15,7 @@ object TurboRav {
       case "regbank"  => chiselMain(mainArgs, () => Module(new RegBank(32)))
       case "mult"     => chiselMain(mainArgs, () => Module(new Mult(32)))
       case "cache"    => chiselMain(mainArgs, () => Module(new Cache(64, 128, 1)))
+      case "decode"   => chiselMain(mainArgs, () => Module(new Decode(32)))
     }
   }
 }

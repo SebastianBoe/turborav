@@ -12,4 +12,4 @@ all: get-table
 	$(PDFLATEX) opcodes.tex
 
 clean:
-	rm -f instr-table.tex *.pdf *.aux *.dvi *.log
+	rm -f instr-table.texi opcodes.pdf *.aux *.dvi *.log
