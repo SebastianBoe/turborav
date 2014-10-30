@@ -1,14 +1,32 @@
-SRC_DIR     = src/main/scala
-TEST_DIR    = src/test/scala
-GEN_DIR     = generated
-VLOG_DIR    = verilog
-OUTPUT_DIR  = output
+# Usage:
+#	make <module_name>.test	# Run testbench
+#	make <module_name>.v	# Generate verilog
+#	make <module_name>.out	# Generate c++ backend
+#	make clean				# Delete generated files
 
-CHISEL_FLAGS   := --targetDir $(GEN_DIR)
-CHISEL_FLAGS_C := --genHarness --compile --test --backend c $(CHISEL_FLAGS)
-CHISEL_FLAGS_V := --genHarness --backend v --targetDir $(VLOG_DIR)
+DIR_SRC     = src/main/scala
+DIR_TEST    = src/test/scala
+DIR_GEN     = generated
+DIR_VLOG    = verilog
 
-modules := $(notdir $(basename $(wildcard $(SRC_DIR)/*.scala)))
+CHISEL_FLAGS_C := \
+	--genHarness \
+	--backend c \
+	--targetDir $(DIR_GEN) \
+	--compile \
+	--test \
+	--vcd
+
+CHISEL_FLAGS_V := \
+	--genHarness \
+	--backend v \
+	--targetDir $(DIR_VLOG)
+
+modules := \
+	$(notdir \
+	$(basename \
+	$(wildcard \
+	$(DIR_SRC)/*.scala)))
 
 .PHONY: all
 
@@ -16,26 +34,17 @@ all:
 	@echo "No good default make rule yet"
 
 clean:
-	rm -rf target project $(GEN_DIR) $(VLOG_DIR) $(OUTPUT_DIR)
+	rm -rf \
+	target \
+	project \
+	$(DIR_GEN) \
+	$(DIR_VLOG)
 
-outputdir:
-	mkdir -p $(OUTPUT_DIR)
+%.test: $(DIR_TEST)/%test.scala
+	sbt "test:run $*test $(CHISEL_FLAGS_C)"
 
-%.out: $(SRC_DIR)/%.scala outputdir
-	sbt "run $(notdir $(basename $<)) $(CHISEL_FLAGS_C)" \
-	| tee $(OUTPUT_DIR)/$@
-# Remove bash-style coloring from output log
-	@sed -i -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $(OUTPUT_DIR)/$@
+%.v: $(DIR_SRC)/%.scala
+	sbt "run      $*     $(CHISEL_FLAGS_V)"
 
-%.test: $(TEST_DIR)/%test.scala outputdir
-	sbt "test:run $(notdir $(basename $<)) $(CHISEL_FLAGS_C)" \
-	| tee $(OUTPUT_DIR)/$@
-# Remove bash-style coloring from output log
-	@sed -i -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" $(OUTPUT_DIR)/$@
-
-%.hex: $(SRC_DIR)/%.scala
-	sbt "run $(notdir $(basename $<)) --backend flo --genHarness --compile --test $(CHISEL_FLAGS)"
-
-%.v: $(SRC_DIR)/%.scala
-	sbt "run $(notdir $(basename $<)) $(CHISEL_FLAGS_V)"
-
+%.out: $(DIR_SRC)/%.scala
+	sbt "run      $*     $(CHISEL_FLAGS_C)"
