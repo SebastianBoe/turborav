@@ -19,7 +19,7 @@ object TurboRav {
       case "rom"     => chiselMain(mainArgs, () => Module(new Rom()))
         // TODO: Use conf in Mult and Cache as well. 
       case "mult"    => chiselMain(mainArgs, () => Module(new Mult(conf.xlen)))
-      case "cache"   => chiselMain(mainArgs, () => Module(new Cache(64, 128, 1)))
+      case "cache"    => chiselMain(mainArgs, () => Module(new Cache(128, 128, 1)))
     }
   }
 }
