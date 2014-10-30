@@ -1,6 +1,7 @@
 package TurboRav
 
 import Chisel._
+import Common._
 
 object Opcodes {
 
@@ -18,7 +19,7 @@ object Opcodes {
 
 }
 
-class Decode(val xlen : Int) extends Module with Constants {
+class Decode(implicit conf: TurboravConfig) extends Module with Constants {
   val io = new Bundle(){
 
     val stall = Bool(INPUT)
@@ -28,14 +29,14 @@ class Decode(val xlen : Int) extends Module with Constants {
 
     // Write Back signal
     val wb_rd_wen   = Bool(INPUT)
-    val wb_rd_addr  = UInt(INPUT, log2Up(xlen))
-    val wb_rd_data  = UInt(INPUT, xlen)
+    val wb_rd_addr  = UInt(INPUT, log2Up(conf.xlen))
+    val wb_rd_data  = UInt(INPUT, conf.xlen)
 
     // Data Path Signals
-    val dec_rs1      = UInt(OUTPUT, xlen)
-    val dec_rs2      = UInt(OUTPUT, xlen)
-    val dec_rd_addr  = UInt(OUTPUT, log2Up(xlen))
-    val dec_imm      = UInt(OUTPUT, xlen)
+    val dec_rs1      = UInt(OUTPUT, conf.xlen)
+    val dec_rs2      = UInt(OUTPUT, conf.xlen)
+    val dec_rd_addr  = UInt(OUTPUT, log2Up(conf.xlen))
+    val dec_imm      = UInt(OUTPUT, conf.xlen)
 
     // Control Path Signals
     val dec_alu_func = UInt(OUTPUT, ALU_FUNC_WIDTH)
@@ -58,9 +59,9 @@ class Decode(val xlen : Int) extends Module with Constants {
                   io.instr(19, 12), io.instr(20), io.instr(30, 21),
                   UInt(0, width = 1))
 
-  val imm_z = UInt(0, width = xlen)
+  val imm_z = UInt(0, width = conf.xlen)
 
-  val regbank = Module(new RegBank(xlen))
+  val regbank = Module(new RegBank())
   regbank.io.rs1_addr := rs1_addr
   regbank.io.rs2_addr := rs2_addr
   regbank.io.rd_addr  := io.wb_rd_addr
