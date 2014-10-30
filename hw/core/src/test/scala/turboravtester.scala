@@ -23,7 +23,7 @@ object TurboRavTestRunner{
         chiselMainTest(mainArgs, () => Module(new Mult(32))){
           c => new MultTest(c)
         }
-      case "multtest" =>
+      case "decodetest" =>
         chiselMainTest(mainArgs, () => Module(new Decode(32))){
           c => new DecodeTest(c)
         }
