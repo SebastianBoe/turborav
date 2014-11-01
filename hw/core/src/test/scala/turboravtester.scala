@@ -13,7 +13,7 @@ object TurboRavTestRunner{
     implicit val conf = TurboravConfig()
 
     // En pils til førstemann som kan fjerne redundansen.
-    // Hvis du prøvde og feilet inkrementer følgende: 1
+    // Hvis du prøvde og feilet inkrementer følgende: 2
     val res = args(0) match {
       case "alutest" =>
         chiselMainTest(mainArgs, () => Module(new Alu())){
