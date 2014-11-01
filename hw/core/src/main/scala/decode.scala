@@ -3,22 +3,6 @@ package TurboRav
 import Chisel._
 import Common._
 
-object Opcodes {
-
-  def OPCODE_LUI        = Bits("b0110111")
-  def OPCODE_AUIPC      = Bits("b0010111")
-  def OPCODE_JAL        = Bits("b1101111")
-  def OPCODE_JALR       = Bits("b1100111")
-  def OPCODE_BRANCH     = Bits("b1100011")
-  def OPCODE_LOAD       = Bits("b0000011")
-  def OPCODE_STORE      = Bits("b0100011")
-  def OPCODE_REG_REG    = Bits("b0110011")
-  def OPCODE_REG_IMM    = Bits("b0010011")
-  def OPCODE_FENCE      = Bits("b0001111")
-  def OPCODE_SYSTEM     = Bits("b1110011")
-
-}
-
 class Decode(implicit conf: TurboravConfig) extends Module with Constants {
   val io = new Bundle(){
 
@@ -50,7 +34,8 @@ class Decode(implicit conf: TurboravConfig) extends Module with Constants {
 
   //Sign extended immediates
   val imm_i = Cat(Fill(io.instr(31), 20), io.instr(31, 20))
-  val imm_s = Cat(Fill(io.instr(31), 20), Cat(io.instr(31, 25), io.instr(11, 7)))
+  val imm_s = Cat(Fill(io.instr(31), 20),
+                  Cat(io.instr(31, 25), io.instr(11, 7)))
   val imm_b = Cat(Fill(io.instr(31), 19),
                   io.instr(7), io.instr(30, 25), io.instr(11, 8),
                   UInt(0, width = 1))
@@ -75,12 +60,15 @@ class Decode(implicit conf: TurboravConfig) extends Module with Constants {
   val rs2_data       = Reg(init = UInt(0))
 
   when(io.instr_valid && !io.stall){
-    when(io.instr === Opcodes.OPCODE_REG_REG) {
+    stage_alu_func := UInt(ALU_SUB_VAL)
+    imm := imm_z
+
+    when(opcode === OPCODE_REG_REG) {
       stage_alu_func := UInt(ALU_ADD_VAL)
       imm := imm_z
-    } .elsewhen(io.instr === Opcodes.OPCODE_REG_IMM){
+    } .elsewhen(io.instr === OPCODE_REG_IMM){
       imm := imm_i
-    } .elsewhen(io.instr === Opcodes.OPCODE_STORE){
+    } .elsewhen(io.instr === OPCODE_STORE){
       imm := imm_s
     }
 
