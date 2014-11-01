@@ -2,4 +2,5 @@
 *.log
 *.dvi
 
+opcodes.tex
 instr-table.tex
