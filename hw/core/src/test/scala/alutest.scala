@@ -2,8 +2,9 @@ package TurboRav
 
 import Chisel._
 import Common._
+import Constants._
 
-class AluTest(c: Alu, conf: TurboravConfig) extends Tester(c) with Constants {
+class AluTest(c: Alu, conf: TurboravConfig) extends Tester(c) {
   val xlen = conf.xlen
   /* Testing with bigint because of possible use of 64bit
    * values would couse problems with long types

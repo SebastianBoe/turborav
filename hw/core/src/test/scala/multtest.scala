@@ -1,8 +1,9 @@
 package TurboRav
 
 import Chisel._
+import Constants._
 
-class MultTest(c: Mult) extends Tester(c) with Constants {
+class MultTest(c: Mult) extends Tester(c) {
 
   def test(a: BigInt, b: BigInt, func: Int, resL: BigInt, resH: BigInt) {
     poke(c.io.enable, 1)

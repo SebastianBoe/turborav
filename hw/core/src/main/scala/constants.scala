@@ -2,7 +2,7 @@ package TurboRav
 
 import Chisel._
 
-trait Constants {
+object Constants {
 
   val INSTRUCTION_WIDTH = 32
 

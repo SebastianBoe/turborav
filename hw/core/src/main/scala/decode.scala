@@ -2,8 +2,9 @@ package TurboRav
 
 import Chisel._
 import Common._
+import Constants._
 
-class Decode(implicit conf: TurboravConfig) extends Module with Constants {
+class Decode(implicit conf: TurboravConfig) extends Module {
 
   require(conf.xlen == 32 || conf.xlen == 64)
 
