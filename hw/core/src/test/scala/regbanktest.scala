@@ -20,7 +20,7 @@ class RegBankTest(c: RegBank, conf: TurboravConfig) extends Tester(c) {
     poke(c.io.rd_addr, rx)
     poke(c.io.rd_data,  data)
     step(1)
-    //poke(c.io.rd_wen,  false)
+    poke(c.io.rd_wen,  0)
   }
 
   val one = BigInt(1)
