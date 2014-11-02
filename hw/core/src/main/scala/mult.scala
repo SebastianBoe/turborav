@@ -1,8 +1,9 @@
 package TurboRav
 
 import Chisel._
+import Constants._
 
-class Mult(val xlen: Int) extends Module with Constants {
+class Mult(val xlen: Int) extends Module {
 
   require(isPow2(xlen))
 

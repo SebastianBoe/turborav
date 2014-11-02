@@ -2,10 +2,11 @@ package TurboRav
 
 import Chisel._
 import Common._
+import Constants._
 
 // The purely combinatorial Arithmetic Logic Unit.
 
-class Alu (implicit conf: TurboravConfig) extends Module with Constants {
+class Alu (implicit conf: TurboravConfig) extends Module {
 
   require(isPow2(conf.xlen))
 

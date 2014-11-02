@@ -20,7 +20,12 @@ object TurboRav {
         // TODO: Use conf in Mult and Cache as well.
       case "mult"    => chiselMain(mainArgs, () => Module(new Mult(conf.xlen)))
       case "cache"    => chiselMain(mainArgs, () => Module(new Cache(128, 128, 1)))
+      case "fetch"   => chiselMain(mainArgs, () => Module(new Fetch()))
       case "decode"   => chiselMain(mainArgs, () => Module(new Decode()))
+      case "execute" => chiselMain(mainArgs, () => Module(new Execute()))
+      case "memory"   => chiselMain(mainArgs, () => Module(new Memory()))
+      case "writeback"   => chiselMain(mainArgs, () => Module(new Writeback()))
+      case "ravv"    => chiselMain(mainArgs, () => Module(new RavV()))
     }
   }
 }

@@ -1,10 +1,11 @@
 package TurboRav
 
 import Chisel._
+import Constants._
 
 class Cache(val cacheLineWidth: Int,
   val numEntries: Int,
-  val associativity: Int) extends Module with Constants {
+  val associativity: Int) extends Module {
 
     val io = new Bundle {
       val address = UInt(INPUT, 32)
