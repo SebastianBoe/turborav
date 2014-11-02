@@ -6,8 +6,7 @@ import Common._
 object TurboRav {
   def main(args: Array[String]): Unit = {
 
-    val module = if (args.length > 0) args(0) else "cache"
-    if (args.length >= 1) args + "--backend c" + "--genHarness"
+    val module = if (args.length > 0) args(0) else "ravv"
 
     val mainArgs = args.slice(1, args.length)
 

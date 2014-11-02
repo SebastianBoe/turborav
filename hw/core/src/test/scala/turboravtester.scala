@@ -6,16 +6,16 @@ import Common._
 object TurboRavTestRunner{
   def main(args: Array[String]): Unit = {
 
-    val module = if (args.length > 0) args(0) else "decode"
-    if (args.length >= 1) args + "--backend c" + "--genHarness"
+    val module = if (args.length > 0) args(0) else "ravvtest"
 
     val mainArgs = args.slice(1, args.length)
+
     implicit val conf = TurboravConfig()
 
     // En pils til førstemann som kan fjerne redundansen.
     // Hvis du prøvde og feilet inkrementer følgende:
     // 2
-    val res = args(0) match {
+    val res = module match {
       case "alutest" =>
         chiselMainTest(mainArgs, () => Module(new Alu())){
           c => new AluTest(c, conf)
@@ -35,6 +35,10 @@ object TurboRavTestRunner{
       case "decodetest" =>
         chiselMainTest(mainArgs, () => Module(new Decode())){
           c => new DecodeTest(c)
+        }
+      case "ravvtest" =>
+        chiselMainTest(mainArgs, () => Module(new RavV())){
+          c => new RavVTest(c)
         }
     }
   }
