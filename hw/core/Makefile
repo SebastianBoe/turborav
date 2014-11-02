@@ -16,6 +16,14 @@ DIR_GEN     = generated
 DIR_VLOG    = verilog
 DIR_SYNTH = synthesis
 
+# Perhaps call xst in it's own directory to not get this junk in
+# hw/core
+SYNTHESIS_JUNK = \
+	xst \
+	_xmsgs/ \
+	hs_err_pid1674.log \
+	*.lso
+
 FPGA_MODEL = xc3s250e-cp132-5
 
 CHISEL_FLAGS_C := \
@@ -48,6 +56,7 @@ clean:
 	project \
 	$(DIR_GEN) \
 	$(DIR_VLOG) \
+	$(SYNTHESIS_JUNK) \
 	$(DIR_SYNTH)
 
 %.test: $(DIR_TEST)/%test.scala
