@@ -1,0 +1,64 @@
+\documentclass[12pt]{article}
+
+\usepackage{listings}
+\usepackage{todonotes}
+
+\begin{document}
+\section{Guidelines}
+\subsection{Version control}
+\begin{enumerate}
+\item Merge commits should be avoided.\footnote
+  {
+    They add no value, can be avoided through proper use of rebase, and
+    make looking at the linear history of commits to Master confusing.
+  }
+  \item When committing something non-trivial to code with a clear
+    original author it is considered polite to do a pull-request.\footnote
+    {
+      On the pro-side this introduces some code review and allows the
+      original author to stay up-to-date with the state of code he cares
+      about. On the con-side this increases the ``terskel'' for improving on
+      code and can cause improvements to be dropped.
+    }
+\end{enumerate}
+\subsection{Source code}
+Unless stated otherwise one must follow the style guide of the
+language.
+\begin{enumerate}
+  \item No trailing-whitespace.
+  \item No tabs.
+  \item Max line length is 80 chars.
+\end{enumerate}
+\subsubsection{Chisel}
+\todo[inline]{It might increase readability if we had the policy of using
+  functions for combinatorial HW, and Modules for stateful HW.}
+
+A chisel source file should follow the structure of the below code.\footnote
+{
+  Being consistent in the structure of each source file increases readability.
+}
+\begin{figure}
+\begin{lstlisting}[language=Java, frame=single]
+package Turborav
+
+import Chisel._
+
+// Some high-level description of what the module does.
+
+class MyModule(implicit conf: TurboravConfig)
+extends Module {
+  // start with io.
+ val io = new Bundle {
+   val in  = Bool(INPUT)
+   val out = Bool(OUTPUT)
+ }
+  // Instantiation assertions
+  require(Array(32, 64) contains conf.xlen)
+
+//Chisel code.
+
+ io.out := false
+}
+\end{lstlisting}
+\end{figure}
+\end{document}
