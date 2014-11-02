@@ -36,9 +36,9 @@ class DecodeTest(c: Decode) extends Tester(c) {
   val andi_instr  = 0x07b4f393l   //    andi   x7, x9, 123
   val ori_instr   = 0x07b4e393l   //    ori    x7, x9, 123
   val xori_instr  = 0x07b4c393l   //    xori   x7, x9, 123
-  val slli_instr  = 0x00c49393l   //    slli   x7, x9, 123
-  val srli_instr  = 0x00c4d393l   //    srli   x7, x9, 123
-  val srai_instr  = 0x40c4d393l   //    srai   x7, x9, 123
+  val slli_instr  = 0x00c49393l   //    slli   x7, x9, 12
+  val srli_instr  = 0x00c4d393l   //    srli   x7, x9, 12
+  val srai_instr  = 0x40c4d393l   //    srai   x7, x9, 12
 
   // All instructions are valid
   poke(c.io.fch_dec.instr_valid, 1)
@@ -58,14 +58,14 @@ class DecodeTest(c: Decode) extends Tester(c) {
   test_func(srl_instr   ,ALU_SRL_VAL)
   test_func(sub_instr   ,ALU_SUB_VAL)
   test_func(sra_instr   ,ALU_SRA_VAL)
-  test_func(addi_instr  ,ALU_ADD_VAL, true, 123)
-  test_func(slti_instr  ,ALU_SLT_VAL, true, 123)
+  test_func(addi_instr  ,ALU_ADD_VAL,  true, 123)
+  test_func(slti_instr  ,ALU_SLT_VAL,  true, 123)
   test_func(sltiu_instr ,ALU_SLTU_VAL, true, 123)
-  test_func(slli_instr  ,ALU_SLL_VAL, true, 12)
-  test_func(srli_instr  ,ALU_SRL_VAL, true, 12)
-  test_func(srai_instr  ,ALU_SRA_VAL, true, 12)
-  test_func(andi_instr  ,ALU_AND_VAL, true, 123)
-  test_func(ori_instr   ,ALU_OR_VAL, true, 123)
-  test_func(xori_instr  ,ALU_XOR_VAL, true, 123)
+  test_func(andi_instr  ,ALU_AND_VAL,  true, 123)
+  test_func(ori_instr   ,ALU_OR_VAL,   true, 123)
+  test_func(xori_instr  ,ALU_XOR_VAL,  true, 123)
+  test_func(slli_instr  ,ALU_SLL_VAL,  true, 12)
+  test_func(srli_instr  ,ALU_SRL_VAL,  true, 12)
+  test_func(srai_instr  ,ALU_SRA_VAL,  true, 12)
 
 }
