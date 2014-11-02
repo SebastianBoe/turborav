@@ -2,9 +2,10 @@ package TurboRav
 
 import Chisel._
 import Constants._
+import Common._
 
-class Mult(val xlen: Int) extends Module {
-
+class Mult(implicit conf: TurboravConfig) extends Module with Constants {
+  val xlen = conf.xlen // Extract xlen for convenience
   require(isPow2(xlen))
 
   val io = new Bundle(){

@@ -2,15 +2,20 @@ package TurboRav
 
 import Chisel._
 import Constants._
+import Common._
 
-class Cache(val cacheLineWidth: Int,
-  val numEntries: Int,
-  val associativity: Int) extends Module {
-
+class Cache(implicit conf: TurboravConfig) extends Module with Constants {
+  //TODO: declaration order of io and require statements is
+  //inconsistent between Cache and Alu. What is best? io I guess.
     val io = new Bundle {
       val address = UInt(INPUT, 32)
       val data    = UInt(OUTPUT, 32)
     }
+
+  // Extract configuration for convenience
+  val cacheLineWidth = conf.cache.cacheLineWidth
+  val numEntries     = conf.cache.numEntries
+  val associativity  = conf.cache.associativity
 
     val INSTRUCTION_WIDTH_UINT = UInt(INSTRUCTION_WIDTH)
 

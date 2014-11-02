@@ -13,19 +13,22 @@ object TurboRav {
 
     implicit val conf = new TurboravConfig()
 
-    val res = module match {
-      case "alu"     => chiselMain(mainArgs, () => Module(new Alu()))
-      case "regbank" => chiselMain(mainArgs, () => Module(new RegBank()))
-      case "rom"     => chiselMain(mainArgs, () => Module(new Rom()))
-        // TODO: Use conf in Mult and Cache as well.
-      case "mult"    => chiselMain(mainArgs, () => Module(new Mult(conf.xlen)))
-      case "cache"    => chiselMain(mainArgs, () => Module(new Cache(128, 128, 1)))
-      case "fetch"   => chiselMain(mainArgs, () => Module(new Fetch()))
-      case "decode"   => chiselMain(mainArgs, () => Module(new Decode()))
-      case "execute" => chiselMain(mainArgs, () => Module(new Execute()))
-      case "memory"   => chiselMain(mainArgs, () => Module(new Memory()))
-      case "writeback"   => chiselMain(mainArgs, () => Module(new Writeback()))
-      case "ravv"    => chiselMain(mainArgs, () => Module(new RavV()))
-    }
+    val res = chiselMain(
+      mainArgs,
+      module match
+      {
+        case "alu"       => () => Module(new Alu())
+        case "regbank"   => () => Module(new RegBank())
+        case "rom"       => () => Module(new Rom())
+        case "mult"      => () => Module(new Mult())
+        case "cache"     => () => Module(new Cache())
+        case "fetch"     => () => Module(new Fetch())
+        case "decode"    => () => Module(new Decode())
+        case "execute"   => () => Module(new Execute())
+        case "memory"    => () => Module(new Memory())
+        case "writeback" => () => Module(new Writeback())
+        case "ravv"      => () => Module(new RavV())
+      }
+    )
   }
 }
