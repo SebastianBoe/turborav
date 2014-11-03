@@ -10,8 +10,6 @@ object TurboRav {
 
     val mainArgs = args.slice(1, args.length)
 
-    implicit val conf = new TurboravConfig()
-
     val res = chiselMain(
       mainArgs,
       module match

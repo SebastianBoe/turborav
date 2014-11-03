@@ -5,7 +5,7 @@ import Chisel._
 import Common._
 import Apb._
 
-class Rom(implicit conf: TurboravConfig) extends Module {
+class Rom() extends Module {
   val io = new SlaveToApbIo()
 
   val s_idle :: s_setup :: s_access :: Nil = Enum(UInt(), 3)
@@ -36,11 +36,11 @@ class Rom(implicit conf: TurboravConfig) extends Module {
   }
 
   // Read ROM contents from configured path.
-  val source = scala.io.Source.fromFile(conf.rom_contents_path)
+  val source = scala.io.Source.fromFile(Config.rom_contents_path)
   val romArray = source.map(UInt(_)).toArray
   source.close
   val rom = Vec(romArray)
-  io.rdata  := rom(io.addr) & Fill(conf.apb_data_len, state === s_access)
+  io.rdata  := rom(io.addr) & Fill(Config.apb_data_len, state === s_access)
   io.enable := state === s_access
   io.ready  := state === s_access
 }

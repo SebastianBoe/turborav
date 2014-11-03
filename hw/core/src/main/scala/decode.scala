@@ -4,9 +4,9 @@ import Chisel._
 import Common._
 import Constants._
 
-class Decode(implicit conf: TurboravConfig) extends Module {
+class Decode() extends Module {
 
-  require(conf.xlen == 32 || conf.xlen == 64 || conf.xlen == 128)
+  require(Config.xlen == 32 || Config.xlen == 64 || Config.xlen == 128)
 
   val io = new DecodeIO()
 
@@ -21,32 +21,32 @@ class Decode(implicit conf: TurboravConfig) extends Module {
   val alu_func_i = Cat(UInt(0, width = 1), io.fch_dec.instr(14, 12))
 
   //Sign extended immediates
-  val imm_i = Cat(Fill(io.fch_dec.instr(31), conf.xlen - 12),
+  val imm_i = Cat(Fill(io.fch_dec.instr(31), Config.xlen - 12),
                   io.fch_dec.instr(31, 20))
 
-  val imm_s = Cat(Fill(io.fch_dec.instr(31), conf.xlen - 12),
+  val imm_s = Cat(Fill(io.fch_dec.instr(31), Config.xlen - 12),
                   io.fch_dec.instr(31, 25),
                   io.fch_dec.instr(11, 7))
 
-  val imm_b = Cat(Fill(io.fch_dec.instr(31), conf.xlen - 12 - 1),
+  val imm_b = Cat(Fill(io.fch_dec.instr(31), Config.xlen - 12 - 1),
                   io.fch_dec.instr(7),
                   io.fch_dec.instr(30, 25),
                   io.fch_dec.instr(11, 8),
                   UInt(0, width = 1))
 
-  val imm_j = Cat(Fill(io.fch_dec.instr(31), conf.xlen - 20),
+  val imm_j = Cat(Fill(io.fch_dec.instr(31), Config.xlen - 20),
                   io.fch_dec.instr(19, 12),
                   io.fch_dec.instr(20),
                   io.fch_dec.instr(30, 21),
                   UInt(0, width = 1))
 
   val imm_u32 = Cat(io.fch_dec.instr(31, 20),
-                    UInt(0, width = conf.xlen - 12))
-  val imm_u = if(conf.xlen != 32)
-              Cat(Fill(imm_u32(31), conf.xlen - 32), imm_u32)
+                    UInt(0, width = Config.xlen - 12))
+  val imm_u = if(Config.xlen != 32)
+              Cat(Fill(imm_u32(31), Config.xlen - 32), imm_u32)
               else imm_u32
 
-  val shamt = Cat(UInt(0, width = conf.xlen - 5),
+  val shamt = Cat(UInt(0, width = Config.xlen - 5),
                   io.fch_dec.instr(24, 20))
 
   val regbank = Module(new RegBank())

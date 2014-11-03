@@ -4,7 +4,7 @@ import Chisel._
 import Common._
 import Constants._
 
-class Memory(implicit conf: TurboravConfig) extends Module {
+class Memory() extends Module {
 
   val io = new MemoryIO()
 

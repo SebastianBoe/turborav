@@ -6,25 +6,25 @@ import Constants._
 
 // The purely combinatorial Arithmetic Logic Unit.
 
-class Alu (implicit conf: TurboravConfig) extends Module {
+class Alu () extends Module {
 
-  require(isPow2(conf.xlen))
+  require(isPow2(Config.xlen))
 
   val io = new Bundle {
     val func = UInt(INPUT, 4)
-    val in_a  = UInt(INPUT, conf.xlen)
-    val in_b  = UInt(INPUT, conf.xlen)
-    val out  = UInt(OUTPUT, conf.xlen)
+    val in_a  = UInt(INPUT, Config.xlen)
+    val in_b  = UInt(INPUT, Config.xlen)
+    val out  = UInt(OUTPUT, Config.xlen)
   }
 
   val shamt = UInt(
-    io.in_b(log2Up(conf.xlen) - 1, 0),
-    width = log2Up(conf.xlen)
+    io.in_b(log2Up(Config.xlen) - 1, 0),
+    width = log2Up(Config.xlen)
   )
 
   io.out := Lookup(
     io.func,
-    UInt(0, conf.xlen),
+    UInt(0, Config.xlen),
     Array(
       ALU_ADD  -> (io.in_a + io.in_b),
       ALU_SUB  -> (io.in_a - io.in_b),

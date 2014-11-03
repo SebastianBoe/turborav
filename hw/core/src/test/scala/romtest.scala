@@ -3,7 +3,7 @@ package TurboRav
 import Chisel._
 import Common._
 
-class RomTest(c: Rom, conf: TurboravConfig) extends Tester(c) {
+class RomTest(c: Rom) extends Tester(c) {
   val HI = 1
   val LO = 0
 

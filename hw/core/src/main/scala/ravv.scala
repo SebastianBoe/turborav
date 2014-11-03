@@ -6,7 +6,7 @@ import Constants._
 
 
 /* The Rav V processor core */
-class RavV (implicit conf: TurboravConfig) extends Module {
+class RavV () extends Module {
 
   val io = new Bundle(){
     val stall = Bool(INPUT)

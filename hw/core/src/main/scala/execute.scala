@@ -4,7 +4,7 @@ import Chisel._
 import Common._
 import Constants._
 
-class Execute(implicit conf: TurboravConfig) extends Module {
+class Execute() extends Module {
 
   val io = new ExecuteIO()
 

@@ -7,12 +7,12 @@ package Apb
 import Chisel._
 import Common._
 
-class SlaveToApbIo(implicit conf: TurboravConfig) extends Bundle {
-  val addr =   UInt(INPUT, conf.apb_addr_len)
+class SlaveToApbIo() extends Bundle {
+  val addr =   UInt(INPUT, Config.apb_addr_len)
   val write =  Bool(INPUT)
   val sel =    Bool(INPUT)
 
   val enable = Bool(OUTPUT)
-  val rdata =  UInt(OUTPUT, conf.apb_data_len)
+  val rdata =  UInt(OUTPUT, Config.apb_data_len)
   val ready =  Bool(OUTPUT)
 }

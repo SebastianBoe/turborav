@@ -4,7 +4,7 @@ import Chisel._
 import Common._
 import Constants._
 
-class Writeback(implicit conf: TurboravConfig) extends Module {
+class Writeback() extends Module {
 
   val io = new WritebackIO()
 

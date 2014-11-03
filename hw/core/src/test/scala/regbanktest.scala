@@ -3,8 +3,8 @@ package TurboRav
 import Chisel._
 import Common._
 
-class RegBankTest(c: RegBank, conf: TurboravConfig) extends Tester(c) {
-  val xlen = conf.xlen
+class RegBankTest(c: RegBank) extends Tester(c) {
+  val xlen = Config.xlen
   def read1(rx: Int, data: BigInt) = {
     poke(c.io.rs1_addr, rx)
     expect(c.io.rs1_data, data)

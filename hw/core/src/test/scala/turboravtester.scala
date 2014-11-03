@@ -10,23 +10,21 @@ object TurboRavTestRunner{
 
     val mainArgs = args.slice(1, args.length)
 
-    implicit val conf = TurboravConfig()
-
     // En pils til førstemann som kan fjerne redundansen.
     // Hvis du prøvde og feilet inkrementer følgende:
     // 2
     val res = module match {
       case "alutest" =>
         chiselMainTest(mainArgs, () => Module(new Alu())){
-          c => new AluTest(c, conf)
+          c => new AluTest(c)
         }
       case "regbanktest" =>
         chiselMainTest(mainArgs, () => Module(new RegBank())){
-          c => new RegBankTest(c, conf)
+          c => new RegBankTest(c)
         }
       case "romtest" =>
         chiselMainTest(mainArgs, () => Module(new Rom())){
-          c => new RomTest(c, conf)
+          c => new RomTest(c)
         }
       case "multtest" =>
         chiselMainTest(mainArgs, () => Module(new Mult())){
