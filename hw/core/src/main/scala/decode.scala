@@ -59,6 +59,8 @@ class Decode(implicit conf: TurboravConfig) extends Module {
   val rd_addr  = Reg(init = UInt(0))
   val rs1_data = Reg(init = UInt(0))
   val rs2_data = Reg(init = UInt(0))
+  val alu_in_a = Reg(init = UInt(0))
+  val alu_in_b = Reg(init = UInt(0))
 
   when(io.fch_dec.instr_valid && !io.stall){
     // default values
@@ -66,6 +68,8 @@ class Decode(implicit conf: TurboravConfig) extends Module {
 
     when(opcode === OPCODE_REG_REG) {
       alu_func := alu_func_r
+      alu_in_a := ALU_IN_A_RS1
+      alu_in_b := ALU_IN_B_RS2
     }
     .elsewhen(opcode === OPCODE_REG_IMM){
       when(isShift(alu_func_r)){
@@ -76,6 +80,8 @@ class Decode(implicit conf: TurboravConfig) extends Module {
         imm := imm_i
         alu_func := alu_func_i
       }
+      alu_in_a := ALU_IN_A_RS1
+      alu_in_b := ALU_IN_B_IMM
     }
     .elsewhen(opcode === OPCODE_STORE){
       imm := imm_s
@@ -92,5 +98,6 @@ class Decode(implicit conf: TurboravConfig) extends Module {
   io.dec_exe.rs2     := rs2_data
 
   io.dec_exe.exe_ctrl.alu_func := alu_func
-
+  io.dec_exe.exe_ctrl.alu_in_a_sel := alu_in_a
+  io.dec_exe.exe_ctrl.alu_in_b_sel := alu_in_b
 }

@@ -60,4 +60,16 @@ object Constants {
   def OPCODE_FENCE      = Bits("b0001111")
   def OPCODE_SYSTEM     = Bits("b1110011")
 
+  val ALU_IN_A_RS1_VAL = 1
+
+  val ALU_IN_A_SEL_WIDTH = 2
+  val ALU_IN_A_RS1 = UInt(ALU_IN_A_RS1_VAL, ALU_IN_A_SEL_WIDTH)
+
+  val ALU_IN_B_RS2_VAL = 0
+  val ALU_IN_B_IMM_VAL = 1
+
+  val ALU_IN_B_SEL_WIDTH = 2
+  val ALU_IN_B_RS2 = UInt(ALU_IN_B_RS2_VAL, ALU_IN_B_SEL_WIDTH )
+  val ALU_IN_B_IMM = UInt(ALU_IN_B_IMM_VAL, ALU_IN_B_SEL_WIDTH )
+
 }

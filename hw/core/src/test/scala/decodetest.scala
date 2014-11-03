@@ -14,7 +14,13 @@ class DecodeTest(c: Decode) extends Tester(c) {
     poke(c.io.fch_dec.instr, instr)
     step(1)
     expect(c.io.dec_exe.exe_ctrl.alu_func, exp_func)
-    if (is_imm) expect(c.io.dec_exe.imm, signed(exp_imm))
+    expect(c.io.dec_exe.exe_ctrl.alu_in_a_sel, ALU_IN_A_RS1_VAL)
+    if (is_imm){
+      expect(c.io.dec_exe.imm, signed(exp_imm))
+      expect(c.io.dec_exe.exe_ctrl.alu_in_b_sel, ALU_IN_B_IMM_VAL)
+    } else {
+      expect(c.io.dec_exe.exe_ctrl.alu_in_b_sel, ALU_IN_B_RS2_VAL)
+    }
   }
 
   val  add_instr1 = 0x7ff30193l   //    addi   x3, x6, 2047
