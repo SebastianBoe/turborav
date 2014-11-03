@@ -4,7 +4,7 @@ import Chisel._
 import Constants._
 import Common._
 
-class Mult(implicit conf: TurboravConfig) extends Module with Constants {
+class Mult(implicit conf: TurboravConfig) extends Module {
   val xlen = conf.xlen // Extract xlen for convenience
   require(isPow2(xlen))
 

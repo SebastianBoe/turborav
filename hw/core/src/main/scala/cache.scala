@@ -4,7 +4,7 @@ import Chisel._
 import Constants._
 import Common._
 
-class Cache(implicit conf: TurboravConfig) extends Module with Constants {
+class Cache(implicit conf: TurboravConfig) extends Module {
   //TODO: declaration order of io and require statements is
   //inconsistent between Cache and Alu. What is best? io I guess.
     val io = new Bundle {
