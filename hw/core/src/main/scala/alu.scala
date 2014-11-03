@@ -12,32 +12,30 @@ class Alu (implicit conf: TurboravConfig) extends Module {
 
   val io = new Bundle {
     val func = UInt(INPUT, 4)
-    val inA  = UInt(INPUT, conf.xlen)
-    val inB  = UInt(INPUT, conf.xlen)
+    val in_a  = UInt(INPUT, conf.xlen)
+    val in_b  = UInt(INPUT, conf.xlen)
     val out  = UInt(OUTPUT, conf.xlen)
   }
-  // The value given when no valid func is applied.
-  val defaultAluOutput = UInt(0, conf.xlen)
 
   val shamt = UInt(
-    io.inB(log2Up(conf.xlen) - 1, 0),
+    io.in_b(log2Up(conf.xlen) - 1, 0),
     width = log2Up(conf.xlen)
   )
 
   io.out := Lookup(
     io.func,
-    defaultAluOutput,
+    UInt(0, conf.xlen),
     Array(
-      ALU_ADD  -> (io.inA + io.inB),
-      ALU_SUB  -> (io.inA - io.inB),
-      ALU_SLT  -> (io.inA.toSInt() < io.inB.toSInt()),
-      ALU_SLTU -> (io.inA < io.inB),
-      ALU_AND  -> (io.inA & io.inB),
-      ALU_OR   -> (io.inA | io.inB),
-      ALU_XOR  -> (io.inA ^ io.inB),
-      ALU_SLL  -> (io.inA << shamt),
-      ALU_SRL  -> (io.inA >> shamt),
-      ALU_SRA  -> (io.inA.toSInt() >> shamt)
+      ALU_ADD  -> (io.in_a + io.in_b),
+      ALU_SUB  -> (io.in_a - io.in_b),
+      ALU_SLT  -> (io.in_a.toSInt() < io.in_b.toSInt()),
+      ALU_SLTU -> (io.in_a < io.in_b),
+      ALU_AND  -> (io.in_a & io.in_b),
+      ALU_OR   -> (io.in_a | io.in_b),
+      ALU_XOR  -> (io.in_a ^ io.in_b),
+      ALU_SLL  -> (io.in_a << shamt),
+      ALU_SRL  -> (io.in_a >> shamt),
+      ALU_SRA  -> (io.in_a.toSInt() >> shamt)
     )
   )
 }

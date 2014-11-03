@@ -10,8 +10,8 @@ class AluTest(c: Alu, conf: TurboravConfig) extends Tester(c) {
    * values would couse problems with long types
    */
   def test(a: BigInt, b: BigInt, op: Int, result: BigInt){
-    poke(c.io.inA, a)
-    poke(c.io.inB, b)
+    poke(c.io.in_a, a)
+    poke(c.io.in_b, b)
     poke(c.io.func, op)
     expect(c.io.out, result)
   }

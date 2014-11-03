@@ -10,15 +10,15 @@ class Mult(implicit conf: TurboravConfig) extends Module {
 
   val io = new Bundle(){
     // multiplicand, dividend
-    val inA    = UInt(INPUT, xlen)
+    val in_a    = UInt(INPUT, xlen)
     // multiplier, divisor
-    val inB    = UInt(INPUT, xlen)
+    val in_b    = UInt(INPUT, xlen)
     val enable = Bool(INPUT)
     val abort  = Bool(INPUT)
     val func   = UInt(INPUT, 3)
 
-    val outL = UInt(OUTPUT, xlen)
-    val outH = UInt(OUTPUT, xlen)
+    val out_lo = UInt(OUTPUT, xlen)
+    val out_hi = UInt(OUTPUT, xlen)
     val done = Bool(OUTPUT)
 
   }
@@ -58,12 +58,12 @@ class Mult(implicit conf: TurboravConfig) extends Module {
   when (state === s_idle && io.enable) {
     when (isDivide(io.func)) {
       state := s_div
-      argument := io.inB
-      holding := Cat(UInt(0, width = xlen + 1), io.inA)
+      argument := io.in_b
+      holding := Cat(UInt(0, width = xlen + 1), io.in_a)
       } .otherwise {
         state := s_mult
-        argument := io.inA
-        holding := Cat(UInt(0, width = xlen + 1), io.inB)
+        argument := io.in_a
+        holding := Cat(UInt(0, width = xlen + 1), io.in_b)
       }
       exec_func := io.func
       count := UInt(0)
@@ -89,8 +89,8 @@ class Mult(implicit conf: TurboravConfig) extends Module {
     state := s_idle
   }
 
-  io.outH := holding((xlen * 2) - 1, xlen)
-  io.outL := holding(xlen - 1, 0)
+  io.out_hi := holding((xlen * 2) - 1, xlen)
+  io.out_lo := holding(xlen - 1, 0)
   io.done := state === s_idle
 
 }

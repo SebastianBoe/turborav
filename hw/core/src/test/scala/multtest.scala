@@ -7,8 +7,8 @@ class MultTest(c: Mult) extends Tester(c) {
 
   def test(a: BigInt, b: BigInt, func: Int, resL: BigInt, resH: BigInt) {
     poke(c.io.enable, 1)
-    poke(c.io.inA, a)
-    poke(c.io.inB, b)
+    poke(c.io.in_a, a)
+    poke(c.io.in_b, b)
     poke(c.io.func, func)
     // step once and deassert enable
     step(1)
@@ -16,8 +16,8 @@ class MultTest(c: Mult) extends Tester(c) {
     // mult and div takes xlen + 1 cycles to complete
     step(c.xlen)
     expect(c.io.done, 1)
-    expect(c.io.outL, resL)
-    expect(c.io.outH, resH)
+    expect(c.io.out_lo, resL)
+    expect(c.io.out_hi, resH)
   }
 
   val one = BigInt(1)
@@ -46,9 +46,9 @@ class MultTest(c: Mult) extends Tester(c) {
  for(i <- 0 until 10){
    val a = BigInt(c.xlen, rnd)
    val b = BigInt(c.xlen, rnd)
-   var resL =  (a * b) & max
-   val resH = (a * b) >> c.xlen
-   test(a, b, MULT_MUL_VAL, resL, resH)
+   var res_lo =  (a * b) & max
+   val res_hi = (a * b) >> c.xlen
+   test(a, b, MULT_MUL_VAL, res_lo, res_hi)
  }
 
 
@@ -70,8 +70,8 @@ class MultTest(c: Mult) extends Tester(c) {
 
  // TEST abort
  poke(c.io.enable, 1)
- poke(c.io.inA, two)
- poke(c.io.inB, one)
+ poke(c.io.in_a, two)
+ poke(c.io.in_b, one)
  poke(c.io.func, MULT_DIV_VAL)
  // step once and deassert enable
  step(1)
