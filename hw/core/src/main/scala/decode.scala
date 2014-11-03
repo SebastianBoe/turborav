@@ -54,50 +54,35 @@ class Decode() extends Module {
   regbank.io.rs2_addr := rs2_addr
   io.wrb_dec <> regbank.io
 
-  val imm      = Reg(init = UInt(0))
-  val alu_func = Reg(init = UInt(0))
-  val rd_addr  = Reg(init = UInt(0))
-  val rs1_data = Reg(init = UInt(0))
-  val rs2_data = Reg(init = UInt(0))
-  val alu_in_a = Reg(init = UInt(0))
-  val alu_in_b = Reg(init = UInt(0))
+  val dec_exe = Reg(init = new DecodeExecute())
 
   when(io.fch_dec.instr_valid && !io.stall){
     // default values
-    alu_func := UInt(ALU_ADD_VAL)
+    dec_exe.exe_ctrl.alu_func := UInt(ALU_ADD_VAL)
+    dec_exe.exe_ctrl.alu_in_a_sel := ALU_IN_A_RS1
 
     when(opcode === OPCODE_REG_REG) {
-      alu_func := alu_func_r
-      alu_in_a := ALU_IN_A_RS1
-      alu_in_b := ALU_IN_B_RS2
+      dec_exe.exe_ctrl.alu_func := alu_func_r
+      dec_exe.exe_ctrl.alu_in_b_sel := ALU_IN_B_RS2
     }
     .elsewhen(opcode === OPCODE_REG_IMM){
       when(isShift(alu_func_r)){
-        imm := shamt
-        alu_func := alu_func_r
+        dec_exe.imm := shamt
+        dec_exe.exe_ctrl.alu_func := alu_func_r
       }
       .otherwise{
-        imm := imm_i
-        alu_func := alu_func_i
+        dec_exe.imm := imm_i
+        dec_exe.exe_ctrl.alu_func := alu_func_i
       }
-      alu_in_a := ALU_IN_A_RS1
-      alu_in_b := ALU_IN_B_IMM
+      dec_exe.exe_ctrl.alu_in_b_sel := ALU_IN_B_IMM
     }
     .elsewhen(opcode === OPCODE_STORE){
-      imm := imm_s
+      dec_exe.imm := imm_s
     }
-
-    rs1_data := regbank.io.rs1_data
-    rs2_data := regbank.io.rs2_data
-    rd_addr  := io.fch_dec.instr(11, 7)
+    dec_exe.rs1 := regbank.io.rs1_data
+    dec_exe.rs2 := regbank.io.rs2_data
+    dec_exe.rd_addr  := io.fch_dec.instr(11, 7)
   }
 
-  io.dec_exe.imm     := imm
-  io.dec_exe.rd_addr := rd_addr
-  io.dec_exe.rs1     := rs1_data
-  io.dec_exe.rs2     := rs2_data
-
-  io.dec_exe.exe_ctrl.alu_func := alu_func
-  io.dec_exe.exe_ctrl.alu_in_a_sel := alu_in_a
-  io.dec_exe.exe_ctrl.alu_in_b_sel := alu_in_b
+  io.dec_exe := dec_exe
 }
