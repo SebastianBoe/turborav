@@ -31,8 +31,8 @@ object Constants {
 
   val MULT_MUL_VAL    = 0
   val MULT_MULH_VAL   = 1
-  val MULT_MULHU_VAL  = 2
-  val MULT_MULHSU_VAL = 3
+  val MULT_MULHSU_VAL = 2
+  val MULT_MULHU_VAL  = 3
   val MULT_DIV_VAL    = 4
   val MULT_DIVU_VAL   = 5
   val MULT_REM_VAL    = 6
