@@ -79,8 +79,15 @@ class Decode() extends Module {
     .elsewhen(opcode === OPCODE_STORE){
       dec_exe.imm := imm_s
     }
-    dec_exe.rs1 := regbank.io.rs1_data
-    dec_exe.rs2 := regbank.io.rs2_data
+    // Do internal forwarding
+    dec_exe.rs1 :=
+      Mux(io.wrb_dec.rd_wen && io.wrb_dec.rd_addr === rs1_addr,
+          io.wrb_dec.rd_data,
+          regbank.io.rs1_data)
+    dec_exe.rs2 :=
+         Mux(io.wrb_dec.rd_wen && io.wrb_dec.rd_addr === rs2_addr,
+          io.wrb_dec.rd_data,
+          regbank.io.rs2_data)
     dec_exe.rd_addr  := io.fch_dec.instr(11, 7)
   }
 

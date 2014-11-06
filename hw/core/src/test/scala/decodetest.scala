@@ -23,6 +23,15 @@ class DecodeTest(c: Decode) extends Tester(c) {
     }
   }
 
+  def write_reg(addr: Int, data: BigInt){
+    poke(c.io.wrb_dec.rd_wen, 1)
+    poke(c.io.wrb_dec.rd_addr, addr)
+    poke(c.io.wrb_dec.rd_data, data)
+  }
+  def write_reg_disable(){
+    poke(c.io.wrb_dec.rd_wen, 0)
+  }
+
   val  add_instr1 = 0x7ff30193l   //    addi   x3, x6, 2047
   val  add_instr2 = 0x80138213l   //    addi   x4, x7, -2047
 
@@ -73,5 +82,28 @@ class DecodeTest(c: Decode) extends Tester(c) {
   test_func(slli_instr  ,ALU_SLL_VAL,  true, 12)
   test_func(srli_instr  ,ALU_SRL_VAL,  true, 12)
   test_func(srai_instr  ,ALU_SRA_VAL,  true, 12)
+
+  // Test register write and read
+  // Make sure that register written by WRB will be read
+  poke(c.io.fch_dec.instr, add_instr)
+  write_reg(9, 123)
+  step(1)
+  write_reg_disable()
+  expect(c.io.dec_exe.rs1, 123)
+  expect(c.io.dec_exe.rs2, 0)
+
+  poke(c.io.fch_dec.instr, add_instr)
+  write_reg(11, 123)
+  step(1)
+  write_reg_disable()
+  expect(c.io.dec_exe.rs1, 123)
+  expect(c.io.dec_exe.rs2, 123)
+
+  poke(c.io.fch_dec.instr, add_instr)
+  write_reg(10, 321)
+  step(1)
+  write_reg_disable()
+  expect(c.io.dec_exe.rs1, 123)
+  expect(c.io.dec_exe.rs2, 123)
 
 }
