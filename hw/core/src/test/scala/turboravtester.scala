@@ -34,6 +34,18 @@ object TurboRavTestRunner{
         chiselMainTest(mainArgs, () => Module(new Decode())){
           c => new DecodeTest(c)
         }
+      case "executetest" =>
+        chiselMainTest(mainArgs, () => Module(new Execute())){
+          c => new ExecuteTest(c)
+        }
+      case "memorytest" =>
+        chiselMainTest(mainArgs, () => Module(new Memory())){
+          c => new MemoryTest(c)
+        }
+      case "writebacktest" =>
+      chiselMainTest(mainArgs, () => Module(new Writeback())){
+        c => new WritebackTest(c)
+      }
       case "ravvtest" =>
         chiselMainTest(mainArgs, () => Module(new RavV())){
           c => new RavVTest(c)

@@ -30,13 +30,15 @@ class ExecuteMemory() extends Bundle {
   val rs2        = UInt(OUTPUT, Config.xlen)
 
   val mem_ctrl = new MemoryCtrl()
-  val wb_ctrl  = new WritebackCtrl()
+  val wrb_ctrl  = new WritebackCtrl()
 }
 
 class MemoryWriteback() extends Bundle {
-  val rd_addr = UInt(OUTPUT, 5)
+  val rd_addr       = UInt(OUTPUT, 5)
+  val alu_result    = UInt(OUTPUT, Config.xlen)
+  val mem_read_data = UInt(OUTPUT, Config.xlen)
 
-  val wb_ctrl = new WritebackCtrl()
+  val wrb_ctrl = new WritebackCtrl()
 }
 
 class WritebackDecode() extends Bundle {
@@ -76,14 +78,20 @@ class DecodeIO() extends Bundle {
 class ExecuteIO() extends Bundle {
   val dec_exe = new DecodeExecute().flip()
   val exe_mem = new ExecuteMemory()
+
+  val stall = Bool(INPUT)
 }
 
 class MemoryIO() extends Bundle {
   val exe_mem = new ExecuteMemory().flip()
   val mem_wrb = new MemoryWriteback()
+
+  val stall = Bool(INPUT)
 }
 
 class WritebackIO() extends Bundle {
   val mem_wrb = new MemoryWriteback().flip()
   val wrb_dec = new WritebackDecode()
+
+  val stall = Bool(INPUT)
 }
