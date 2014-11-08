@@ -15,6 +15,7 @@ class DecodeTest(c: Decode) extends Tester(c) {
     step(1)
     expect(c.io.dec_exe.exe_ctrl.alu_func, exp_func)
     expect(c.io.dec_exe.exe_ctrl.alu_in_a_sel, ALU_IN_A_RS1_VAL)
+    expect(c.io.dec_exe.wrb_ctrl.rd_wen, 1)
     if (is_imm){
       expect(c.io.dec_exe.imm, signed(exp_imm))
       expect(c.io.dec_exe.exe_ctrl.alu_in_b_sel, ALU_IN_B_IMM_VAL)
