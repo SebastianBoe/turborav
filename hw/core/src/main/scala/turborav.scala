@@ -15,6 +15,7 @@ object TurboRav {
       module match
       {
         case "alu"       => () => Module(new Alu())
+        case "bru"       => () => Module(new BranchUnit())
         case "regbank"   => () => Module(new RegBank())
         case "rom"       => () => Module(new Rom())
         case "mult"      => () => Module(new Mult())

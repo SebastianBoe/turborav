@@ -18,6 +18,10 @@ object TurboRavTestRunner{
         chiselMainTest(mainArgs, () => Module(new Alu())){
           c => new AluTest(c)
         }
+      case "brutest" =>
+        chiselMainTest(mainArgs, () => Module(new BranchUnit())){
+          c => new BranchUnitTest(c)
+        }
       case "regbanktest" =>
         chiselMainTest(mainArgs, () => Module(new RegBank())){
           c => new RegBankTest(c)
