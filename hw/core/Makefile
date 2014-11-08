@@ -1,9 +1,9 @@
 # Usage:
-#	make <module_name>.test				# Run testbench
-#	make <module_name>.v				# Generate verilog
-#	make <module_name>.out				# Generate c++ backend
-#	make clean							# Delete generated files
-#	make synthesis/<module_name>.srp 	# Create synthesis report
+#	make <module_name>.test           # Run testbench
+#	make <module_name>.v              # Generate verilog
+#	make <module_name>.out            # Generate c++ backend
+#	make clean                        # Delete generated files
+#	make synthesis/<module_name>.srp  # Create synthesis report
 
 #TODO: Change signature to "make <module_name>.synth"
 
@@ -32,7 +32,8 @@ CHISEL_FLAGS_C := \
 	--targetDir $(DIR_GEN) \
 	--compile \
 	--test \
-	--vcd
+	--vcd \
+	--debug
 
 CHISEL_FLAGS_V := \
 	--genHarness \
