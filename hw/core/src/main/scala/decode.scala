@@ -82,4 +82,6 @@ class Decode() extends Module {
   dec_exe.rs1 :=regbank.io.rs1_data
   dec_exe.rs2 :=regbank.io.rs2_data
   dec_exe.rd_addr  := fch_dec.instr(11, 7)
+  dec_exe.wrb_ctrl.rd_wen := (opcode === OPCODE_REG_IMM ||
+                              opcode === OPCODE_REG_REG)
 }

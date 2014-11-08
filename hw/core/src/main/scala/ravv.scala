@@ -4,13 +4,13 @@ import Chisel._
 import Common._
 import Constants._
 
-
 /* The Rav V processor core */
 class RavV () extends Module {
 
   val io = new Bundle(){
     val stall = Bool(INPUT)
   }
+
   val fch = Module(new Fetch())
   val dec = Module(new Decode())
   val exe = Module(new Execute())
@@ -22,5 +22,4 @@ class RavV () extends Module {
   exe.io.exe_mem <> mem.io.exe_mem
   mem.io.mem_wrb <> wrb.io.mem_wrb
   wrb.io.wrb_dec <> dec.io.wrb_dec
-
 }

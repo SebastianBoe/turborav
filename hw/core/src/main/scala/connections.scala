@@ -14,27 +14,27 @@ class FetchDecode() extends Bundle {
 }
 
 class DecodeExecute() extends Bundle {
-  val rs1      = UInt(OUTPUT, Config.xlen)
-  val rs2      = UInt(OUTPUT, Config.xlen)
-  val imm      = UInt(OUTPUT, Config.xlen)
-  val rd_addr  = UInt(OUTPUT, 5)
+  val rs1     = UInt(OUTPUT, Config.xlen)
+  val rs2     = UInt(OUTPUT, Config.xlen)
+  val imm     = UInt(OUTPUT, Config.xlen)
+  val rd_addr = UInt(OUTPUT, Config.xlen)
 
   val exe_ctrl = new ExecuteCtrl()
   val mem_ctrl = new MemoryCtrl()
-  val wrb_ctrl  = new WritebackCtrl()
+  val wrb_ctrl = new WritebackCtrl()
 }
 
 class ExecuteMemory() extends Bundle {
-  val rd_addr    = UInt(OUTPUT, 5)
+  val rd_addr    = UInt(OUTPUT, Config.xlen)
   val alu_result = UInt(OUTPUT, Config.xlen)
   val rs2        = UInt(OUTPUT, Config.xlen)
 
   val mem_ctrl = new MemoryCtrl()
-  val wrb_ctrl  = new WritebackCtrl()
+  val wrb_ctrl = new WritebackCtrl()
 }
 
 class MemoryWriteback() extends Bundle {
-  val rd_addr       = UInt(OUTPUT, 5)
+  val rd_addr       = UInt(OUTPUT, Config.xlen)
   val alu_result    = UInt(OUTPUT, Config.xlen)
   val mem_read_data = UInt(OUTPUT, Config.xlen)
 
@@ -59,6 +59,7 @@ class MemoryCtrl() extends Bundle {
 }
 
 class WritebackCtrl() extends Bundle {
+  val rd_wen         = Bool(OUTPUT)
   val regbank_in_sel = Bits(OUTPUT, 2)
 }
 

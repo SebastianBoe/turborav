@@ -13,6 +13,7 @@ class Writeback() extends Module {
     mem_wrb := io.mem_wrb
   }
 
-  //io.wrb_dec.rd_data := mem_wrb.alu_result
-  //io.wrb_dec <> mem_wrb
+  io.wrb_dec.rd_data := mem_wrb.alu_result
+  io.wrb_dec.rd_wen := mem_wrb.wrb_ctrl.rd_wen
+  io.wrb_dec <> mem_wrb
 }
