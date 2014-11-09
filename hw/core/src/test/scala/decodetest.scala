@@ -14,6 +14,7 @@ class DecodeTest(c: Decode) extends Tester(c) {
     poke(c.io.fch_dec.instr, instr)
     step(1)
     expect(c.io.dec_exe.exe_ctrl.alu_func, exp_func)
+    expect(c.io.dec_exe.exe_ctrl.bru_func, BRANCH_BNOT_VAL)
     expect(c.io.dec_exe.exe_ctrl.alu_in_a_sel, ALU_IN_A_RS1_VAL)
     expect(c.io.dec_exe.wrb_ctrl.rd_wen, 1)
     if (is_imm){
@@ -22,6 +23,18 @@ class DecodeTest(c: Decode) extends Tester(c) {
     } else {
       expect(c.io.dec_exe.exe_ctrl.alu_in_b_sel, ALU_IN_B_RS2_VAL)
     }
+  }
+
+  def test_branch(instr: Long,
+                  exp_func: Long,
+                  exp_imm: Long) = {
+    poke(c.io.fch_dec.instr, instr)
+    step(1)
+    expect(c.io.dec_exe.exe_ctrl.bru_func, exp_func)
+    expect(c.io.dec_exe.exe_ctrl.alu_in_a_sel, ALU_IN_A_PC_VAL)
+    expect(c.io.dec_exe.wrb_ctrl.rd_wen, 0)
+    expect(c.io.dec_exe.imm, signed(exp_imm))
+    expect(c.io.dec_exe.exe_ctrl.alu_in_b_sel, ALU_IN_B_IMM_VAL)
   }
 
   def write_reg(addr: Int, data: BigInt){
@@ -34,7 +47,7 @@ class DecodeTest(c: Decode) extends Tester(c) {
   }
 
   val  add_instr1 = 0x7ff30193l   //    addi   x3, x6, 2047
-  val  add_instr2 = 0x80138213l   //    addi   x4, x7, -2047
+  val  add_instr2 = 0x80038213l   //    addi   x4, x7, -2048
 
   val add_instr   = 0x00b483b3l   //    add    x7, x9, x11
   val slt_instr   = 0x00b4a3b3l   //    slt    x7, x9, x11
@@ -56,12 +69,21 @@ class DecodeTest(c: Decode) extends Tester(c) {
   val srli_instr  = 0x00c4d393l   //    srli   x7, x9, 12
   val srai_instr  = 0x40c4d393l   //    srai   x7, x9, 12
 
+  val beq_instr  = 0xff310fe3l  // beq     beq  x2, x3,    -2
+  val bne_instr  = 0x7f419fe3l  // bne     bne  x3, x4,  4094
+  val blt_instr  = 0x80524063l  // blt     blt  x4, x5, -4096
+  val bltu_instr = 0x0062e163l  // bltu    bltu x5, x6,     2
+  val bge_instr  = 0x00735063l  // bge     bge  x6, x7,
+  val bgeu_instr = 0x0083f063l  // bgeu    bgeu x7, x8,
+
+
+
   // All instructions are valid
   poke(c.io.fch_dec.instr_valid, 1)
 
   // Test immediate sign extend range
   test_func(add_instr1, ALU_ADD_VAL, true, 2047)
-  test_func(add_instr2, ALU_ADD_VAL, true, -2047)
+  test_func(add_instr2, ALU_ADD_VAL, true, -2048)
 
   // Test Alu Function
   test_func(add_instr   ,ALU_ADD_VAL)
@@ -107,4 +129,11 @@ class DecodeTest(c: Decode) extends Tester(c) {
   expect(c.io.dec_exe.rs1, 123)
   expect(c.io.dec_exe.rs2, 123)
 
+
+  test_branch(beq_instr,  BRANCH_BEQ_VAL,     -2)
+  test_branch(bne_instr,  BRANCH_BNE_VAL,   4094)
+  test_branch(blt_instr,  BRANCH_BLT_VAL,  -4096)
+  test_branch(bltu_instr, BRANCH_BLTU_VAL,     2)
+  test_branch(bge_instr,  BRANCH_BGE_VAL,      0)
+  test_branch(bgeu_instr, BRANCH_BGEU_VAL,     0)
 }

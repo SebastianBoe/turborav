@@ -8,8 +8,8 @@ class Decode() extends Module {
 
   require(Config.xlen == 32 || Config.xlen == 64 || Config.xlen == 128)
 
-  // all shift codes end in 01 (func3 is 14:12)
-  def isShift(func: Bits) = (!func(13)) && func(12)
+  // all shift codes end in 01
+  def is_shift(func3: Bits) = (!func3(1) && func3(0))
 
   val io = new DecodeIO()
 
@@ -22,8 +22,9 @@ class Decode() extends Module {
   val rs2_addr = fch_dec.instr(24, 20)
 
   val opcode     = fch_dec.instr(6, 0)
-  val alu_func_r = Cat(fch_dec.instr(30),fch_dec.instr(14, 12))
-  val alu_func_i = Cat(UInt(0, width = 1), fch_dec.instr(14, 12))
+  val func3 = fch_dec.instr(14, 12)
+  val alu_func_r = Cat(fch_dec.instr(30), func3)
+  val alu_func_i = Cat(UInt(0, width = 1), func3)
 
   //Sign extended immediates
   val imm_i = Cat(Fill(fch_dec.instr(31), Config.xlen - 12),
@@ -33,7 +34,7 @@ class Decode() extends Module {
                   fch_dec.instr(31, 25),
                   fch_dec.instr(11, 7))
 
-  val imm_b = Cat(Fill(fch_dec.instr(31), Config.xlen - 12 - 1),
+  val imm_b = Cat(Fill(fch_dec.instr(31), Config.xlen - 12),
                   fch_dec.instr(7),
                   fch_dec.instr(30, 25),
                   fch_dec.instr(11, 8),
@@ -64,21 +65,30 @@ class Decode() extends Module {
   val mem_ctrl = dec_exe.mem_ctrl
   val wrb_ctrl = dec_exe.wrb_ctrl
 
-  exe_ctrl.alu_in_a_sel := ALU_IN_A_RS1
-  exe_ctrl.alu_in_b_sel := Mux(opcode === OPCODE_REG_IMM,
+  exe_ctrl.alu_in_a_sel := Mux(opcode === OPCODE_BRANCH, ALU_IN_A_PC,
+                           Mux(opcode === OPCODE_LUI,    ALU_IN_A_ZERO,
+                                                         ALU_IN_A_RS1))
+
+  exe_ctrl.alu_in_b_sel := Mux(opcode === OPCODE_REG_IMM ||
+                               opcode === OPCODE_BRANCH,
                                ALU_IN_B_IMM,
                                ALU_IN_B_RS2)
 
-  exe_ctrl.alu_func := Mux(opcode === OPCODE_REG_IMM && !isShift(fch_dec.instr),
+  exe_ctrl.alu_func:= Mux(opcode === OPCODE_REG_IMM && !is_shift(func3),
                           alu_func_i,
                           alu_func_r)
 
-  dec_exe.imm := MuxCase( UInt(0), Array(
-            (opcode === OPCODE_REG_IMM && isShift(fch_dec.instr)) -> shamt,
-            (opcode === OPCODE_REG_IMM ) -> imm_i,
-            (opcode === OPCODE_STORE) -> imm_s
+  exe_ctrl.bru_func:= Mux(opcode === OPCODE_BRANCH, func3, BNOT)
+
+  dec_exe.imm := MuxCase( imm_i, Array(
+            (opcode === OPCODE_REG_IMM && is_shift(func3))      -> shamt,
+            (opcode === OPCODE_AUIPC || opcode === OPCODE_LUI)  -> imm_u,
+            (opcode === OPCODE_STORE)                           -> imm_s,
+            (opcode === OPCODE_BRANCH)                          -> imm_b,
+            (opcode === OPCODE_JAL)                             -> imm_j
             ))
 
+  dec_exe.pc := fch_dec.pc
   dec_exe.rs1 :=regbank.io.rs1_data
   dec_exe.rs2 :=regbank.io.rs2_data
   dec_exe.rd_addr  := fch_dec.instr(11, 7)

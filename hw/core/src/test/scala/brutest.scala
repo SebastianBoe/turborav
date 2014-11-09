@@ -102,4 +102,17 @@ class BranchUnitTest(c: BranchUnit) extends Tester(c) {
   test(min_signed,  max_signed, BRANCH_BGEU_VAL, True)
   test(max,                max, BRANCH_BGEU_VAL, True)
 
+  // BNOT (not branch)
+  test(0,                    0, BRANCH_BNOT_VAL, False)
+  test(0,                  one, BRANCH_BNOT_VAL, False)
+  test(one,                  0, BRANCH_BNOT_VAL, False)
+  test(one,                one, BRANCH_BNOT_VAL, False)
+  test(max,         max_signed, BRANCH_BNOT_VAL, False)
+  test(max_signed,         max, BRANCH_BNOT_VAL, False)
+  test(max,         min_signed, BRANCH_BNOT_VAL, False)
+  test(min_signed,         max, BRANCH_BNOT_VAL, False)
+  test(max_signed,  min_signed, BRANCH_BNOT_VAL, False)
+  test(min_signed,  max_signed, BRANCH_BNOT_VAL, False)
+  test(max,                max, BRANCH_BNOT_VAL, False)
+
 }
