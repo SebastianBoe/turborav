@@ -13,7 +13,12 @@ class Writeback() extends Module {
     mem_wrb := io.mem_wrb
   }
 
-  io.wrb_dec.rd_data := mem_wrb.alu_result
+  val ctrl = mem_wrb.wrb_ctrl
+
+  io.wrb_dec.rd_data := Mux(ctrl.rd_sel === RD_PC,  mem_wrb.pc,
+                        Mux(ctrl.rd_sel === RD_MEM, mem_wrb.mem_read_data,
+                                                        mem_wrb.alu_result))
+
   io.wrb_dec.rd_wen := mem_wrb.wrb_ctrl.rd_wen
   io.wrb_dec <> mem_wrb
 }

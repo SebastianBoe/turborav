@@ -65,6 +65,7 @@ object Constants {
   val BLTU = UInt(BRANCH_BLTU_VAL, BRANCH_FUNC_WIDTH)
   val BGEU = UInt(BRANCH_BGEU_VAL, BRANCH_FUNC_WIDTH)
   val BNOT = UInt(BRANCH_BNOT_VAL, BRANCH_FUNC_WIDTH)
+  val BJMP = UInt(BRANCH_BJMP_VAL, BRANCH_FUNC_WIDTH)
 
   def OPCODE_LUI        = Bits("b0110111")
   def OPCODE_AUIPC      = Bits("b0010111")
@@ -100,5 +101,16 @@ object Constants {
   val PC_SEL_WIDTH = 1
   val PC_SEL_PC_PLUS4 = UInt(PC_SEL_PC_PLUS4_VAL, PC_SEL_WIDTH)
   val PC_SEL_BRJMP    = UInt(PC_SEL_BRJMP_VAL, PC_SEL_WIDTH)
+
+  val RD_ALU_VAL = 0
+  val RD_MEM_VAL = 1
+  val RD_PC_VAL  = 2
+
+  val RD_SEL_WIDTH = 2
+  val RD_ALU = UInt(RD_ALU_VAL, RD_SEL_WIDTH)
+  val RD_MEM = UInt(RD_MEM_VAL, RD_SEL_WIDTH)
+  val RD_PC  = UInt(RD_PC_VAL,  RD_SEL_WIDTH)
+
+
 
 }

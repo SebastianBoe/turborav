@@ -53,8 +53,8 @@ class WritebackDecode() extends Bundle {
 }
 
 class ExecuteCtrl() extends Bundle {
-  val alu_in_a_sel = Bits(OUTPUT, 2)
-  val alu_in_b_sel = Bits(OUTPUT, 2)
+  val alu_in_a_sel = Bits(OUTPUT, ALU_IN_A_SEL_WIDTH)
+  val alu_in_b_sel = Bits(OUTPUT, ALU_IN_B_SEL_WIDTH)
   val alu_func     = Bits(OUTPUT, ALU_FUNC_WIDTH)
   val bru_func     = Bits(OUTPUT, BRANCH_FUNC_WIDTH)
 }
@@ -65,8 +65,8 @@ class MemoryCtrl() extends Bundle {
 }
 
 class WritebackCtrl() extends Bundle {
-  val rd_wen         = Bool(OUTPUT)
-  val regbank_in_sel = Bits(OUTPUT, 2)
+  val rd_wen = Bool(OUTPUT)
+  val rd_sel = Bits(OUTPUT, RD_SEL_WIDTH)
 }
 
 class FetchIO() extends Bundle {
