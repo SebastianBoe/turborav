@@ -57,7 +57,6 @@ class ExecuteCtrl() extends Bundle {
   val alu_in_b_sel = Bits(OUTPUT, 2)
   val alu_func     = Bits(OUTPUT, ALU_FUNC_WIDTH)
   val bru_func     = Bits(OUTPUT, BRANCH_FUNC_WIDTH)
-  val jump         = Bool(OUTPUT)
 }
 
 class MemoryCtrl() extends Bundle {

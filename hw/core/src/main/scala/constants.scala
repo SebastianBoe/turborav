@@ -55,6 +55,7 @@ object Constants {
   val BRANCH_BLTU_VAL = 6
   val BRANCH_BGEU_VAL = 7
   val BRANCH_BNOT_VAL = 2
+  val BRANCH_BJMP_VAL = 3
 
   val BRANCH_FUNC_WIDTH = 3
   val BEQ  = UInt(BRANCH_BEQ_VAL,  BRANCH_FUNC_WIDTH)

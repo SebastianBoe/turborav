@@ -115,4 +115,17 @@ class BranchUnitTest(c: BranchUnit) extends Tester(c) {
   test(min_signed,  max_signed, BRANCH_BNOT_VAL, False)
   test(max,                max, BRANCH_BNOT_VAL, False)
 
+  // BJMP (Jump)
+  test(0,                    0, BRANCH_BJMP_VAL, True)
+  test(0,                  one, BRANCH_BJMP_VAL, True)
+  test(one,                  0, BRANCH_BJMP_VAL, True)
+  test(one,                one, BRANCH_BJMP_VAL, True)
+  test(max,         max_signed, BRANCH_BJMP_VAL, True)
+  test(max_signed,         max, BRANCH_BJMP_VAL, True)
+  test(max,         min_signed, BRANCH_BJMP_VAL, True)
+  test(min_signed,         max, BRANCH_BJMP_VAL, True)
+  test(max_signed,  min_signed, BRANCH_BJMP_VAL, True)
+  test(min_signed,  max_signed, BRANCH_BJMP_VAL, True)
+  test(max,                max, BRANCH_BJMP_VAL, True)
+
 }
