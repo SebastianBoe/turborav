@@ -43,14 +43,14 @@ class DecodeTest(c: Decode) extends Tester(c) {
   def test_jump(instr: Long,
                 exp_imm: Long,
                 is_jalr: Boolean = false,
-                rs_addr: Int = 0) = {
+                rd_addr: Int = 0) = {
     poke(c.io.fch_dec.instr, instr)
     step(1)
     expect(c.io.dec_exe.exe_ctrl.bru_func, BRANCH_BJMP_VAL)
     expect(c.io.dec_exe.exe_ctrl.alu_func, ALU_ADD_VAL)
     if(is_jalr){
       expect(c.io.dec_exe.exe_ctrl.alu_in_a_sel, ALU_IN_A_RS1_VAL)
-      expect(c.io.dec_exe.rd_addr, rs_addr)
+      expect(c.io.dec_exe.rd_addr, rd_addr)
     }
     else
       expect(c.io.dec_exe.exe_ctrl.alu_in_a_sel, ALU_IN_A_PC_VAL)
@@ -59,6 +59,25 @@ class DecodeTest(c: Decode) extends Tester(c) {
     expect(c.io.dec_exe.wrb_ctrl.rd_wen, 1)
     expect(c.io.dec_exe.imm, signed(exp_imm))
     expect(c.io.dec_exe.exe_ctrl.alu_in_b_sel, ALU_IN_B_IMM_VAL)
+  }
+
+  def test_upper(instr: Long,
+                 exp_imm: Long,
+                 with_pc: Boolean){
+    poke(c.io.fch_dec.instr, instr)
+    step(1)
+    expect(c.io.dec_exe.exe_ctrl.bru_func, BRANCH_BNOT_VAL)
+    expect(c.io.dec_exe.exe_ctrl.alu_func, ALU_ADD_VAL)
+    if(with_pc){
+      expect(c.io.dec_exe.exe_ctrl.alu_in_a_sel, ALU_IN_A_PC_VAL)
+    } else {
+      expect(c.io.dec_exe.exe_ctrl.alu_in_a_sel, ALU_IN_A_ZERO_VAL)
+    }
+    expect(c.io.dec_exe.wrb_ctrl.rd_sel, RD_ALU_VAL)
+    expect(c.io.dec_exe.wrb_ctrl.rd_wen, 1)
+    expect(c.io.dec_exe.imm, signed(exp_imm))
+    expect(c.io.dec_exe.exe_ctrl.alu_in_b_sel, ALU_IN_B_IMM_VAL)
+
   }
 
   def write_reg(addr: Int, data: BigInt){
@@ -104,6 +123,11 @@ class DecodeTest(c: Decode) extends Tester(c) {
   val jal_instr2  = 0x800004efl  // jal   x9,      -1048576
   val jalr_instr1 = 0x7ff58567l  // jalr  x10, x11,    2046
   val jalr_instr2 = 0x800605e7l  // jalr  x11, x12,   -2048
+
+  val auipc_instr1 = 0xfffff297l  // auipc x5, 1048575
+  val auipc_instr2 = 0x00000317l  // auipc x6, 0x0
+  val lui_instr1   = 0xfffff3b7l  // lui   x7, 1048575
+  val lui_instr2   = 0x00000437l  // lui   x8, 0x0
 
   // All instructions are valid
   poke(c.io.fch_dec.instr_valid, 1)
@@ -169,5 +193,8 @@ class DecodeTest(c: Decode) extends Tester(c) {
   test_jump(jalr_instr1,    2047, true, 10)
   test_jump(jalr_instr2,   -2048, true, 11)
 
-
+  test_upper(auipc_instr1, 0xfffff000, true)
+  test_upper(auipc_instr2,          0, true)
+  test_upper(lui_instr1,   0xfffff000, false)
+  test_upper(lui_instr2,            0, false)
 }

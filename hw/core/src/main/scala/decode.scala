@@ -16,6 +16,11 @@ class Decode() extends Module {
     opcode === OPCODE_JALR
   }
 
+  def is_upper(opcode: Bits) = {
+    opcode === OPCODE_AUIPC ||
+    opcode === OPCODE_LUI
+  }
+
   val io = new DecodeIO()
 
   val fch_dec = Reg(init = new FetchDecode())
@@ -51,8 +56,8 @@ class Decode() extends Module {
                   fch_dec.instr(30, 21),
                   UInt(0, width = 1))
 
-  val imm_u32 = Cat(fch_dec.instr(31, 20),
-                    UInt(0, width = Config.xlen - 12))
+  val imm_u32 = Cat(fch_dec.instr(31, 12),
+                    UInt(0, width = Config.xlen - 20))
   val imm_u = if(Config.xlen != 32)
               Cat(Fill(imm_u32(31), Config.xlen - 32), imm_u32)
               else imm_u32
@@ -71,7 +76,8 @@ class Decode() extends Module {
   val wrb_ctrl = dec_exe.wrb_ctrl
 
   exe_ctrl.alu_in_a_sel := Mux(opcode === OPCODE_BRANCH ||
-                               opcode === OPCODE_JAL,     ALU_IN_A_PC,
+                               opcode === OPCODE_JAL    ||
+                               opcode === OPCODE_AUIPC,   ALU_IN_A_PC,
                            Mux(opcode === OPCODE_LUI,     ALU_IN_A_ZERO,
                                                           ALU_IN_A_RS1))
 
@@ -80,9 +86,9 @@ class Decode() extends Module {
                                ALU_IN_B_IMM)
 
   exe_ctrl.alu_func:= Mux(opcode === OPCODE_REG_IMM &&
-                         !is_shift(func3),               alu_func_i,
-                      Mux(is_jump(opcode),               ALU_ADD,
-                                                         alu_func_r))
+                         !is_shift(func3),                     alu_func_i,
+                      Mux(is_jump(opcode) || is_upper(opcode), ALU_ADD,
+                                                               alu_func_r))
 
   exe_ctrl.bru_func:= Mux(opcode === OPCODE_BRANCH, func3,
                       Mux(is_jump(opcode),          BJMP,
@@ -90,7 +96,7 @@ class Decode() extends Module {
 
   dec_exe.imm := MuxCase( imm_i, Array(
             (opcode === OPCODE_REG_IMM && is_shift(func3))      -> shamt,
-            (opcode === OPCODE_AUIPC || opcode === OPCODE_LUI)  -> imm_u,
+            (is_upper(opcode))                                  -> imm_u,
             (opcode === OPCODE_STORE)                           -> imm_s,
             (opcode === OPCODE_BRANCH)                          -> imm_b,
             (opcode === OPCODE_JAL)                             -> imm_j
@@ -102,6 +108,7 @@ class Decode() extends Module {
   dec_exe.rd_addr  := fch_dec.instr(11, 7)
   dec_exe.wrb_ctrl.rd_wen := (opcode === OPCODE_REG_IMM ||
                               opcode === OPCODE_REG_REG ||
+                              is_upper(opcode)          ||
                               is_jump(opcode))
 
   dec_exe.wrb_ctrl.rd_sel := Mux(is_jump(opcode), RD_PC, RD_ALU)
