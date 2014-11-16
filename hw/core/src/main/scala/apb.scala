@@ -8,11 +8,11 @@ import Chisel._
 import Common._
 
 class SlaveToApbIo() extends Bundle {
-  val addr =   UInt(INPUT, Config.apb_addr_len)
+  val addr  =  UInt(INPUT, Config.apb_addr_len)
   val write =  Bool(INPUT)
-  val sel =    Bool(INPUT)
+  val sel   =  Bool(INPUT)
 
   val enable = Bool(OUTPUT)
-  val rdata =  UInt(OUTPUT, Config.apb_data_len)
-  val ready =  Bool(OUTPUT)
+  val rdata  = UInt(OUTPUT, Config.apb_data_len)
+  val ready  = Bool(OUTPUT)
 }
