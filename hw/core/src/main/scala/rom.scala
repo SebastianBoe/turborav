@@ -3,44 +3,39 @@ package TurboRav
 import Chisel._
 
 import Common._
+import Array._
 import Apb._
 
 class Rom() extends Module {
   val io = new SlaveToApbIo()
 
-  val s_idle :: s_setup :: s_access :: Nil = Enum(UInt(), 3)
-  val state = Reg(init = s_idle)
-  //Big ass statemachine, can't wait to refactor.
-  when(state === s_idle)
-  {
-    when(io.sel) { state := s_setup }
-  }
-    .elsewhen(state === s_setup)
-  {
-    state := s_access
-  }
-    .elsewhen(state === s_access)
-  {
-    when(!io.ready)
-    {
-      state := s_access
-    }
-      .elsewhen(io.sel)
-    {
-      state := s_setup
-    }
-      .otherwise
-    {
-      state := s_idle
-    }
+  // This seems to be a common pattern, but I need a better name for
+  // it I think. Surely a name for something this generic should
+  // already exist.
+  def clearIfDisabled(data: UInt, enabled: Bool):UInt = {
+    data & Fill(enabled, data.getWidth())
   }
 
-  // Read ROM contents from configured path.
-  val source = scala.io.Source.fromFile(Config.rom_contents_path)
-  val romArray = source.map(UInt(_)).toArray
-  source.close
-  val rom = Vec(romArray)
-  io.rdata  := rom(io.addr) & Fill(Config.apb_data_len, state === s_access)
-  io.enable := state === s_access
-  io.ready  := state === s_access
+  // Hardcoding this until i figure out how to read contents from
+  // file.
+  val rom = Vec(range(0, 32).map(UInt(_)))
+
+  io.rdata  := clearIfDisabled(
+    data = rom(Reg(next = io.addr)),
+    enabled = io.enable
+  )
+
+  val s_idle :: s_ready :: Nil = Enum(UInt(), 2)
+  val state = Reg(init = s_idle)
+
+  when( state === s_ready ){
+    state := s_idle
+  } .elsewhen ( io.sel ) {
+    state := s_ready
+  } .otherwise {
+    state := s_idle
+  }
+
+  io.ready  := state === s_ready
+  io.enable := io.ready
 }
