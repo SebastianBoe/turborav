@@ -74,6 +74,7 @@ class FetchIO() extends Bundle {
   val exe_fch = new ExecuteFetch().flip()
 
   val stall = Bool(INPUT)
+  val pc_next = UInt(OUTPUT, Config.xlen)
 }
 
 class DecodeIO() extends Bundle {

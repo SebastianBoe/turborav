@@ -26,6 +26,7 @@ object TurboRav {
         case "memory"    => () => Module(new Memory())
         case "writeback" => () => Module(new Writeback())
         case "ravv"      => () => Module(new RavV())
+        case "tile"      => () => Module(new Tile())
       }
     )
   }
