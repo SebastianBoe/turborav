@@ -46,5 +46,6 @@ class RomTest(c: Rom) extends Tester(c) {
     ready  = 0,
     rdata  = 0
   )
-
+  step(1)
+  step(1)
 }
