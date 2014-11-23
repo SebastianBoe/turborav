@@ -23,12 +23,7 @@ class RavV () extends Module {
 }
 
 class RavVToTileIo () extends Bundle {
-  // This is used to make a request for a new instruction.
-  val request  = new ValidIO(new Request())
-
-  // This is used to respond with an instruction
-  val response = new ValidIO(new Response()).flip()
+  val request  = new ValidIO(new Bundle { val addr = UInt(width = Config.xlen) })
+  val response = new ValidIO(new Bundle { val word = UInt(width = Config.xlen) })
+    .flip()
 }
-
-class Request  extends Bundle { val pc          = UInt(width = Config.xlen) }
-class Response extends Bundle { val instruction = UInt(width = Config.xlen) }
