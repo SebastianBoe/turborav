@@ -6,7 +6,7 @@ import Constants._
 import Apb._
 
 /* The Rav V processor core */
-class RavV () extends Module {
+class RavV extends Module {
   val io = new RavVToTileIo()
 
   val fch = Module(new Fetch())
@@ -22,7 +22,7 @@ class RavV () extends Module {
   wrb.io.wrb_dec <> dec.io.wrb_dec
 }
 
-class RavVToTileIo () extends Bundle {
+class RavVToTileIo extends Bundle {
   val request  = new ValidIO(new Bundle { val addr = UInt(width = Config.xlen) })
   val response = new ValidIO(new Bundle { val word = UInt(width = Config.xlen) })
     .flip()
