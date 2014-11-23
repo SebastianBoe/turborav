@@ -35,7 +35,7 @@ class Tile () extends Module {
     state := s_apb_transfer_phase
     io.tile_rav.response.valid := Bool(true)
     io.tile_rav.response.bits.instruction  := io.tile_apb.rdata
-  }.elsewhen(state === s_apb_transfer_phase) {
+  }.otherwise {
     state := s_idle
     io.tile_rav.response.valid := Bool(false)
     io.tile_rav.response.bits.instruction  := UInt(0, width = Config.xlen)
