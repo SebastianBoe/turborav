@@ -14,19 +14,19 @@ object TurboRav {
       mainArgs,
       module match
       {
-        case "alu"       => () => Module(new Alu())
-        case "bru"       => () => Module(new BranchUnit())
-        case "regbank"   => () => Module(new RegBank())
-        case "rom"       => () => Module(new Rom())
-        case "mult"      => () => Module(new Mult())
-        case "cache"     => () => Module(new Cache())
-        case "fetch"     => () => Module(new Fetch())
-        case "decode"    => () => Module(new Decode())
-        case "execute"   => () => Module(new Execute())
-        case "memory"    => () => Module(new Memory())
-        case "writeback" => () => Module(new Writeback())
-        case "ravv"      => () => Module(new RavV())
-        case "tile"      => () => Module(new Tile())
+        case "alu"          => () => Module(new Alu())
+        case "bru"          => () => Module(new BranchUnit())
+        case "regbank"      => () => Module(new RegBank())
+        case "rom"          => () => Module(new Rom())
+        case "mult"         => () => Module(new Mult())
+        case "cache"        => () => Module(new Cache())
+        case "fetch"        => () => Module(new Fetch())
+        case "decode"       => () => Module(new Decode())
+        case "execute"      => () => Module(new Execute())
+        case "memory"       => () => Module(new Memory())
+        case "writeback"    => () => Module(new Writeback())
+        case "ravv"         => () => Module(new RavV())
+        case "RRApbAdapter" => () => Module(new RRApbAdapter())
       }
     )
   }
