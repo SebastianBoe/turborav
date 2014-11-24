@@ -27,6 +27,7 @@ object TurboRav {
         case "writeback"    => () => Module(new Writeback())
         case "ravv"         => () => Module(new RavV())
         case "RRApbAdapter" => () => Module(new RRApbAdapter())
+        case "soc"          => () => Module(new Soc())
       }
     )
   }
