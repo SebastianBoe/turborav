@@ -12,7 +12,7 @@ import Constants._
 // fpga-specific verilog.
 
 class Soc extends Module {
-  val io = new Bundle {}
+  val io = new Bundle { val stub = Bool(INPUT) }
 
   val ravv    = Module(new RavV())
   val rom     = Module(new Rom ())
