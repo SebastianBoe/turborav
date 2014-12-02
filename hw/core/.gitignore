@@ -10,3 +10,9 @@ generated/
 *.flo
 
 /doc/instr-table.tex
+
+# Generated during synthesis
+*.lso
+_xmsgs/
+synthesis/
+xst/
