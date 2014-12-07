@@ -5,8 +5,6 @@ import Constants._
 import Common._
 
 class Cache() extends Module {
-  //TODO: declaration order of io and require statements is
-  //inconsistent between Cache and Alu. What is best? io I guess.
     val io = new Bundle {
       val address = UInt(INPUT, 32)
       val data    = UInt(OUTPUT, 32)
@@ -26,14 +24,22 @@ class Cache() extends Module {
     val entriesPerBank = numEntries / associativity
     val instrPerCacheLine = cacheLineWidth / INSTRUCTION_WIDTH
 
+    /*
     val dataBanks = Array.fill(associativity) {
       Mem(UInt(width = cacheLineWidth), entriesPerBank)
     }
+    */
 
     val numOffsetBits = log2Down(cacheLineWidth / INSTRUCTION_WIDTH)
     val numIndexBits  = log2Down(entriesPerBank)
     val numTagBits    = INSTRUCTION_WIDTH - numOffsetBits - numIndexBits
 
+    var cacheLine = new Bundle {
+      val tag = UInt(numTagBits)
+      val data = UInt(numIndexBits + numOffsetBits)
+    }
+    val tagArray = Mem(Bits(width = numTagBits * associativity), numEntries, seqRead = true)
+    /*
     val tagBanks = Array.fill(associativity) {
       new Bundle {
         val isValid = Mem(Bool(false),              entriesPerBank)
@@ -46,12 +52,10 @@ class Cache() extends Module {
     val instrTag    = io.address(numOffsetBits + numIndexBits + numTagBits - 1,
       numOffsetBits + numIndexBits)
 
-    /*
     when (tagBanks(0).bank(instrIndex) === instrTag
       && tagBanks(0).isValid(instrIndex)) {
 
     }
-    */
 
     val muxArray = Array.ofDim[(UInt, UInt)](instrPerCacheLine)
     for (i <- 0 until instrPerCacheLine) {
@@ -66,5 +70,5 @@ class Cache() extends Module {
       UInt(0, 32),
       muxArray
     )
-
+    */
   }
