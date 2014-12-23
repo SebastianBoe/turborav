@@ -15,3 +15,6 @@ CFLAGS=-march=RV32I
 all:
 	$(TC)gcc -c $(CFLAGS) 1_+_2.s
 	$(TC)objdump -D 1_+_2.o
+
+clean:
+	rm *.o
