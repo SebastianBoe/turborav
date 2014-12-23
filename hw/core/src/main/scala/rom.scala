@@ -16,9 +16,16 @@ class Rom() extends Module {
     data & Fill(enabled, data.getWidth())
   }
 
-  // Hardcoding this until i figure out how to read contents from
-  // file.
-  val rom = Vec(range(0, 32).map(UInt(_)))
+  // Hardcoding until I am able to read from file correctly. The
+  // machine-code hex translation is from core/riscv_test_code
+  val rom_array = Array(
+    0x00100793, // li	a5,1
+    0x00200713, // li	a4,2
+    0x00f706b3, // add	a3,a4,a5
+    0x00000063 // b	c <main+0xc> //Should jump to 0
+  )
+
+  val rom = Vec(rom_array.map(UInt(_)))
 
   io.rdata  := clearIfDisabled(
     data = rom(Reg(next = io.addr)),
