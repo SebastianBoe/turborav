@@ -108,9 +108,12 @@ class Decode() extends Module {
   dec_exe.rd_addr  := fch_dec.instr(11, 7)
   dec_exe.wrb_ctrl.rd_wen := (opcode === OPCODE_REG_IMM ||
                               opcode === OPCODE_REG_REG ||
+                              opcode === OPCODE_LOAD    ||
                               is_upper(opcode)          ||
                               is_jump(opcode))
 
+  dec_exe.mem_ctrl.read := opcode === OPCODE_LOAD
+  dec_exe.mem_ctrl.write := opcode === OPCODE_STORE
   dec_exe.wrb_ctrl.rd_sel := Mux(is_jump(opcode), RD_PC, RD_ALU)
 
 }

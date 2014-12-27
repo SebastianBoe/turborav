@@ -5,6 +5,7 @@ import Chisel._
 object Constants {
 
   val INSTRUCTION_WIDTH = 32
+  val BITS_IN_BYTE = 8
 
   val ALU_ADD_VAL  = 0
   val ALU_SLL_VAL  = 1

@@ -8,7 +8,7 @@ class Fetch() extends Module {
 
   val io = new FetchIO()
 
-  val pc = Reg(init = UInt(0))
+  val pc = Reg(init = UInt(0, width = Config.xlen))
   val pc_next = pc + UInt(4)
 
   when(!io.stall){
