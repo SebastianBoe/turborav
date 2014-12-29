@@ -12,9 +12,13 @@ TC=riscv64-unknown-elf-
 # and other fancy instructions from being generated I think.
 CFLAGS=-march=RV32I
 
+# Set to numeric to get registers x0-31, instead of weird ABI aliases.
+# These options were found in objdump --help.
+OBJDUMP_FLAGS=-M numeric --architecture=riscv:rv32
+
 all:
 	$(TC)gcc -c $(CFLAGS) 1_+_2.s
-	$(TC)objdump -D 1_+_2.o
+	$(TC)objdump $(OBJDUMP_FLAGS) -D 1_+_2.o
 
 clean:
 	rm *.o
