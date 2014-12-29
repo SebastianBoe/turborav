@@ -20,6 +20,10 @@ class RavV extends Module {
   exe.io.exe_mem <> mem.io.exe_mem
   mem.io.mem_wrb <> wrb.io.mem_wrb
   wrb.io.wrb_dec <> dec.io.wrb_dec
+
+  // Right now we only support reading instructions, so the fetch stage is directly connected to
+  // the memory IF.
+  io <> fch.io.requestResponseIo
 }
 
 class RequestResponseIo extends Bundle {
