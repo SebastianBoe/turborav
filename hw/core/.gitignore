@@ -8,6 +8,7 @@ generated/
 *.v
 *.hex
 *.flo
+*.o
 
 /doc/instr-table.tex
 
