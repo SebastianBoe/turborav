@@ -25,10 +25,17 @@ class Rom() extends Module {
     0x00000063 // b	c <main+0xc> //Should jump to 0
   )
 
+  // The apb bus addresses individual bytes, but the ROM stores 4-byte
+  // words and assumes that all addresses are word-aligned. To go from
+  // a byte-addressable address to a word addressable address we
+  // right-shift twice.
+  val word_addr = io.addr >> UInt(2)
+  assert(io.addr(1,0) === UInt(0), "We assume word-aligned addresses.")
+
   val rom = Vec(rom_array.map(UInt(_)))
 
   io.rdata  := clearIfDisabled(
-    data = rom(Reg(next = io.addr)),
+    data = rom(Reg(next = word_addr)),
     enabled = io.enable
   )
 

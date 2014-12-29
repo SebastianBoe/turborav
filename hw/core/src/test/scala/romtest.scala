@@ -61,7 +61,7 @@ class RomTest(c: Rom) extends Tester(c) {
 
   for (i <- 0 to rom_array.size - 1) {
     verify_transaction(
-      address = i,
+      address = i * 4,
       expected_value = rom_array(i)
     )
   }
