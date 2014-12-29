@@ -50,10 +50,19 @@ class RomTest(c: Rom) extends Tester(c) {
     step(1)
   }
 
-  for (i <- 0 to 31) {
+  // This is copy-pasted from rom.scala, but this is ok because it is
+  // only temporary.
+  val rom_array = Array(
+    0x00100793, // li	a5,1
+    0x00200713, // li	a4,2
+    0x00f706b3, // add	a3,a4,a5
+    0x00000063 // b	c <main+0xc> //Should jump to 0
+  )
+
+  for (i <- 0 to rom_array.size - 1) {
     verify_transaction(
       address = i,
-      expected_value = i
+      expected_value = rom_array(i)
     )
   }
 }
