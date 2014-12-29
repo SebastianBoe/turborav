@@ -19,10 +19,10 @@ class Rom() extends Module {
   // Hardcoding until I am able to read from file correctly. The
   // machine-code hex translation is from core/riscv_test_code
   val rom_array = Array(
-    0x00100793, // li	a5,1
-    0x00200713, // li	a4,2
-    0x00f706b3, // add	a3,a4,a5
-    0x00000063 // b	c <main+0xc> //Should jump to 0
+    0x00100293, // li	x5,1
+    0x00200213, // li	x4,2
+    0x005201b3, // add	x3,x4,x5
+    0x00000063  // b	c <main+0xc> //Should jump to 0
   )
 
   // The apb bus addresses individual bytes, but the ROM stores 4-byte

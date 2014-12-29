@@ -1,5 +1,5 @@
 main:
-	li	a5,1
-	li	a4,2
-	add	a3,a4,a5
+	li  x5,1
+	li	x4,2
+	add	x3,x4,x5
     b main

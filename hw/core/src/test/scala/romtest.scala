@@ -53,10 +53,10 @@ class RomTest(c: Rom) extends Tester(c) {
   // This is copy-pasted from rom.scala, but this is ok because it is
   // only temporary.
   val rom_array = Array(
-    0x00100793, // li	a5,1
-    0x00200713, // li	a4,2
-    0x00f706b3, // add	a3,a4,a5
-    0x00000063 // b	c <main+0xc> //Should jump to 0
+    0x00100293, // li	x5,1
+    0x00200213, // li	x4,2
+    0x005201b3, // add	x3,x4,x5
+    0x00000063  // b	c <main+0xc> //Should jump to 0
   )
 
   for (i <- 0 to rom_array.size - 1) {
