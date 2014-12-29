@@ -17,10 +17,12 @@ class Fetch() extends Module {
     pc := pc_next
   }
 
+  // Fetch to decode
   io.fch_dec.pc          := pc
   io.fch_dec.instr_valid := rr.response.valid
   io.fch_dec.instr       := rr.response.bits.word
 
-  rr.request.bits.addr := pc_next
+  // Memory interface to fetch
+  rr.request.bits.addr := pc
   rr.request.valid := Bool(true) // I think this is safe.
 }

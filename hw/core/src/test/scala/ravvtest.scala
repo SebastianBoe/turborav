@@ -32,6 +32,9 @@ class RavVTest(c: RavV) extends Tester(c) {
   val addi_instr_x11 = 0x02a00593l  // li      x11, 42
   val nop            = 0x00000013   // nop
 
+  // I broke this test with the new memory interface. Not sure what to
+  // do about that.
+
   poke(c.dec.io.fch_dec.instr, addi_instr_x9)
   step(1)
   expect(c.dec.io.dec_exe.rd_addr, 9)
