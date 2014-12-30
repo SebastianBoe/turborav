@@ -47,6 +47,8 @@ class Cache() extends Module {
   val tagHits = Vec.fill(associativity) { Bool() }
 
   /* Linear Feedback register used for random replacement policy */
+  // pro-tip: val shift = LFSR16(io.write) (Ta det som et complement
+  // at du implementerte det nesten identisk som Chisel forfatterne).
   val shift= Reg(init = UInt(1, 16))
   when (io.write) {
     val bit = shift(0)^shift(2)^shift(3)^shift(5)
