@@ -9,6 +9,7 @@ import Common._
 
 class SlaveToApbIo() extends Bundle {
   val addr  =  UInt(INPUT, Config.apb_addr_len)
+  val wdata  = UInt(INPUT, Config.apb_data_len)
   val write =  Bool(INPUT)
   val sel   =  Bool(INPUT)
 
