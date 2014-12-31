@@ -16,11 +16,11 @@ class Rom() extends Module {
   val word_addr = io.addr >> UInt(2)
   assert(io.addr(1,0) === UInt(0), "We assume word-aligned addresses.")
 
-  val rom_array = parse_rom_contents()
+  val rom_array = parseRomContents()
   val rom = Vec(rom_array.map(UInt(_)))
 
   io.rdata  := clearIfDisabled(
-    data = rom(Reg(next = word_addr)),
+    data    = rom(Reg(next = word_addr)),
     enabled = io.enable
   )
 
@@ -37,19 +37,12 @@ class Rom() extends Module {
   io.ready  := state === s_ready
   io.enable := io.ready
 
-  // This seems to be a common pattern, but I need a better name for
-  // it I think. Surely a name for something this generic should
-  // already exist.
-  def clearIfDisabled(data: UInt, enabled: Bool):UInt = {
-    data & Fill(enabled, data.getWidth())
-  }
-
-    // Assumes there is a file at core/resources/rom_contents.hex with
-    // contents like
-    // 12
-    // deadbeef
-    // 29381ad
-  def parse_rom_contents():Array[Int] = {
+  // Assumes there is a file at core/resources/rom_contents.hex with
+  // contents like
+  // 12
+  // deadbeef
+  // 29381ad
+  def parseRomContents():Array[Int] = {
     val path = "resources/rom_contents.hex"
     val source = scala.io.Source.fromFile(path)
     val lines = source.mkString
