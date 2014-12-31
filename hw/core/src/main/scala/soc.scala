@@ -20,7 +20,7 @@ import Constants._
 // Bit 31,30,29,28
 //      0, 0, 0, 0 // ROM memory map
 //      0, 0, 0, 1 // RAM memory map
-//      0, 0, 1, 0 // MMIO
+//      0, 0, 1, 0 // MMIO // Coming in the future.
 //      otherwise  // Reserved for future use
 
 // See the following 32 bit addresses as an example
@@ -37,6 +37,22 @@ class Soc extends Module {
   val ram     = Module(new Ram ())
   val adapter = Module(new RRApbAdapter())
 
+  // Connect the bus master
   ravv.io <> adapter.io.rr
-  rom .io <> adapter.io.apb
+
+  val master_apb = adapter.io.apb // For convenience
+  val is_ram_request = master_apb.addr(28)
+
+  // Bah, was tricky to make this beautiful, try again later.
+  ram.io.addr  := master_apb.addr
+  ram.io.write := master_apb.write
+  ram.io.sel   := master_apb.sel
+
+  rom.io.addr  := master_apb.addr
+  rom.io.write := master_apb.write
+  rom.io.sel   := master_apb.sel
+
+  master_apb.enable := Mux(is_ram_request , ram.io.enable , rom.io.enable)
+  master_apb.rdata  := Mux(is_ram_request , ram.io.rdata  , rom.io.rdata)
+  master_apb.ready  := Mux(is_ram_request , ram.io.ready  , rom.io.ready)
 }
