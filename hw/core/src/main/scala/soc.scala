@@ -44,13 +44,13 @@ class Soc extends Module {
   val is_ram_request = master_apb.addr(28)
 
   // Bah, was tricky to make this beautiful, try again later.
-  ram.io.addr  := master_apb.addr
-  ram.io.write := master_apb.write
-  ram.io.sel   := master_apb.sel
+  ram.io.addr  := clearIfDisabled(master_apb.addr  , enabled = is_ram_request)
+  ram.io.write := clearIfDisabled(master_apb.write , enabled = is_ram_request)
+  ram.io.sel   := clearIfDisabled(master_apb.sel   , enabled = is_ram_request)
 
-  rom.io.addr  := master_apb.addr
-  rom.io.write := master_apb.write
-  rom.io.sel   := master_apb.sel
+  rom.io.addr  := clearIfDisabled(master_apb.addr  , !is_ram_request)
+  rom.io.write := clearIfDisabled(master_apb.write , !is_ram_request)
+  rom.io.sel   := clearIfDisabled(master_apb.sel   , !is_ram_request)
 
   master_apb.enable := Mux(is_ram_request , ram.io.enable , rom.io.enable)
   master_apb.rdata  := Mux(is_ram_request , ram.io.rdata  , rom.io.rdata)
