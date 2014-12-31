@@ -21,13 +21,19 @@ class RavV extends Module {
   mem.io.mem_wrb <> wrb.io.mem_wrb
   wrb.io.wrb_dec <> dec.io.wrb_dec
 
-  // Right now we only support reading instructions, so the fetch stage is directly connected to
-  // the memory IF.
+  // Right now we only support reading instructions, so the fetch
+  // stage is directly connected to the memory IF.
   io <> fch.io.requestResponseIo
 }
 
 class RequestResponseIo extends Bundle {
-  val request  = new ValidIO(new Bundle { val addr = UInt(width = Config.xlen) })
-  val response = new ValidIO(new Bundle { val word = UInt(width = Config.xlen) })
-    .flip()
+  val request  = new ValidIO( new Bundle {
+    val addr  = UInt(width = Config.xlen)
+    val wdata = UInt(width = Config.xlen)
+    val write = Bool()
+  })
+
+  val response = new ValidIO(new Bundle {
+    val word = UInt(width = Config.xlen)
+  }).flip()
 }
