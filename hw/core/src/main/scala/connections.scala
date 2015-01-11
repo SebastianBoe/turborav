@@ -12,7 +12,7 @@ class FetchIO() extends Bundle {
   val exe_fch = new ExecuteFetch().flip()
 
   val requestResponseIo = new RequestResponseIo()
-  val stall = Bool(INPUT)
+  val i_stall = Bool(INPUT)
 }
 
 class FetchDecode() extends Bundle {
@@ -30,7 +30,7 @@ class DecodeIO() extends Bundle {
   val wrb_dec = new WritebackDecode().flip()
 
   //TODO: this one should be in HDU interface or something similar.
-  val stall = Bool(INPUT)
+  val i_stall = Bool(INPUT)
 }
 
 class DecodeExecute() extends Bundle {
@@ -53,7 +53,7 @@ class ExecuteIO() extends Bundle {
   val exe_mem = new ExecuteMemory()
   val exe_fch = new ExecuteFetch()
 
-  val stall = Bool(INPUT)
+  val i_stall = Bool(INPUT)
 }
 
 class ExecuteCtrl() extends Bundle {
@@ -86,7 +86,8 @@ class MemoryIO() extends Bundle {
   val mem_wrb = new MemoryWriteback()
 
   val requestResponseIo = new RequestResponseIo()
-  val stall = Bool(INPUT)
+  val i_stall = Bool(INPUT)
+  val o_stall = Bool(OUTPUT)
 }
 
 class MemoryCtrl() extends Bundle {
@@ -110,7 +111,7 @@ class WritebackIO() extends Bundle {
   val mem_wrb = new MemoryWriteback().flip()
   val wrb_dec = new WritebackDecode()
 
-  val stall = Bool(INPUT)
+  val i_stall = Bool(INPUT)
 }
 
 class WritebackCtrl() extends Bundle {

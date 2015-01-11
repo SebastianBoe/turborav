@@ -21,9 +21,12 @@ class RavV extends Module {
   mem.io.mem_wrb <> wrb.io.mem_wrb
   wrb.io.wrb_dec <> dec.io.wrb_dec
 
-  // Right now we only support reading instructions, so the fetch
-  // stage is directly connected to the memory IF.
-  io <> fch.io.requestResponseIo
+  //TODO: Connect o_stalls to i_stalls
+
+  val arbiter = Module(new RavVMemoryRequestArbiter())
+  arbiter.io.ravv <> io
+  arbiter.io.fch  <> fch.io.requestResponseIo
+  arbiter.io.mem  <> mem.io.requestResponseIo
 }
 
 class RequestResponseIo extends Bundle {
