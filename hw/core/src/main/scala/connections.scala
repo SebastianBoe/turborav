@@ -4,6 +4,9 @@ import Chisel._
 import Common._
 import Constants._
 
+////////////////////////////////////////
+// Fetch
+////////////////////////////////////////
 class FetchIO() extends Bundle {
   val fch_dec = new FetchDecode()
   val exe_fch = new ExecuteFetch().flip()
@@ -18,6 +21,9 @@ class FetchDecode() extends Bundle {
   val pc          = UInt(OUTPUT, Config.xlen)
 }
 
+////////////////////////////////////////
+// Decode
+////////////////////////////////////////
 class DecodeIO() extends Bundle {
   val fch_dec = new FetchDecode().flip()
   val dec_exe = new DecodeExecute()
@@ -39,6 +45,9 @@ class DecodeExecute() extends Bundle {
   val wrb_ctrl = new WritebackCtrl()
 }
 
+////////////////////////////////////////
+// Execute
+////////////////////////////////////////
 class ExecuteIO() extends Bundle {
   val dec_exe = new DecodeExecute().flip()
   val exe_mem = new ExecuteMemory()
@@ -69,6 +78,9 @@ class ExecuteFetch() extends Bundle {
   val pc_alu = UInt(OUTPUT, Config.xlen)
 }
 
+////////////////////////////////////////
+// Memory
+////////////////////////////////////////c
 class MemoryIO() extends Bundle {
   val exe_mem = new ExecuteMemory().flip()
   val mem_wrb = new MemoryWriteback()
@@ -91,6 +103,9 @@ class MemoryWriteback() extends Bundle {
   val wrb_ctrl = new WritebackCtrl()
 }
 
+////////////////////////////////////////
+// Writeback
+////////////////////////////////////////c
 class WritebackIO() extends Bundle {
   val mem_wrb = new MemoryWriteback().flip()
   val wrb_dec = new WritebackDecode()
