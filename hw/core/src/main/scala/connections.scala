@@ -23,7 +23,7 @@ class DecodeExecute() extends Bundle {
 }
 
 class ExecuteMemory() extends Bundle {
-  val rd_addr    = UInt(OUTPUT, Config.xlen)
+  val rd_addr    = UInt(OUTPUT, 5)
   val alu_result = UInt(OUTPUT, Config.xlen)
   val rs2        = UInt(OUTPUT, Config.xlen)
   val pc         = UInt(OUTPUT, Config.xlen)
@@ -98,6 +98,8 @@ class MemoryIO() extends Bundle {
   val exe_mem = new ExecuteMemory().flip()
   val mem_wrb = new MemoryWriteback()
 
+
+  val requestResponseIo = new RequestResponseIo()
   val stall = Bool(INPUT)
 }
 
