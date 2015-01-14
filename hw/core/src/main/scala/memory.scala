@@ -21,6 +21,11 @@ class Memory() extends Module {
     mem_ctrl.write ||
     mem_ctrl.read
 
+  request.valid            := UInt(0)
+  request.bits.addr        := UInt(0)
+  request.bits.wdata       := UInt(0)
+  request.bits.write       := UInt(0)
+
   // This stage can be in one of two states, either idling, or
   // awaiting a response from the memory hierarchy.
   val s_idle :: s_awaiting_response :: Nil = Enum(UInt(), 2)
@@ -38,13 +43,14 @@ class Memory() extends Module {
   }.otherwise {
     when(response.valid){
       state                    := s_idle
-      io.mem_wrb.mem_read_data := response.bits.word
+      request.valid            := UInt(0)
       request.bits.addr        := UInt(0)
       request.bits.wdata       := UInt(0)
       request.bits.write       := UInt(0)
     }
   }
 
+  io.mem_wrb.mem_read_data := response.bits.word
   io.mem_wrb <> exe_mem
   io.o_stall := state === s_awaiting_response
  }

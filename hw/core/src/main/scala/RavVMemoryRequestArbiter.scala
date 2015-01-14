@@ -11,13 +11,13 @@ import Constants._
 // With this scheme the fetch and memory stages are agnostic to the
 // fact that they are not the sole bus masters. If one of their
 // requests is stalled due to bus contention they only see this as an
-// abnormally long memory transfer.
+// abnormally long memory request.
 
 class RavVMemoryRequestArbiter extends Module {
   val io = new Bundle() {
     val ravv = new RequestResponseIo()
-    val fch  = new RequestResponseIo()
-    val mem  = new RequestResponseIo()
+    val fch  = new RequestResponseIo().flip()
+    val mem  = new RequestResponseIo().flip()
   }
 
   val s_no_requests :: s_mem :: s_fch :: Nil = Enum(UInt(), 3)
@@ -41,7 +41,7 @@ class RavVMemoryRequestArbiter extends Module {
   no_response.bits.word := UInt(0)
 
   // Do it simple with muxes first and then figure out how to do this
-  // beatifully later.
+  // beautifully later.
   io.ravv.request := Mux(
     state === s_fch,
     io.fch.request,
