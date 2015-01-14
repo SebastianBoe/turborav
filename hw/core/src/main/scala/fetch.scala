@@ -12,7 +12,7 @@ class Fetch() extends Module {
   val pc = Reg(init = UInt(0, width = Config.xlen))
   val pc_next = pc + UInt(4)
 
-  val should_stall = io.stall || !rr.response.valid
+  val should_stall = io.i_stall || !rr.response.valid
   when(!should_stall){
     pc := pc_next
   }

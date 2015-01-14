@@ -29,6 +29,7 @@ object TurboRav {
         case "RRApbAdapter" => () => Module(new RRApbAdapter())
         case "soc"          => () => Module(new Soc())
         case "ram"          => () => Module(new Ram())
+        case "RavVMemoryRequestArbiter" => () => Module(new RavVMemoryRequestArbiter())
         case _              => () => throw new Exception(
           "You forgot to add the module to turborav.scala"
         )

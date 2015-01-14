@@ -9,7 +9,7 @@ class Execute() extends Module {
   val io = new ExecuteIO()
 
   val dec_exe = Reg(init = new DecodeExecute())
-  when(!io.stall){
+  when(!io.i_stall){
     dec_exe := io.dec_exe
   }
 

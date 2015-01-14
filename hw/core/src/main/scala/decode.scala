@@ -24,7 +24,7 @@ class Decode() extends Module {
   val io = new DecodeIO()
 
   val fch_dec = Reg(init = new FetchDecode())
-  unless(io.stall){
+  unless(io.i_stall){
     fch_dec := io.fch_dec
   }
 
@@ -112,8 +112,7 @@ class Decode() extends Module {
                               is_upper(opcode)          ||
                               is_jump(opcode))
 
-  dec_exe.mem_ctrl.read := opcode === OPCODE_LOAD
-  dec_exe.mem_ctrl.write := opcode === OPCODE_STORE
+  dec_exe.mem_ctrl.read   := opcode === OPCODE_LOAD
+  dec_exe.mem_ctrl.write  := opcode === OPCODE_STORE
   dec_exe.wrb_ctrl.rd_sel := Mux(is_jump(opcode), RD_PC, RD_ALU)
-
 }
