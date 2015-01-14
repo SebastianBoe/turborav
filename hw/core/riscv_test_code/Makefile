@@ -6,7 +6,7 @@
 # did not work for me, only the Newlib version, YMMV).
 
 # ToolChain prefix
-TC=riscv64-unknown-elf-
+TC?=riscv64-unknown-elf-
 
 # Setting the architecture to RV32I will prevent 64 bit instructions
 # and other fancy instructions from being generated I think.
