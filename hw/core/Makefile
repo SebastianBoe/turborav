@@ -46,6 +46,21 @@ modules := \
 	$(wildcard \
 	$(DIR_SRC)/*.scala)))
 
+ROM_PROGRAM_NAME = startup_program
+ROM = $(DIR_GEN)/$(ROM_PROGRAM_NAME).hex
+
+CROSS?=riscv64-unknown-elf-
+
+CC=$(CROSS)gcc
+LD=$(CROSS)ld
+AS=$(CROSS)as
+OBJCOPY=$(CROSS)objcopy
+OBJDUMP=$(CROSS)objdump
+
+CFLAGS=-march=RV32I -Wall -I./
+ASFLAGS=-march=RV32I
+OBJDUMP_FLAGS=-M numeric --architecture=riscv:rv32
+
 .PHONY: all
 
 all:
@@ -60,20 +75,29 @@ clean:
 	$(SYNTHESIS_JUNK) \
 	$(DIR_SYNTH)
 
-%.test: $(DIR_TEST)/%test.scala
+%.test: $(ROM) $(DIR_TEST)/%test.scala
 	sbt "test:run $*test $(CHISEL_FLAGS_C)"
 
-%.v: $(DIR_SRC)/%.scala
+%.v:    $(ROM) $(DIR_SRC)/%.scala
 	sbt "run      $*     $(CHISEL_FLAGS_V)"
 
-%.out: $(DIR_SRC)/%.scala
+%.out:  $(ROM) $(DIR_SRC)/%.scala
 	sbt "run      $*     $(CHISEL_FLAGS_C)"
 
-$(DIR_SYNTH)/%.srp: $(DIR_SYNTH)/%.xst $(DIR_SYNTH)/%.prj
+$(DIR_SYNTH)/%.srp: $(ROM) $(DIR_SYNTH)/%.xst $(DIR_SYNTH)/%.prj
 	xst \
 	 -ifn $< \
 	 -ofn $@ \
 	 -intstyle silent
+
+%.hex: %.bin
+	hexdump -v -e '1/4 "%08X" "\n"' $< > $@
+
+%.bin: %.o
+	${OBJCOPY} -O binary $< $@
+
+$(DIR_GEN)/$(ROM_PROGRAM_NAME).o: rom/$(ROM_PROGRAM_NAME).S
+	${AS} ${ASFLAGS} $< -o $@
 
 $(DIR_SYNTH)/%.xst: $(DIR_SYNTH)/%.prj
 	@echo "run                           " >  $@
