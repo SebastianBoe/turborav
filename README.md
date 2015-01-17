@@ -25,14 +25,10 @@ how to get started with hw-development.
   Install the GNU toolchain for RISC-V from
   https://github.com/ucb-bar/riscv-gnu-toolchain
 
-### Enter the core directory
-
-   cd hw/core
-
 ### Test your environment
 
-   make alu.test
+   cd hw/core && make alu.test
 
-### Peruse the issue-tracker to see if there is anything that interests
+Peruse the issue-tracker to see if there is anything that interests
 you or create your own issue based on what you want to contribute
 with. But most importantly; have fun!
