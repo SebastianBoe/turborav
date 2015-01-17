@@ -1,7 +1,7 @@
 # Usage:
-#	make <module_name>.test           # Run testbench
+#	make <module_name>.test           # Run a test on the simulator
 #	make <module_name>.v              # Generate verilog
-#	make <module_name>.out            # Generate c++ backend
+#	make <module_name>.out            # Generate c++ simulator
 #	make clean                        # Delete generated files
 #	make synthesis/<module_name>.srp  # Create synthesis report
 
@@ -14,7 +14,7 @@ DIR_SRC     = src/main/scala
 DIR_TEST    = src/test/scala
 DIR_GEN     = generated
 DIR_VLOG    = verilog
-DIR_SYNTH = synthesis
+DIR_SYNTH   = synthesis
 
 # Perhaps call xst in it's own directory to not get this junk in
 # hw/core
