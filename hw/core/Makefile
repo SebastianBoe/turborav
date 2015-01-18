@@ -1,9 +1,10 @@
 # Usage:
-#	make <module_name>.test           # Run a test on the simulator
-#	make <module_name>.v              # Generate verilog
-#	make <module_name>.out            # Generate c++ simulator
-#	make clean                        # Delete generated files
-#	make synthesis/<module_name>.srp  # Create synthesis report
+#	make <module_name>.test            # Run a test on the simulator
+#	make <module_name>.v               # Generate verilog
+#	make <module_name>.out             # Generate c++ simulator
+#	make clean                         # Delete generated files
+#	make synthesis/<module_name>.srp   # Create synthesis report
+#	make generated/startup_program.dis # Disassemble ROM contents
 
 #TODO: Change signature to "make <module_name>.synth"
 
@@ -58,7 +59,7 @@ OBJCOPY := $(CROSS)objcopy
 OBJDUMP := $(CROSS)objdump
 
 CFLAGS :=-march=RV32I -Wall -I./
-ASFLAGS:=-march=RV32I
+ASFLAGS:=-march=RV32I --fatal-warnings
 OBJDUMP_FLAGS := -M numeric --architecture=riscv:rv32
 
 .PHONY: all
@@ -99,7 +100,12 @@ $(DIR_SYNTH)/%.srp: $(ROM) $(DIR_SYNTH)/%.xst $(DIR_SYNTH)/%.prj
 %.bin: %.o
 	${OBJCOPY} -O binary $< $@
 
+$(DIR_GEN)/$(ROM_PROGRAM_NAME).dis: $(DIR_GEN)/$(ROM_PROGRAM_NAME).o
+	$(OBJDUMP) $(OBJDUMP_FLAGS) -D $< > $@
+    # The disassembly can be done manually for debugging purposes.
+
 $(DIR_GEN)/$(ROM_PROGRAM_NAME).o: rom/$(ROM_PROGRAM_NAME).S
+	$(dir_guard)
 	${AS} ${ASFLAGS} $< -o $@
 
 $(DIR_SYNTH)/%.xst: $(DIR_SYNTH)/%.prj

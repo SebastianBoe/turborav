@@ -25,23 +25,11 @@ class RavV extends Module {
   fch.io.i_stall := mem.io.o_stall
   dec.io.i_stall := mem.io.o_stall
   exe.io.i_stall := mem.io.o_stall
-  mem.io.i_stall := Bool(false)
+  mem.io.i_stall := mem.io.o_stall
   wrb.io.i_stall := Bool(false)
 
   val arbiter = Module(new RavVMemoryRequestArbiter())
   arbiter.io.ravv <> io
   arbiter.io.fch  <> fch.io.requestResponseIo
   arbiter.io.mem  <> mem.io.requestResponseIo
-}
-
-class RequestResponseIo extends Bundle {
-  val request  = new ValidIO( new Bundle {
-    val addr  = UInt(width = Config.xlen)
-    val wdata = UInt(width = Config.xlen)
-    val write = Bool()
-  })
-
-  val response = new ValidIO(new Bundle {
-    val word = UInt(width = Config.xlen)
-  }).flip()
 }
