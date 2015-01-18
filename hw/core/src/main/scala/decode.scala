@@ -85,10 +85,12 @@ class Decode() extends Module {
                                ALU_IN_B_RS2,
                                ALU_IN_B_IMM)
 
-  exe_ctrl.alu_func:= Mux(opcode === OPCODE_REG_IMM &&
-                         !is_shift(func3),                     alu_func_i,
-                      Mux(is_jump(opcode) || is_upper(opcode), ALU_ADD,
-                                                               alu_func_r))
+  exe_ctrl.alu_func := Mux(opcode === OPCODE_LOAD ||
+                           opcode === OPCODE_STORE, ALU_ADD,
+                       Mux(opcode === OPCODE_REG_IMM &&
+                           !is_shift(func3),                     alu_func_i,
+                           Mux(is_jump(opcode) || is_upper(opcode), ALU_ADD,
+                                                               alu_func_r)))
 
   exe_ctrl.bru_func:= Mux(opcode === OPCODE_BRANCH, func3,
                       Mux(is_jump(opcode),          BJMP,
