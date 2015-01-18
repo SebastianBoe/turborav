@@ -23,36 +23,44 @@ class Memory() extends Module {
     mem_ctrl.write ||
     mem_ctrl.read
 
-  request.valid            := UInt(0)
-  request.bits.addr        := UInt(0)
-  request.bits.wdata       := UInt(0)
-  request.bits.write       := UInt(0)
-
+  noRequest
   // This stage can be in one of two states, either idling, or
   // awaiting a response from the memory hierarchy.
   val s_idle :: s_awaiting_response :: Nil = Enum(UInt(), 2)
   val state = Reg(init = s_idle)
   when(state === s_idle){
     when(is_mem_transfer_instr){
-      state             := s_awaiting_response
-      request.valid     := Bool(true)
-      request.bits.addr := exe_mem.alu_result
-      when(mem_ctrl.write) {
-        request.bits.wdata := exe_mem.rs2
-        request.bits.write := Bool(true)
-      }
+      state := s_awaiting_response
+      doRequest
+    }.otherwise {
+      noRequest
     }
   }.otherwise {
     when(response.valid){
-      state                    := s_idle
-      request.valid            := UInt(0)
-      request.bits.addr        := UInt(0)
-      request.bits.wdata       := UInt(0)
-      request.bits.write       := UInt(0)
+      state := s_idle
+      noRequest
+    }.otherwise {
+      doRequest
     }
   }
 
   io.mem_wrb.mem_read_data := response.bits.word
   io.mem_wrb <> exe_mem
   io.o_stall := state === s_awaiting_response
+
+  def doRequest {
+    request.valid := Bool(true)
+    request.bits.addr := exe_mem.alu_result
+    when(mem_ctrl.write) {
+      request.bits.wdata := exe_mem.rs2
+      request.bits.write := Bool(true)
+    }
+  }
+
+  def noRequest {
+    request.valid := UInt(0)
+    request.bits.addr := UInt(0)
+    request.bits.wdata := UInt(0)
+    request.bits.write := UInt(0)
+  }
  }
