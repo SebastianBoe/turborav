@@ -14,8 +14,9 @@ import Constants._
 // Memory map
 
 // The 4 most significant bits divide the memory map into 16 segments.
-// Only the three lowest segments are defined. The lowest segment is
-// ROM, followed by RAM, and then memory mapped IO (AKA peripherals).
+// Only the three lowest segments have defined meaning. The lowest
+// segment is ROM, followed by RAM, and then memory mapped IO (AKA
+// peripherals).
 
 // Bit 31,30,29,28
 //      0, 0, 0, 0 // ROM memory map

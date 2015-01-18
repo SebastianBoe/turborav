@@ -37,7 +37,7 @@ class Rom() extends Module {
   io.ready  := state === s_ready
   io.enable := io.ready
 
-  // Assumes there is a file at core/resources/rom_contents.hex with
+  // Assumes there is a file at path with
   // contents like
   // 12
   // deadbeef
