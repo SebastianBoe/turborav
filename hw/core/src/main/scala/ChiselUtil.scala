@@ -13,3 +13,10 @@ object clearIfDisabled {
     data & Fill(enabled, data.getWidth())
   }
 }
+
+// Has the same signature as Cat, except that it returns a
+// Bool. Returns true iff any bit given as an argument was high.
+object Any {
+  def apply[T <: Data](mod: T, mods: T*): Bool = apply(mod :: mods.toList)
+  def apply[T <: Data](mods: Seq[T]):     Bool = orR(Cat(mods))
+}
