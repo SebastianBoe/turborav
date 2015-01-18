@@ -58,7 +58,7 @@ OBJCOPY=$(CROSS)objcopy
 OBJDUMP=$(CROSS)objdump
 
 CFLAGS=-march=RV32I -Wall -I./
-ASFLAGS=-march=RV32I
+ASFLAGS=-march=RV32I --fatal-warnings
 OBJDUMP_FLAGS=-M numeric --architecture=riscv:rv32
 
 .PHONY: all
