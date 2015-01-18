@@ -146,8 +146,10 @@ class ForwardingExecute() extends Bundle {
 
 class ForwardingMemory()extends Bundle {
   val rd_addr = UInt(INPUT, 5)
+  val rd_wen  = Bool(OUTPUT)
 }
 
 class ForwardingWriteback() extends Bundle {
   val rd_addr = UInt(INPUT, 5)
+  val rd_wen  = Bool(OUTPUT)
 }

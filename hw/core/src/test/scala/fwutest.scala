@@ -16,6 +16,10 @@ class ForwardingUnitTest(c: ForwardingUnit) extends Tester(c) {
     expect(c.io.fwu_exe.rs2_sel, expect_rs2)
   }
 
+  /* Test forwarding with RD write enable */
+  poke(c.io.fwu_mem.rd_wen, 1)
+  poke(c.io.fwu_wrb.rd_wen, 1)
+
   /* No forwarding */
   test( 1, 2,
         3, 4,
@@ -52,7 +56,38 @@ class ForwardingUnitTest(c: ForwardingUnit) extends Tester(c) {
   test( 1, 2,
         2, 2,
         RS_SEL_DEC_VAL, RS_SEL_MEM_VAL)
-  /* Forward both rs1 andrs2 from memory before writeback stage */
+  /* Forward both rs1 and rs2 from memory before writeback stage */
+  test( 1, 1,
+        1, 1,
+        RS_SEL_MEM_VAL, RS_SEL_MEM_VAL)
+  /* Dont forward write to register zero */
+  test( 0, 0,
+        0, 0,
+        RS_SEL_DEC_VAL, RS_SEL_DEC_VAL)
+
+  /* Test forwarding without RD write enable */
+  poke(c.io.fwu_mem.rd_wen, 0)
+  poke(c.io.fwu_wrb.rd_wen, 0)
+
+  /* No forwarding */
+  test( 1, 1,
+        1, 1,
+        RS_SEL_DEC_VAL, RS_SEL_DEC_VAL)
+
+  /* Only writeback stage is writing */
+  poke(c.io.fwu_mem.rd_wen, 0)
+  poke(c.io.fwu_wrb.rd_wen, 1)
+
+  /* Forward from writeback stage */
+  test( 1, 1,
+        1, 1,
+        RS_SEL_WRB_VAL, RS_SEL_WRB_VAL)
+
+  /* Only memory stage is writing */
+  poke(c.io.fwu_mem.rd_wen, 1)
+  poke(c.io.fwu_wrb.rd_wen, 0)
+
+  /* Forward from memory stage */
   test( 1, 1,
         1, 1,
         RS_SEL_MEM_VAL, RS_SEL_MEM_VAL)
