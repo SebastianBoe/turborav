@@ -25,7 +25,7 @@ class RavV extends Module {
   fch.io.i_stall := mem.io.o_stall
   dec.io.i_stall := mem.io.o_stall
   exe.io.i_stall := mem.io.o_stall
-  mem.io.i_stall := Bool(false)
+  mem.io.i_stall := mem.io.o_stall
   wrb.io.i_stall := Bool(false)
 
   val arbiter = Module(new RavVMemoryRequestArbiter())

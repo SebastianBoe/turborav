@@ -46,7 +46,10 @@ class Memory() extends Module {
 
   io.mem_wrb.mem_read_data := response.bits.word
   io.mem_wrb <> exe_mem
-  io.o_stall := state === s_awaiting_response
+
+  io.o_stall :=
+  (exe_mem.mem_ctrl.write || exe_mem.mem_ctrl.read) &&
+  ! response.valid
 
   def doRequest {
     request.valid := Bool(true)
@@ -63,4 +66,4 @@ class Memory() extends Module {
     request.bits.wdata := UInt(0)
     request.bits.write := UInt(0)
   }
- }
+}
