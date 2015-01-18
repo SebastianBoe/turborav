@@ -7,8 +7,6 @@ import Constants._
 class Memory() extends Module {
   val io = new MemoryIO()
 
-  val mem_ctrl = io.exe_mem.mem_ctrl
-
   // Pipeline registers
   val exe_mem = Reg(init = new ExecuteMemory())
   when(!io.i_stall){
@@ -18,6 +16,9 @@ class Memory() extends Module {
   // For convenience
   val request  = io.requestResponseIo.request
   val response = io.requestResponseIo.response
+
+  val mem_ctrl = exe_mem.mem_ctrl
+
   val is_mem_transfer_instr =
     mem_ctrl.write ||
     mem_ctrl.read
