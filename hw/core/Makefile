@@ -10,21 +10,21 @@
 # Include some generic utility functions
 include utilities.mk
 
-DIR_SRC     = src/main/scala
-DIR_TEST    = src/test/scala
-DIR_GEN     = generated
-DIR_VLOG    = verilog
-DIR_SYNTH   = synthesis
+DIR_SRC     := src/main/scala
+DIR_TEST    := src/test/scala
+DIR_GEN     := generated
+DIR_VLOG    := verilog
+DIR_SYNTH   := synthesis
 
 # Perhaps call xst in it's own directory to not get this junk in
 # hw/core
-SYNTHESIS_JUNK = \
+SYNTHESIS_JUNK := \
 	xst \
 	_xmsgs/ \
 	hs_err_pid1674.log \
 	*.lso
 
-FPGA_MODEL = xc3s250e-cp132-5
+FPGA_MODEL := xc3s250e-cp132-5
 
 CHISEL_FLAGS_C := \
 	--genHarness \
@@ -46,20 +46,20 @@ modules := \
 	$(wildcard \
 	$(DIR_SRC)/*.scala)))
 
-ROM_PROGRAM_NAME = startup_program
-ROM = $(DIR_GEN)/$(ROM_PROGRAM_NAME).hex
+ROM_PROGRAM_NAME := startup_program
+ROM := $(DIR_GEN)/$(ROM_PROGRAM_NAME).hex
 
-CROSS?=riscv64-unknown-elf-
+CROSS ?= riscv64-unknown-elf-
 
-CC=$(CROSS)gcc
-LD=$(CROSS)ld
-AS=$(CROSS)as
-OBJCOPY=$(CROSS)objcopy
-OBJDUMP=$(CROSS)objdump
+CC      := $(CROSS)gcc
+LD      := $(CROSS)ld
+AS      := $(CROSS)as
+OBJCOPY := $(CROSS)objcopy
+OBJDUMP := $(CROSS)objdump
 
-CFLAGS=-march=RV32I -Wall -I./
-ASFLAGS=-march=RV32I
-OBJDUMP_FLAGS=-M numeric --architecture=riscv:rv32
+CFLAGS :=-march=RV32I -Wall -I./
+ASFLAGS:=-march=RV32I
+OBJDUMP_FLAGS := -M numeric --architecture=riscv:rv32
 
 .PHONY: all
 
