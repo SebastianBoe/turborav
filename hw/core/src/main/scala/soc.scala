@@ -30,6 +30,8 @@ import Constants._
 // 0x2000_0000 // Peripheral hardware register address
 // 0x3000_0000 // Reserved
 
+// Get the Memory map offsets from Constants.BASE_ADDR_XXX
+
 class Soc extends Module {
   val io = new Bundle { val stub = Bool(INPUT) }
 
