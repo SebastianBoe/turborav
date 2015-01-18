@@ -63,6 +63,9 @@ OBJDUMP_FLAGS=-M numeric --architecture=riscv:rv32
 
 .PHONY: all
 
+# Don't delete the ROM hex file contents, it is useful when debugging
+.SECONDARY: $(ROM)
+
 all:
 	@echo "No good default make rule yet"
 
