@@ -12,6 +12,7 @@ class Memory() extends Module {
   val response = io.requestResponseIo.response
   val mem_ctrl = io.exe_mem.mem_ctrl
 
+  // Pipeline registers
   val exe_mem = Reg(init = new ExecuteMemory())
   when(!io.i_stall){
     exe_mem := io.exe_mem
