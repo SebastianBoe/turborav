@@ -22,6 +22,10 @@ object TurboRavTestRunner{
         chiselMainTest(mainArgs, () => Module(new BranchUnit())){
           c => new BranchUnitTest(c)
         }
+      case "fwutest" =>
+        chiselMainTest(mainArgs, () => Module(new ForwardingUnit())){
+          c => new ForwardingUnitTest(c)
+        }
       case "regbanktest" =>
         chiselMainTest(mainArgs, () => Module(new RegBank())){
           c => new RegBankTest(c)

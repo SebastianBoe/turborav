@@ -52,6 +52,7 @@ class ExecuteIO() extends Bundle {
   val dec_exe = new DecodeExecute().flip()
   val exe_mem = new ExecuteMemory()
   val exe_fch = new ExecuteFetch()
+  val fwu_exe = new ForwardingExecute().flip()
 
   val i_stall = Bool(INPUT)
 }
@@ -84,6 +85,7 @@ class ExecuteFetch() extends Bundle {
 class MemoryIO() extends Bundle {
   val exe_mem = new ExecuteMemory().flip()
   val mem_wrb = new MemoryWriteback()
+  val fwu_mem = new ForwardingMemory()
 
   val requestResponseIo = new RequestResponseIo()
   val i_stall = Bool(INPUT)
@@ -110,6 +112,7 @@ class MemoryWriteback() extends Bundle {
 class WritebackIO() extends Bundle {
   val mem_wrb = new MemoryWriteback().flip()
   val wrb_dec = new WritebackDecode()
+  val fwu_wrb = new ForwardingWriteback().flip()
 
   val i_stall = Bool(INPUT)
 }
@@ -125,3 +128,26 @@ class WritebackDecode() extends Bundle {
   val rd_addr = UInt(OUTPUT, 5)
 }
 
+////////////////////////////////////////
+// Forwarding Unit
+////////////////////////////////////////
+class ForwardingUnitIO() extends Bundle {
+  val fwu_exe = new ForwardingExecute()
+  val fwu_mem = new ForwardingMemory()
+  val fwu_wrb = new ForwardingWriteback()
+}
+
+class ForwardingExecute() extends Bundle {
+  val rs1_addr = UInt(INPUT, 5)
+  val rs2_addr = UInt(INPUT, 5)
+  val rs1_sel  = UInt(OUTPUT, RS_SEL_WIDTH)
+  val rs2_sel  = UInt(OUTPUT, RS_SEL_WIDTH)
+}
+
+class ForwardingMemory()extends Bundle {
+  val rd_addr = UInt(INPUT, 5)
+}
+
+class ForwardingWriteback() extends Bundle {
+  val rd_addr = UInt(INPUT, 5)
+}

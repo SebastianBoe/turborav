@@ -112,6 +112,13 @@ object Constants {
   val RD_MEM = UInt(RD_MEM_VAL, RD_SEL_WIDTH)
   val RD_PC  = UInt(RD_PC_VAL,  RD_SEL_WIDTH)
 
+  val RS_SEL_WIDTH = 2
+  val RS_SEL_DEC_VAL = 0
+  val RS_SEL_MEM_VAL = 1
+  val RS_SEL_WRB_VAL = 2
 
+  val RS_SEL_DEC = UInt(RS_SEL_DEC_VAL, RS_SEL_WIDTH)
+  val RS_SEL_MEM = UInt(RS_SEL_MEM_VAL, RS_SEL_WIDTH)
+  val RS_SEL_WRB = UInt(RS_SEL_WRB_VAL, RS_SEL_WIDTH)
 
 }
