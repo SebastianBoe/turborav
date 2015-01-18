@@ -1,6 +1,5 @@
 main:
     li x1, 0xb0e
-    li x1, 0xb0e
     li x2, 0x10000000
     nop
     nop
