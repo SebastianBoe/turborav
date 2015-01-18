@@ -28,11 +28,11 @@ class Decode() extends Module {
     fch_dec := io.fch_dec
   }
 
-  val rs1_addr = fch_dec.instr(19, 15)
-  val rs2_addr = fch_dec.instr(24, 20)
+  val rs1_addr   = fch_dec.instr(19, 15)
+  val rs2_addr   = fch_dec.instr(24, 20)
 
   val opcode     = fch_dec.instr(6, 0)
-  val func3 = fch_dec.instr(14, 12)
+  val func3      = fch_dec.instr(14, 12)
   val alu_func_r = Cat(fch_dec.instr(30), func3)
   val alu_func_i = Cat(UInt(0, width = 1), func3)
 
