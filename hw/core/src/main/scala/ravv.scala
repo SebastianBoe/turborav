@@ -21,16 +21,12 @@ class RavV extends Module {
   mem.io.mem_wrb <> wrb.io.mem_wrb
   wrb.io.wrb_dec <> dec.io.wrb_dec
 
-  // TODO: Connect stall signals using loops instead.
-  val stall = orR(Cat(
-    // There should be more stages that generate stall signals soon.
-    mem.io.o_stall
-  ))
-  fch.io.i_stall := stall
-  dec.io.i_stall := stall
-  exe.io.i_stall := stall
-  mem.io.i_stall := stall
-  wrb.io.i_stall := stall
+  // TODO: Connect stall signals in a loop instead.
+  fch.io.i_stall := mem.io.o_stall
+  dec.io.i_stall := mem.io.o_stall
+  exe.io.i_stall := mem.io.o_stall
+  mem.io.i_stall := Bool(false)
+  wrb.io.i_stall := Bool(false)
 
   val arbiter = Module(new RavVMemoryRequestArbiter())
   arbiter.io.ravv <> io
