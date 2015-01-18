@@ -36,6 +36,8 @@ class Decode() extends Module {
   val rs1_addr   = fch_dec.instr(19, 15)
   val rs2_addr   = fch_dec.instr(24, 20)
 
+  val rd_addr: UInt = fch_dec.instr(11, 7)
+  
   val opcode     = fch_dec.instr(6, 0)
   val func3      = fch_dec.instr(14, 12)
   val alu_func_r = Cat(fch_dec.instr(30), func3)
@@ -47,7 +49,7 @@ class Decode() extends Module {
 
   val imm_s = Cat(Fill(fch_dec.instr(31), Config.xlen - 12),
                   fch_dec.instr(31, 25),
-                  fch_dec.instr(11, 7))
+                  rd_addr)
 
   val imm_b = Cat(Fill(fch_dec.instr(31), Config.xlen - 12),
                   fch_dec.instr(7),
@@ -112,12 +114,15 @@ class Decode() extends Module {
   dec_exe.pc := fch_dec.pc
   dec_exe.rs1 :=regbank.io.rs1_data
   dec_exe.rs2 :=regbank.io.rs2_data
-  dec_exe.rd_addr  := fch_dec.instr(11, 7)
-  dec_exe.wrb_ctrl.rd_wen := (opcode === OPCODE_REG_IMM ||
-                              opcode === OPCODE_REG_REG ||
-                              opcode === OPCODE_LOAD    ||
-                              is_upper(opcode)          ||
-                              is_jump(opcode))
+  dec_exe.rd_addr  := rd_addr
+  dec_exe.wrb_ctrl.rd_wen :=
+  rd_addr != UInt(0) && Any(
+      opcode === OPCODE_REG_IMM,
+      opcode === OPCODE_REG_REG,
+      opcode === OPCODE_LOAD,
+      is_upper(opcode),
+      is_jump(opcode)
+  )
 
   dec_exe.mem_ctrl.read   := opcode === OPCODE_LOAD
   dec_exe.mem_ctrl.write  := opcode === OPCODE_STORE
