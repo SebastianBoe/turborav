@@ -43,7 +43,7 @@ class Rom() extends Module {
   // deadbeef
   // 29381ad
   def parseRomContents():Array[Int] = {
-    val path = "resources/rom_contents.hex"
+    val path = "generated/startup_program.hex"
     val source = scala.io.Source.fromFile(path)
     val lines = source.mkString
     source.close()
