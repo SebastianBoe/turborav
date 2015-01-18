@@ -14,7 +14,7 @@ class RomTest(c: Rom) extends Tester(c) {
     expect(c.io.rdata, rdata)
   }
 
-  def verify_transaction(address: Int, expected_value: Int) = {
+  def verify_transaction(address: BigInt, expected_value: BigInt) = {
     // Sanity test. start with idling, then read a value from the rom.
     poke(c.io.sel, 0)
     poke(c.io.write, 0)

@@ -5,6 +5,7 @@ import Chisel._
 import Common._
 import Array._
 import Apb._
+import java.math.BigInteger;
 
 class Rom() extends Module {
   val io = new SlaveToApbIo()
@@ -42,11 +43,11 @@ class Rom() extends Module {
   // 12
   // deadbeef
   // 29381ad
-  def parseRomContents():Array[Int] = {
+  def parseRomContents():Array[BigInteger] = {
     val path = "generated/startup_program.hex"
     val source = scala.io.Source.fromFile(path)
     val lines = source.mkString
     source.close()
-    return lines.split("\\n").map(Integer.parseInt(_, 16))
+    return lines.split("\\n").map(new BigInteger(_, 16))
   }
 }
