@@ -46,6 +46,10 @@ class Memory() extends Module {
 
   io.mem_wrb.mem_read_data := response.bits.word
   io.mem_wrb <> exe_mem
+  io.mem_exe.alu_result := exe_mem.alu_result
+
+  io.fwu_mem.rd_wen  := exe_mem.wrb_ctrl.rd_wen
+  io.fwu_mem.rd_addr := exe_mem.rd_addr
 
   io.o_stall :=
   (exe_mem.mem_ctrl.write || exe_mem.mem_ctrl.read) &&

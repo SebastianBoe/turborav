@@ -16,13 +16,21 @@ class Execute() extends Module {
   val ctrl = dec_exe.exe_ctrl
   val zero = UInt(0, width = Config.xlen)
 
+  val rs1 = Mux(io.fwu_exe.rs1_sel === RS_SEL_MEM, io.mem_exe.alu_result,
+            Mux(io.fwu_exe.rs1_sel === RS_SEL_WRB, io.wrb_exe.rd_data,
+                                                   dec_exe.rs1))
+
+  val rs2 = Mux(io.fwu_exe.rs2_sel === RS_SEL_MEM, io.mem_exe.alu_result,
+            Mux(io.fwu_exe.rs2_sel === RS_SEL_WRB, io.wrb_exe.rd_data,
+                                                   dec_exe.rs2))
+
   val alu_in_a = Mux(ctrl.alu_in_a_sel === ALU_IN_A_PC,  dec_exe.pc,
-                 Mux(ctrl.alu_in_a_sel === ALU_IN_A_RS1, dec_exe.rs1,
+                 Mux(ctrl.alu_in_a_sel === ALU_IN_A_RS1, rs1,
                                                          zero))
 
   val alu_in_b = Mux(ctrl.alu_in_b_sel === ALU_IN_B_IMM,
                     dec_exe.imm,
-                    dec_exe.rs2)
+                    rs2)
 
   val alu = Module(new Alu())
   alu.io.in_a := alu_in_a
@@ -34,6 +42,9 @@ class Execute() extends Module {
   bru.io.in_a := dec_exe.rs1
   bru.io.in_b := dec_exe.rs2
   bru.io.func := ctrl.bru_func
+
+  io.fwu_exe.rs1_addr := dec_exe.rs1_addr
+  io.fwu_exe.rs2_addr := dec_exe.rs2_addr
 
   io.exe_fch.pc_sel:= Mux(bru.io.take,
                           PC_SEL_BRJMP,

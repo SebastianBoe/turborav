@@ -34,7 +34,9 @@ class DecodeIO() extends Bundle {
 }
 
 class DecodeExecute() extends Bundle {
+  val rs1_addr= UInt(OUTPUT, 5)
   val rs1     = UInt(OUTPUT, Config.xlen)
+  val rs2_addr= UInt(OUTPUT, 5)
   val rs2     = UInt(OUTPUT, Config.xlen)
   val imm     = UInt(OUTPUT, Config.xlen)
   val rd_addr = UInt(OUTPUT, Config.xlen)
@@ -53,6 +55,8 @@ class ExecuteIO() extends Bundle {
   val exe_mem = new ExecuteMemory()
   val exe_fch = new ExecuteFetch()
   val fwu_exe = new ForwardingExecute().flip()
+  val mem_exe = new MemoryExecute().flip()
+  val wrb_exe = new WritebackExecute().flip()
 
   val i_stall = Bool(INPUT)
 }
@@ -85,7 +89,8 @@ class ExecuteFetch() extends Bundle {
 class MemoryIO() extends Bundle {
   val exe_mem = new ExecuteMemory().flip()
   val mem_wrb = new MemoryWriteback()
-  val fwu_mem = new ForwardingMemory()
+  val fwu_mem = new ForwardingMemory().flip()
+  val mem_exe = new MemoryExecute()
 
   val requestResponseIo = new RequestResponseIo()
   val i_stall = Bool(INPUT)
@@ -106,6 +111,10 @@ class MemoryWriteback() extends Bundle {
   val wrb_ctrl = new WritebackCtrl()
 }
 
+class MemoryExecute() extends Bundle {
+  val alu_result = UInt(OUTPUT, Config.xlen)
+}
+
 ////////////////////////////////////////
 // Writeback
 ////////////////////////////////////////c
@@ -113,6 +122,7 @@ class WritebackIO() extends Bundle {
   val mem_wrb = new MemoryWriteback().flip()
   val wrb_dec = new WritebackDecode()
   val fwu_wrb = new ForwardingWriteback().flip()
+  val wrb_exe = new WritebackExecute()
 
   val i_stall = Bool(INPUT)
 }
@@ -122,11 +132,16 @@ class WritebackCtrl() extends Bundle {
   val rd_sel = Bits(OUTPUT, RD_SEL_WIDTH)
 }
 
+class WritebackExecute() extends Bundle {
+  val rd_data = UInt(OUTPUT, Config.xlen)
+}
+
 class WritebackDecode() extends Bundle {
   val rd_wen  = Bool(OUTPUT)
   val rd_data = UInt(OUTPUT, Config.xlen)
   val rd_addr = UInt(OUTPUT, 5)
 }
+
 
 ////////////////////////////////////////
 // Forwarding Unit
@@ -146,10 +161,10 @@ class ForwardingExecute() extends Bundle {
 
 class ForwardingMemory()extends Bundle {
   val rd_addr = UInt(INPUT, 5)
-  val rd_wen  = Bool(OUTPUT)
+  val rd_wen  = Bool(INPUT)
 }
 
 class ForwardingWriteback() extends Bundle {
   val rd_addr = UInt(INPUT, 5)
-  val rd_wen  = Bool(OUTPUT)
+  val rd_wen  = Bool(INPUT)
 }

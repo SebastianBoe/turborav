@@ -112,7 +112,9 @@ class Decode() extends Module {
             ))
 
   dec_exe.pc := fch_dec.pc
+  dec_exe.rs1_addr := rs1_addr
   dec_exe.rs1 :=regbank.io.rs1_data
+  dec_exe.rs2_addr := rs2_addr
   dec_exe.rs2 :=regbank.io.rs2_data
   dec_exe.rd_addr  := rd_addr
   dec_exe.wrb_ctrl.rd_wen :=
