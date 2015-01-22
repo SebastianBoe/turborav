@@ -6,7 +6,7 @@ import Common._
 import Array._
 import Apb._
 
-class Ram() extends Module {
+class Ram extends Module {
   val io = new SlaveToApbIo()
 
   // TODO: Remove redundancy between APB slaves. Defining the io and
@@ -16,6 +16,9 @@ class Ram() extends Module {
   val word_size_in_bytes = Config.apb_data_len / 8
   val byte_offset_size  = log2Down(word_size_in_bytes)
   val word_addr = io.addr >> UInt(byte_offset_size)
+
+  // The 4 most siginificant bits segment the memory map,
+  val ram_word_addr = io.addr(31 - 4, byte_offset_size)
 
   assert(io.addr(byte_offset_size - 1, 0) === UInt(0),
     "We assume word-aligned addresses."
@@ -43,13 +46,13 @@ class Ram() extends Module {
   io.enable := io.ready
 
   // We need a one-cycle delay for some reason
-  val word_addr_prev = Reg(next = word_addr)
+  val ram_word_addr_prev = Reg(next = ram_word_addr)
   when(io.enable) {
     when(io.write){
-      ram(word_addr_prev) := io.wdata
+      ram(ram_word_addr_prev) := io.wdata
       io.rdata := UInt(0)
     }.otherwise {
-      io.rdata := ram(word_addr_prev)
+      io.rdata := ram(ram_word_addr_prev)
     }
   }.otherwise {
     io.rdata := UInt(0)
