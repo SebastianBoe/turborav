@@ -25,14 +25,14 @@ class RegBank() extends Module {
     regs(io.rd_addr) := io.rd_data
   }
 
-  io.rs1_data := Mux(
-    io.rs1_addr != UInt(0),
-    regs(io.rs1_addr),
-    UInt(0, Config.xlen)
-  )
-  io.rs2_data := Mux(
-    io.rs2_addr != UInt(0),
-    regs(io.rs2_addr),
-    UInt(0, Config.xlen)
-  )
+  io.rs1_data :=
+  Mux(io.rs1_addr === UInt(0),                 UInt(0, Config.xlen),
+  Mux(io.rs1_addr === io.rd_addr && io.rd_wen, io.rd_data,
+                                               regs(io.rs1_addr)
+                                               ))
+  io.rs2_data :=
+  Mux(io.rs2_addr === UInt(0),                 UInt(0, Config.xlen),
+  Mux(io.rs2_addr === io.rd_addr && io.rd_wen, io.rd_data,
+                                               regs(io.rs2_addr)
+                                               ))
 }
