@@ -16,7 +16,7 @@ class RRApbAdapter extends Module {
     val apb = new SlaveToApbIo().flip()
   }
 
-  val s_idle :: s_apb_access_phase :: s_apb_transfer_phase :: Nil = Enum(UInt(), 3)
+  val s_idle :: s_apb_access_phase :: s_apb_setup_phase :: Nil = Enum(UInt(), 3)
   val state = Reg(init = s_idle)
 
   when      (state === s_idle) {
@@ -33,7 +33,7 @@ class RRApbAdapter extends Module {
       io.apb.sel   := Bool(true)
     }
   }.elsewhen(state === s_apb_access_phase) {
-    state := s_apb_transfer_phase
+    state := s_apb_setup_phase
 
     io.rr.response.valid := Bool(true)
     io.rr.response.bits.word  := io.apb.rdata
