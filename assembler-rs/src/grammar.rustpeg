@@ -1,0 +1,12 @@
+use instructions::Instruction;
+
+#[pub]
+instructions -> Vec<Instruction>
+    = instruction ** [\n]
+
+#[pub]
+instruction -> Instruction
+    = nop
+
+nop -> Instruction
+    = "nop" { Instruction::Nop }
