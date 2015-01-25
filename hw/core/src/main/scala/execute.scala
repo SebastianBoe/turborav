@@ -32,8 +32,6 @@ class Execute() extends Module {
                     dec_exe.imm,
                     rs2)
 
-  //val alu_result = alu.io.out
-
   val alu = Module(new Alu())
   alu.io.in_a := alu_in_a
   alu.io.in_b := alu_in_b
