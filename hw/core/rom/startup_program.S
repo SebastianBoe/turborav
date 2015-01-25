@@ -13,4 +13,4 @@ main:
     nop
     nop
     lw x2, 4(x2)
-    b main
+    j main
