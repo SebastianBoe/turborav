@@ -37,7 +37,7 @@ class Decode() extends Module {
   val rs2_addr   = fch_dec.instr(24, 20)
 
   val rd_addr: UInt = fch_dec.instr(11, 7)
-  
+
   val opcode     = fch_dec.instr(6, 0)
   val func3      = fch_dec.instr(14, 12)
   val alu_func_r = Cat(fch_dec.instr(30), func3)
