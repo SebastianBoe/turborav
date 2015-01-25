@@ -1,4 +1,5 @@
 use instructions::Instruction;
+use instructions::Instruction::*;
 
 #[pub]
 instructions -> Vec<Instruction>
@@ -6,7 +7,22 @@ instructions -> Vec<Instruction>
 
 #[pub]
 instruction -> Instruction
-    = nop
+    = nop / addi
 
 nop -> Instruction
-    = "nop" { Instruction::Nop }
+    = "nop" { Nop }
+
+addi -> Instruction
+    = "addi " r:register "," d:register "," i:immediate { Addi(r, d, i) }
+
+register -> u32
+    = "x" [0-9]+ { match_str[1..].parse().unwrap() }
+
+immediate -> i32
+    = negative_immediate / positive_immediate
+
+negative_immediate -> i32
+    = "-" [0-9]+ { -match_str[1..].parse::<i32>().unwrap() }
+
+positive_immediate -> i32
+    = [0-9]+ { match_str.parse().unwrap() }
