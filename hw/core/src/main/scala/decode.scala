@@ -96,6 +96,7 @@ class Decode() extends Module {
                            !is_shift(func3),                     alu_func_i,
                        Mux(is_jump(opcode)   ||
                            is_upper(opcode)  ||
+                           opcode === OPCODE_BRANCH ||
                            is_lw_sw(opcode),                     ALU_ADD,
                                                                  alu_func_r))
 

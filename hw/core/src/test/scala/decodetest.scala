@@ -34,6 +34,7 @@ class DecodeTest(c: Decode) extends Tester(c) {
     poke(c.io.fch_dec.instr, instr)
     step(1)
     expect(c.io.dec_exe.exe_ctrl.bru_func, exp_func)
+    expect(c.io.dec_exe.exe_ctrl.alu_func, ALU_ADD_VAL)
     expect(c.io.dec_exe.exe_ctrl.alu_in_a_sel, ALU_IN_A_PC_VAL)
     expect(c.io.dec_exe.wrb_ctrl.rd_wen, 0)
     expect(c.io.dec_exe.imm, signed(exp_imm))

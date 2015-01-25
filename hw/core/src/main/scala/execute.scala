@@ -32,6 +32,8 @@ class Execute() extends Module {
                     dec_exe.imm,
                     rs2)
 
+  //val alu_result = alu.io.out
+
   val alu = Module(new Alu())
   alu.io.in_a := alu_in_a
   alu.io.in_b := alu_in_b
@@ -42,13 +44,14 @@ class Execute() extends Module {
   bru.io.in_a := dec_exe.rs1
   bru.io.in_b := dec_exe.rs2
   bru.io.func := ctrl.bru_func
+  io.exe_fch.pc_alu := alu.io.out
+  io.exe_fch.pc_sel := Mux(bru.io.take,
+                           PC_SEL_BRJMP,
+                           PC_SEL_PC_PLUS4)
 
   io.fwu_exe.rs1_addr := dec_exe.rs1_addr
   io.fwu_exe.rs2_addr := dec_exe.rs2_addr
 
-  io.exe_fch.pc_sel:= Mux(bru.io.take,
-                          PC_SEL_BRJMP,
-                          PC_SEL_PC_PLUS4)
 
   io.exe_mem <> dec_exe
 }
