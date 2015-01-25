@@ -27,7 +27,7 @@ class Spi extends Module {
   io.clk := clk
 
 
-  val tx_reg = UInt(width=8)
+  val tx_reg = Reg(UInt(width=8))
   when (io.apb.sel && io.apb.write) {
     when (SPI_TX_BYTE_REG_ADDR === io.apb.addr) {
       tx_reg := io.apb.wdata
