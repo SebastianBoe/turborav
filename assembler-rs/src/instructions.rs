@@ -4,14 +4,14 @@ pub enum Instruction {
 }
 
 impl Instruction {
-    pub fn to_binary(&self) -> Result<u32, String> {
+    pub fn to_binary(&self) -> u32 {
         match self {
-            Nop => Ok(0x13)
+            Nop => 0x13
         }
     }
 }
 
 #[test]
 fn verify_nop_binary_conversion() {
-    assert_eq!(0x13, Instruction::Nop.to_binary().unwrap());
+    assert_eq!(0x13, Instruction::Nop.to_binary());
 }

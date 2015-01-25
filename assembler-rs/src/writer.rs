@@ -16,7 +16,8 @@ impl InstructionWriter for ProgramFileWriter {
     fn write_instructions(&self, instructions: &Vec<Instruction>) {
         let mut file = File::create(&self.path).unwrap();
         for instr in instructions.iter() {
-            file.write_le_u32(instr.to_binary().unwrap());
+            let hex = format!("{:08X}", instr.to_binary());
+            file.write_line(hex.as_slice());
         }
         file.fsync();
     }
@@ -30,18 +31,13 @@ impl ProgramFileWriter {
 
 #[test]
 fn verify_writing_instructions_to_file() {
-    let file_name = "target/swag.bin";
+    let file_name = "target/swag.hex";
     let instructions = vec![Nop, Nop];
     let writer = ProgramFileWriter::new(file_name);
     writer.write_instructions(&instructions);
 
-    let path = Path::new(file_name);
-    assert!(path.exists());
-    assert!(path.is_file());
-    assert_eq!(8u64, path.stat().unwrap().size);
-
-    let mut file = File::open(&path).unwrap();
-    let mut expectedFile = File::open(&Path::new("resources/test1.bin")).unwrap();
+    let mut file = File::open(&Path::new(file_name)).unwrap();
+    let mut expectedFile = File::open(&Path::new("resources/test1.hex")).unwrap();
 
     assert_eq!(file.read_to_end().unwrap(), expectedFile.read_to_end().unwrap());
 }
