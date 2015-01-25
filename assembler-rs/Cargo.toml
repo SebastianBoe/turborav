@@ -1,0 +1,8 @@
+[package]
+
+name = "assembler-rs"
+version = "0.0.1"
+authors = ["Bjorn C Seime <bcseime@gmail.com>"]
+
+[dependencies]
+peg = "0.1.4"
