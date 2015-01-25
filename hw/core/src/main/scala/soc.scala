@@ -33,12 +33,15 @@ import Constants._
 // Get the Memory map offsets from Constants.BASE_ADDR_XXX
 
 class Soc extends Module {
-  val io = new Bundle { val stub = Bool(INPUT) }
+  val io = new Bundle { val spi_clock = Bool(OUTPUT) }
 
   val ravv    = Module(new RavV())
   val rom     = Module(new Rom ())
   val ram     = Module(new Ram ())
   val adapter = Module(new RRApbAdapter())
+  val spi     = Module(new Spi())
+
+  io.spi_clock := spi.io.clk
 
   // Connect the bus master
   ravv.io <> adapter.io.rr

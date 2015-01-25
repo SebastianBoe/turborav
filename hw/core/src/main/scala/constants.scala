@@ -1,6 +1,7 @@
 package TurboRav
 
 import Chisel._
+import Common._
 import java.math.BigInteger
 
 object Constants {
@@ -125,5 +126,7 @@ object Constants {
   val RS_SEL_DEC = UInt(RS_SEL_DEC_VAL, RS_SEL_WIDTH)
   val RS_SEL_MEM = UInt(RS_SEL_MEM_VAL, RS_SEL_WIDTH)
   val RS_SEL_WRB = UInt(RS_SEL_WRB_VAL, RS_SEL_WIDTH)
+
+  val SPI_TX_BYTE_REG_ADDR = UInt(0, Config.apb_addr_len)
 
 }
