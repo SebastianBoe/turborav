@@ -19,10 +19,10 @@ class SocTest(c: Soc) extends Tester(c) {
     }
 
     print("\n\nRegister bank:\n")
-    for(i <- 0 until 32 / 8){
-      for(j <- 0 until 8){
-        val x= 8*i+j
-        print("x%02d:%08x\t".format(x,regs(x)))
+    for(i <- 0 until 32 / 4){
+      for(j <- 0 until 4){
+        val x= 4*i+j
+        print("x%02d: %08x\t".format(x,regs(x)))
       }
       print("\n")
     }
