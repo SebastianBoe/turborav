@@ -16,6 +16,9 @@ class RegBank() extends Module {
 
     val rs1_data = UInt(OUTPUT, Config.xlen)
     val rs2_data = UInt(OUTPUT, Config.xlen)
+
+    val debug_addr = UInt(INPUT, 5)
+    val debug_data = UInt(OUTPUT, Config.xlen)
   }
 
   /* Chisel does not support initializing memory */
@@ -35,4 +38,5 @@ class RegBank() extends Module {
   Mux(io.rs2_addr === io.rd_addr && io.rd_wen, io.rd_data,
                                                regs(io.rs2_addr)
                                                ))
+  io.debug_data := regs(io.debug_addr)
 }
