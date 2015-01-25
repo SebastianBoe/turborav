@@ -127,10 +127,10 @@ object Constants {
   val RS_SEL_MEM = UInt(RS_SEL_MEM_VAL, RS_SEL_WIDTH)
   val RS_SEL_WRB = UInt(RS_SEL_WRB_VAL, RS_SEL_WIDTH)
 
-  val SPI_TX_BYTE_REG_ADDR = UInt(0, Config.apb_addr_len)
+  val SPI_TX_BYTE_REG_ADDR = UInt(0, Config.apb_addr_len - 4)
 
-  val MEMORY_SEGMENT_ROM = Bits("b0000")
-  val MEMORY_SEGMENT_RAM = Bits("b0001")
-  val MEMORY_SEGMENT_SPI = Bits("b0010")
+  val MEMORY_SEGMENT_ROM = UInt("b0000", 4)
+  val MEMORY_SEGMENT_RAM = UInt("b0001", 4)
+  val MEMORY_SEGMENT_SPI = UInt("b0010", 4)
 
 }
