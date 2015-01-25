@@ -31,10 +31,10 @@ class RavV extends Module {
   fch.io.exe_fch <> exe.io.exe_fch
 
   // TODO: Connect stall signals in a loop instead.
-  fch.io.i_stall := mem.io.o_stall || fch.io.o_stall
-  dec.io.i_stall := mem.io.o_stall || fch.io.o_stall
-  exe.io.i_stall := mem.io.o_stall || fch.io.o_stall
-  mem.io.i_stall := mem.io.o_stall || fch.io.o_stall
+  fch.io.i_stall := mem.io.o_stall
+  dec.io.i_stall := mem.io.o_stall
+  exe.io.i_stall := mem.io.o_stall
+  mem.io.i_stall := mem.io.o_stall
   wrb.io.i_stall := Bool(false)
 
   val arbiter = Module(new RavVMemoryRequestArbiter())

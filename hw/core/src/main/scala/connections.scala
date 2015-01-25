@@ -13,7 +13,6 @@ class FetchIO() extends Bundle {
 
   val requestResponseIo = new RequestResponseIo()
   val i_stall = Bool(INPUT)
-  val o_stall = Bool(OUTPUT)
 }
 
 class FetchDecode() extends Bundle {

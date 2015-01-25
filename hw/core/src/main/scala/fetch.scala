@@ -10,16 +10,27 @@ class Fetch() extends Module {
   val rr = io.requestResponseIo // For convenience
 
   val pc = Reg(init = UInt(0, width = Config.xlen))
-  val pc_next = Mux(io.exe_fch.pc_sel === PC_SEL_BRJMP,
-                    io.exe_fch.pc_alu,
-                    pc + UInt(4))
+
+  /* There should be a better way */
+  val saved_take_branch = Reg(init = Bool(false))
+  val saved_branch_addr = Reg(init = UInt(0))
+
+  val pc_next = Mux(io.exe_fch.pc_sel === PC_SEL_BRJMP, io.exe_fch.pc_alu,
+                Mux(saved_take_branch,                  saved_branch_addr,
+                                                        pc + UInt(4)
+                ))
 
   val should_stall = io.i_stall || !rr.response.valid
-  when(!should_stall){
-    pc := pc_next
+
+  when(io.exe_fch.pc_sel === PC_SEL_BRJMP){
+    saved_take_branch := Bool(true)
+    saved_branch_addr := io.exe_fch.pc_alu
   }
 
-  io.o_stall := !rr.response.valid
+  when(!should_stall){
+    pc := pc_next
+    saved_take_branch := Bool(false)
+  }
 
   // Fetch to decode
   io.fch_dec.pc          := pc
