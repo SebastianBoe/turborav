@@ -129,4 +129,8 @@ object Constants {
 
   val SPI_TX_BYTE_REG_ADDR = UInt(0, Config.apb_addr_len)
 
+  val MEMORY_SEGMENT_ROM = Bits("b0000")
+  val MEMORY_SEGMENT_RAM = Bits("b0001")
+  val MEMORY_SEGMENT_SPI = Bits("b0010")
+
 }

@@ -47,18 +47,41 @@ class Soc extends Module {
   ravv.io <> adapter.io.rr
 
   val master_apb = adapter.io.apb // For convenience
-  val is_ram_request = master_apb.addr(28)
+  val memory_segment = master_apb.addr(31, 28)
+  val is_rom_request = MEMORY_SEGMENT_ROM === memory_segment
+  val is_ram_request = MEMORY_SEGMENT_RAM === memory_segment
+  val is_spi_request = MEMORY_SEGMENT_SPI === memory_segment
 
   // Bah, was tricky to make this beautiful, try again later.
-  ram.io.addr  := clearIfDisabled(master_apb.addr  , enabled = is_ram_request)
-  ram.io.wdata := clearIfDisabled(master_apb.wdata , enabled = is_ram_request)
-  ram.io.write := clearIfDisabled(master_apb.write , enabled = is_ram_request)
-  ram.io.sel   := clearIfDisabled(master_apb.sel   , enabled = is_ram_request)
+  ram.io.addr   := clearIfDisabled(master_apb.addr  , enabled = is_ram_request)
+  ram.io.wdata  := clearIfDisabled(master_apb.wdata , enabled = is_ram_request)
+  ram.io.write  := clearIfDisabled(master_apb.write , enabled = is_ram_request)
+  ram.io.sel    := clearIfDisabled(master_apb.sel   , enabled = is_ram_request)
 
-  rom.io.addr  := clearIfDisabled(master_apb.addr  , !is_ram_request)
-  rom.io.sel   := clearIfDisabled(master_apb.sel   , !is_ram_request)
+  rom.io.addr   := clearIfDisabled(master_apb.addr  , enabled = is_rom_request)
+  rom.io.sel    := clearIfDisabled(master_apb.sel   , enabled = is_rom_request)
 
-  master_apb.enable := Mux(is_ram_request , ram.io.enable , rom.io.enable)
-  master_apb.rdata  := Mux(is_ram_request , ram.io.rdata  , rom.io.rdata)
-  master_apb.ready  := Mux(is_ram_request , ram.io.ready  , rom.io.ready)
+  spi.io.apb.addr   := clearIfDisabled(master_apb.addr  , enabled = is_spi_request)
+  spi.io.apb.sel    := clearIfDisabled(master_apb.sel   , enabled = is_spi_request)
+  spi.io.apb.wdata  := clearIfDisabled(master_apb.wdata , enabled = is_spi_request)
+  spi.io.apb.write  := clearIfDisabled(master_apb.write , enabled = is_spi_request)
+
+  // This redundancy is bad, but when we get a tristate bus it can be deprecated.
+  master_apb.enable := MuxCase(ram.io.enable, Array(
+    is_rom_request -> rom.io.enable,
+    is_ram_request -> ram.io.enable,
+    is_spi_request -> spi.io.apb.enable
+  ))
+  master_apb.rdata := MuxCase(ram.io.rdata, Array(
+    is_rom_request -> rom.io.rdata,
+    is_ram_request -> ram.io.rdata,
+    is_spi_request -> spi.io.apb.rdata
+  ))
+  master_apb.ready := MuxCase(ram.io.ready, Array(
+    is_rom_request -> rom.io.ready,
+    is_ram_request -> ram.io.ready,
+    is_spi_request -> spi.io.apb.ready
+  ))
+
 }
+
