@@ -29,36 +29,24 @@ class Spi extends Module {
 
   val peripheral_address = io.apb.addr(27, 0)
   // TODO: Use log2up
-  val bits_sent = Reg(init=UInt(0, width=4))
+  val bits_sent = Reg(init=UInt(1, width=4))
 
   val tx_reg = Reg(UInt(width=8))
 
   when (io.apb.sel && io.apb.write) {
-    when (SPI_TX_BYTE_REG_ADDR === peripheral_address) {
-      tx_reg := io.apb.wdata
-      state := s_tx
-      } .otherwise {
-        tx_reg := UInt(0)
-      }
+    tx_reg := io.apb.wdata
+    state := s_tx
   } .elsewhen (bits_sent === UInt(8)) {
     state := s_idle
-  } .otherwise {
-    tx_reg := tx_reg >> UInt(1)
   }
 
   when (state === s_tx) {
     io.ncs := Bool(false)
-    when (bits_sent === UInt(8)) {
-      bits_sent := UInt(0)
-    } .otherwise {
-      io.mosi := tx_reg(0)
-      bits_sent := bits_sent + UInt(1)
-    }
+    io.mosi := tx_reg(0)
+    bits_sent := bits_sent + UInt(1)
   } .otherwise {
     io.ncs := Bool(true)
     io.mosi := UInt(0)
   }
-
-  io.apb.rdata := tx_reg
 
 }
