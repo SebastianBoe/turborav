@@ -88,7 +88,7 @@ clean:
 %.out:  $(ROM) $(DIR_SRC)/%.scala
 	sbt "run      $*     $(CHISEL_FLAGS_C)"
 
-$(DIR_SYNTH)/%.srp: $(ROM) $(DIR_SYNTH)/%.xst $(DIR_SYNTH)/%.prj
+$(DIR_SYNTH)/%.srp: $(DIR_SYNTH)/%.xst $(ROM) $(DIR_SYNTH)/%.prj
 	xst \
 	 -ifn $< \
 	 -ofn $@ \
