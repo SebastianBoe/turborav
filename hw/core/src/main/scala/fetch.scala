@@ -40,4 +40,6 @@ class Fetch() extends Module {
   // Memory interface to fetch
   rr.request.bits.addr := pc
   rr.request.valid := Bool(true) // I think this is safe.
+  rr.request.bits.wdata := UInt(0)
+  rr.request.bits.write := Bool(false)
 }
