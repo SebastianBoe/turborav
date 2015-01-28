@@ -13,7 +13,7 @@ class Spi extends Module {
     val miso  = Bool(INPUT)
 
     val mosi  = Bool(OUTPUT)
-    val clk   = Bool(OUTPUT)
+    val spi_clk   = Bool(OUTPUT)
     val ncs   = Bool(OUTPUT)
   }
 
@@ -21,11 +21,11 @@ class Spi extends Module {
   val state = Reg(init = s_idle)
 
   // Use the implicit clock as SPI clock.
-  val clk = Reg(Bool())
+  val spi_clk = Reg(Bool())
   when (Bool(true)) {
-    clk := !io.clk
+    spi_clk := !io.spi_clk
   }
-  io.clk := clk
+  io.spi_clk := spi_clk
 
   val peripheral_address = io.apb.addr(27, 0)
   // TODO: Use log2up
