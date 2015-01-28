@@ -41,7 +41,7 @@ class Soc extends Module {
   val adapter = Module(new RRApbAdapter())
   val spi     = Module(new Spi())
 
-  io.spi_clock := spi.io.clk
+  io.spi_clock := spi.io.spi_clk
 
   // Connect the bus master
   ravv.io <> adapter.io.rr
