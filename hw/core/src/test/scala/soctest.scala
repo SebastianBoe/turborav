@@ -4,18 +4,16 @@ import Chisel._
 import Constants._
 
 class SocTest(c: Soc) extends Tester(c) {
-
   step(200)
-  expect(c.ravv.exe.io.exe_mem.alu_result, 3)
-
   print_regs()
 
+  // Could easily do something similair with the memory when we want
+  // to.
   def print_regs() = {
     val regs = Array.ofDim[BigInt](32)
 
     for(i <- 0 until 32){
-      poke(c.ravv.dec.regbank.io.debug_addr,i)
-      regs(i) = peek(c.ravv.dec.regbank.io.debug_data)
+      regs(i) = peekAt(c.ravv.dec.regbank.regs, i)
     }
 
     print("\n\nRegister bank:\n")
@@ -28,5 +26,4 @@ class SocTest(c: Soc) extends Tester(c) {
     }
     print("\n\n")
   }
-
 }
