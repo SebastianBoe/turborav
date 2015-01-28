@@ -117,6 +117,7 @@ $(DIR_SYNTH)/%.xst: $(DIR_SYNTH)/%.prj
 	@echo $* | sed -e "s/\b\(.\)/\u\1/g"   >> $@
 	@echo "-opt_level 1                  " >> $@
 	@echo "-ofmt NGC                     " >> $@
+	@echo "-define {SYNTHESIS}           " >> $@
 	@echo "-work_lib work                " >> $@
 	@echo >> $@
 
