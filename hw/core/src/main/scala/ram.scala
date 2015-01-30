@@ -47,12 +47,12 @@ class Ram extends Module {
 
   // We need a one-cycle delay for some reason
   val ram_word_addr_prev = Reg(next = ram_word_addr)
-  when(io.enable) {
+  when(io.sel) {
     when(io.write){
-      ram(ram_word_addr_prev) := io.wdata
+      ram(ram_word_addr) := io.wdata
       io.rdata := UInt(0)
     }.otherwise {
-      io.rdata := ram(ram_word_addr_prev)
+      io.rdata := ram(ram_word_addr)
     }
   }.otherwise {
     io.rdata := UInt(0)
