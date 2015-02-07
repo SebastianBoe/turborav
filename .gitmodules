@@ -1,3 +1,0 @@
-[submodule "hw/tools/riscv-opcodes"]
-	path = hw/tools/riscv-opcodes
-	url = https://github.com/ucb-bar/riscv-opcodes.git
