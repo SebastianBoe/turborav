@@ -100,6 +100,11 @@ class MemoryIO() extends Bundle {
 class MemoryCtrl() extends Bundle {
   val write = Bool(OUTPUT)
   val read = Bool(OUTPUT)
+
+  def kill() = {
+    write := Bool(false)
+    read := Bool(false)
+  }
 }
 
 class MemoryWriteback() extends Bundle {
@@ -130,6 +135,11 @@ class WritebackIO() extends Bundle {
 class WritebackCtrl() extends Bundle {
   val rd_wen = Bool(OUTPUT)
   val rd_sel = Bits(OUTPUT, RD_SEL_WIDTH)
+
+  def kill() = {
+    rd_wen := Bool(false)
+  }
+
 }
 
 class WritebackExecute() extends Bundle {
