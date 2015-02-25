@@ -39,6 +39,5 @@ class RavV extends Module {
 
   val arbiter = Module(new RavVMemoryRequestArbiter())
   arbiter.io.ravv <> io
-  arbiter.io.fch  <> fch.io.requestResponseIo
   arbiter.io.mem  <> mem.io.requestResponseIo
 }

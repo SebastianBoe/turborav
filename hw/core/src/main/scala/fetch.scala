@@ -7,8 +7,6 @@ import Constants._
 class Fetch() extends Module {
   val io = new FetchIO()
 
-  val rr = io.requestResponseIo // For convenience
-
   val pc = Reg(init = UInt(0, width = Config.xlen))
 
   /* There should be a better way */
@@ -20,7 +18,7 @@ class Fetch() extends Module {
                                                         pc + UInt(4)
                 ))
 
-  val should_stall = io.i_stall || !rr.response.valid
+  val should_stall = io.i_stall
   val has_branched = io.exe_fch.pc_sel === PC_SEL_BRJMP || take_saved_branch
 
   when(io.exe_fch.pc_sel === PC_SEL_BRJMP){
@@ -33,14 +31,11 @@ class Fetch() extends Module {
     take_saved_branch := Bool(false)
   }
 
+  val rom = Module(new Rom())
+  rom.io.pc := pc
+
   // Fetch to decode
   io.fch_dec.pc          := pc
-  io.fch_dec.instr_valid := rr.response.valid && !has_branched
-  io.fch_dec.instr       := rr.response.bits.word
-
-  // Memory interface to fetch
-  rr.request.bits.addr := pc
-  rr.request.valid := Bool(true) // I think this is safe.
-  rr.request.bits.wdata := UInt(0)
-  rr.request.bits.write := Bool(false)
+  io.fch_dec.instr_valid := !has_branched
+  io.fch_dec.instr       := rom.io.instr
 }

@@ -30,10 +30,6 @@ object TurboRavTestRunner{
         chiselMainTest(mainArgs, () => Module(new RegBank())){
           c => new RegBankTest(c)
         }
-      case "romtest" =>
-        chiselMainTest(mainArgs, () => Module(new Rom())){
-          c => new RomTest(c)
-        }
       case "multtest" =>
         chiselMainTest(mainArgs, () => Module(new Mult())){
           c => new MultTest(c)

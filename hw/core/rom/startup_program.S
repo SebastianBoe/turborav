@@ -1,18 +1,7 @@
 main:
-    li x1, 0x10000000
-    li x2, 'H'
-    nop
-    nop
-    nop
-    nop
-    nop
-    sw x2, (x1)
-    nop
-    nop
-    nop
-    nop
-    nop
-    lw x3, (x1)
+    li x1, 0x1
+    li x2, 0x2
+    add x3, x1, x2
     nop
     nop
     nop

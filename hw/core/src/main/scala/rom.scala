@@ -7,36 +7,25 @@ import Array._
 import Apb._
 import java.math.BigInteger;
 
-class Rom() extends Module {
-  val io = new SlaveToApbIo()
+class Rom extends Module {
+  val io = new Bundle {
+    val pc    = UInt(INPUT, Config.xlen)
+    val instr = UInt(OUTPUT, Config.xlen)
+  }
 
-  // The apb bus addresses individual bytes, but the ROM stores 4-byte
+  // The pc addresses individual bytes, but the ROM stores 4-byte
   // words and assumes that all addresses are word-aligned. To go from
   // a byte-addressable address to a word addressable address we
   // right-shift twice.
-  val word_addr = io.addr >> UInt(2)
-  assert(io.addr(1,0) === UInt(0), "We assume word-aligned addresses.")
+  val word_addr = io.pc >> UInt(2)
+  assert(io.pc(1,0) === UInt(0), "We assume word-aligned addresses.")
 
+  // Create ROM
   val rom_array = parseRomContents()
   val rom = Vec(rom_array.map(UInt(_)))
 
-  io.rdata  := clearIfDisabled(
-    data    = rom(Reg(next = word_addr)),
-    enabled = io.enable
-  )
-
-  val s_idle :: s_ready :: Nil = Enum(UInt(), 2)
-  val state = Reg(init = s_idle)
-  when( state === s_ready ){
-    state := s_idle
-  } .elsewhen ( io.sel ) {
-    state := s_ready
-  } .otherwise {
-    state := s_idle
-  }
-
-  io.ready  := state === s_ready
-  io.enable := io.ready
+  // Read from rom
+  io.instr := rom(word_addr)
 
   // Assumes there is a file at path with
   // contents like
