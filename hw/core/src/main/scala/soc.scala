@@ -26,7 +26,7 @@ class Soc extends Module {
   ravv.io <> adapter.io.rr
 
   val master_apb = adapter.io.apb // For convenience
-  val is_spi_request = isInSpiSegment(master_apb.addr)
+  val is_spi_request = isSpiAddress(master_apb.addr)
 
   // Bah, was tricky to make this beautiful, try again later.
   spi.io.apb.addr   := clearIfDisabled(master_apb.addr  , enabled = is_spi_request)

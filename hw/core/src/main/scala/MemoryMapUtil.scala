@@ -32,19 +32,19 @@ object getMemorySegment {
 }
 
 object isApbAddress {
-  def apply(address: UInt):UInt = {
+  def apply(address: UInt):Bool = {
     getMemorySegment(address) === MEMORY_SEGMENT_APB
   }
 }
 
 object isRamAddress {
-  def apply(address: UInt):UInt = {
+  def apply(address: UInt):Bool = {
     getMemorySegment(address) === MEMORY_SEGMENT_RAM
   }
 }
 
 object isSpiAddress {
-  def apply(address: UInt):UInt = {
+  def apply(address: UInt):Bool = {
     getMemorySegment(address) === MEMORY_SEGMENT_SPI
   }
 }
