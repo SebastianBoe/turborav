@@ -11,7 +11,7 @@ object Constants {
 
   val BASE_ADDR_ROM  = new BigInteger("00000000", 16)
   val BASE_ADDR_RAM  = new BigInteger("10000000", 16)
-  val BASE_ADDR_MMIO = new BigInteger("20000000", 16)
+  val BASE_ADDR_APB  = new BigInteger("20000000", 16)
 
   val ALU_ADD_VAL  = 0
   val ALU_SLL_VAL  = 1
@@ -131,6 +131,8 @@ object Constants {
 
   val MEMORY_SEGMENT_ROM = UInt("b0000", 4)
   val MEMORY_SEGMENT_RAM = UInt("b0001", 4)
-  val MEMORY_SEGMENT_SPI = UInt("b0010", 4)
-
+  val MEMORY_SEGMENT_APB = UInt("b0010", 4)
+  val MEMORY_SEGMENT_SPI = MEMORY_SEGMENT_APB // Only true now because
+                                              // SPI is the only APB
+                                              // peripheral
 }

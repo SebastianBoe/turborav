@@ -37,7 +37,5 @@ class RavV extends Module {
   mem.io.i_stall := mem.io.o_stall
   wrb.io.i_stall := Bool(false)
 
-  val arbiter = Module(new RavVMemoryRequestArbiter())
-  arbiter.io.ravv <> io
-  arbiter.io.mem  <> mem.io.requestResponseIo
+  mem.io.requestResponseIo <> io
 }
