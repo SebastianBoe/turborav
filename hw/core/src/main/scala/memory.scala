@@ -41,8 +41,10 @@ class Memory extends Module {
   // RAM request code
   //////////////////////////////////////////////////////////////////////////////
   val ram =  Module(new Ram())
-  ram.io.addr := clearIfDisabled(io.exe_mem.alu_result, enabled = is_ram_request)
-  val ram_word = ram.io.word
+  ram.io.addr   := clearIfDisabled( exe_mem.alu_result , is_ram_request)
+  ram.io.word_w := clearIfDisabled( exe_mem.rs2        , is_ram_request)
+  ram.io.wen    := mem_ctrl.write && is_ram_request
+  val ram_word = ram.io.word_r
 
   //////////////////////////////////////////////////////////////////////////////
   // APB request code

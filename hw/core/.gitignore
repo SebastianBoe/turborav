@@ -17,3 +17,7 @@ generated/
 _xmsgs/
 synthesis/
 xst/
+
+# Put a symlink here that points to your test code instead.
+# (Temporary hack)
+rom/startup_program.S

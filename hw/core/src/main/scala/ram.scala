@@ -8,8 +8,11 @@ import Apb._
 
 class Ram extends Module {
   val io = new Bundle {
-    val addr = UInt(INPUT, Config.xlen)
-    val word = UInt(OUTPUT, Config.xlen)
+    val addr   = UInt(INPUT, Config.xlen)
+    val word_w = UInt(INPUT, Config.xlen)
+    val wen    = Bool(INPUT)
+
+    val word_r = UInt(OUTPUT, Config.xlen)
   }
 
   val word_size_in_bytes           = Config.xlen / 8
@@ -30,5 +33,11 @@ class Ram extends Module {
     most_significant_address_bit,
     byte_offset_size
   )
-  io.word := ram(ram_addr)
+
+  io.word_r := UInt(0) // Default
+  when(io.wen) {
+    ram(ram_addr) := io.word_w
+  } .otherwise {
+    io.word_r := ram(ram_addr)
+  }
 }
