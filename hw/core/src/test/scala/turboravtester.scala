@@ -58,6 +58,10 @@ object TurboRavTestRunner{
         chiselMainTest(mainArgs, () => Module(new Soc())){
           c => new SocTest(c)
         }
+      case "riscvtest" =>
+        chiselMainTest(mainArgs, () => Module(new Soc())){
+          c => new RiscvTest(c)
+        }
     }
   }
 }
