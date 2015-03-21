@@ -4,7 +4,12 @@
 #	make <module_name>.out             # Generate c++ simulator
 #	make clean                         # Delete generated files
 #	make synthesis/<module_name>.srp   # Create synthesis report
-#	make generated/startup_program.dis # Disassemble ROM contents
+
+# This variable contains the path to an elf program. It is meant to be
+# overridden on the command line like:
+
+# 'make rom="riscv-tools/riscv-tests/isa/rv32ui-p-simple soc.test'
+rom := generated/startup_program.o
 
 #TODO: Change signature to "make <module_name>.synth"
 
@@ -16,6 +21,8 @@ DIR_TEST    := src/test/scala
 DIR_GEN     := generated
 DIR_VLOG    := verilog
 DIR_SYNTH   := synthesis
+
+
 
 # Perhaps call xst in it's own directory to not get this junk in
 # hw/core
@@ -47,9 +54,6 @@ modules := \
 	$(wildcard \
 	$(DIR_SRC)/*.scala)))
 
-ROM_PROGRAM_NAME := startup_program
-ROM := $(DIR_GEN)/$(ROM_PROGRAM_NAME).hex
-
 CROSS ?= riscv64-unknown-elf-
 
 CC      := $(CROSS)gcc
@@ -64,9 +68,6 @@ OBJDUMP_FLAGS := --architecture=riscv:rv32
 
 .PHONY: all
 
-# Don't delete the ROM hex file contents, it is useful when debugging
-.SECONDARY: $(ROM)
-
 all:
 	@echo "No good default make rule yet"
 
@@ -76,19 +77,19 @@ clean:
 	project \
 	$(DIR_GEN) \
 	$(DIR_VLOG) \
-	$(SYNTHESIS_JUNK) \
-	$(DIR_SYNTH)
+	$(DIR_SYNTH) \
+	$(SYNTHESIS_JUNK)
 
-%.test: $(ROM) $(DIR_TEST)/%test.scala
+%.test: $(DIR_TEST)/%test.scala
 	sbt "test:run $*test $(CHISEL_FLAGS_C)"
 
-%.v:    $(ROM) $(DIR_SRC)/%.scala
+%.v:    $(DIR_SRC)/%.scala
 	sbt "run      $*     $(CHISEL_FLAGS_V)"
 
-%.out:  $(ROM) $(DIR_SRC)/%.scala
+%.out:  $(DIR_SRC)/%.scala
 	sbt "run      $*     $(CHISEL_FLAGS_C)"
 
-$(DIR_SYNTH)/%.srp: $(DIR_SYNTH)/%.xst $(ROM) $(DIR_SYNTH)/%.prj
+$(DIR_SYNTH)/%.srp: $(DIR_SYNTH)/%.xst $(DIR_SYNTH)/%.prj
 	xst \
 	 -ifn $< \
 	 -ofn $@ \
@@ -99,14 +100,6 @@ $(DIR_SYNTH)/%.srp: $(DIR_SYNTH)/%.xst $(ROM) $(DIR_SYNTH)/%.prj
 
 %.bin: %.o
 	${OBJCOPY} -O binary $< $@
-
-$(DIR_GEN)/$(ROM_PROGRAM_NAME).dis: $(DIR_GEN)/$(ROM_PROGRAM_NAME).o
-	$(OBJDUMP) $(OBJDUMP_FLAGS) -D $< > $@
-    # The disassembly can be done manually for debugging purposes.
-
-$(DIR_GEN)/$(ROM_PROGRAM_NAME).o: rom/$(ROM_PROGRAM_NAME).S
-	$(dir_guard)
-	${AS} ${ASFLAGS} $< -o $@
 
 $(DIR_SYNTH)/%.xst: $(DIR_SYNTH)/%.prj
 	@echo "run                           " >  $@
