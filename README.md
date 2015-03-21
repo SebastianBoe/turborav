@@ -24,8 +24,8 @@ how to get started with hw-development.
 
 ### Install (yet) un-packaged dependencies
 
-  Install the GNU toolchain for RISC-V from
-  https://github.com/ucb-bar/riscv-gnu-toolchain
+  Install the GNU toolchain for RISC-V from our git submodule
+  turborav/hw/core/riscv-tools/
 
 ### Test your environment
 
