@@ -13,16 +13,14 @@ import scala.math.BigInt
 class RiscvTest(c: Soc) extends Tester(c) {
   while(get_test_status() == Running)
   {
-    println(get_test_status())
     step(1)
   }
   print_regs()
-  println(
-    get_test_status() match { case Failed => "FAILED" case Passed => "PASSED" }
-  )
 
   def get_test_status() : TestStatus = {
     def hex2dec(hex: String): BigInt = {
+       // There has to be a better way to do this in scala, i don't
+       // understand why BigInt("81923ba", 16) didn't work.
       hex.toLowerCase().toList.map(
         "0123456789abcdef".indexOf(_)).map(
         BigInt(_)).reduceLeft( _ * 16 + _)
@@ -30,8 +28,6 @@ class RiscvTest(c: Soc) extends Tester(c) {
 
     val TestPassInstr = hex2dec("51e0d073")
     val TestFailInstr = hex2dec("51ee1073")
-    println(TestPassInstr)
-    println(peek(c.ravv.dec.fch_dec.instr))
     peek(c.ravv.dec.fch_dec.instr) match {
       case TestPassInstr => Passed
       case TestFailInstr => Failed
