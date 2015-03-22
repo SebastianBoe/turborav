@@ -9,7 +9,7 @@
 # overridden on the command line like:
 
 # 'make rom="riscv-tools/riscv-tests/isa/rv32ui-p-simple soc.test'
-rom := generated/startup_program.o
+ROM := generated/startup_program.o
 
 #TODO: Change signature to "make <module_name>.synth"
 
@@ -68,6 +68,10 @@ OBJDUMP_FLAGS := --architecture=riscv:rv32
 
 .PHONY: all
 
+# My depdencies are a bit wrong, so as a hack I delete these
+# intermediaries to prevent them from bein re-used.
+.INTERMEDIATE: generated/startup_program.hex generated/startup_program.bin
+
 all:
 	@echo "No good default make rule yet"
 
@@ -80,14 +84,11 @@ clean:
 	$(DIR_SYNTH) \
 	$(SYNTHESIS_JUNK)
 
-%.test: $(DIR_TEST)/%test.scala
+%.test: generated/startup_program.hex $(DIR_TEST)/%test.scala 
 	sbt "test:run $*test $(CHISEL_FLAGS_C)"
 
-%.v:    $(DIR_SRC)/%.scala
+%.v:    generated/startup_program.hex $(DIR_SRC)/%.scala
 	sbt "run      $*     $(CHISEL_FLAGS_V)"
-
-%.out:  $(DIR_SRC)/%.scala
-	sbt "run      $*     $(CHISEL_FLAGS_C)"
 
 $(DIR_SYNTH)/%.srp: $(DIR_SYNTH)/%.xst $(DIR_SYNTH)/%.prj
 	xst \
@@ -95,10 +96,11 @@ $(DIR_SYNTH)/%.srp: $(DIR_SYNTH)/%.xst $(DIR_SYNTH)/%.prj
 	 -ofn $@ \
 	 -intstyle silent
 
-%.hex: %.bin
+generated/startup_program.hex: generated/startup_program.bin
 	hexdump -v -e '1/4 "%08X" "\n"' $< > $@
 
-%.bin: %.o
+generated/startup_program.bin: $(ROM)
+	$(dir_guard)
 	${OBJCOPY} -O binary $< $@
 
 $(DIR_SYNTH)/%.xst: $(DIR_SYNTH)/%.prj
