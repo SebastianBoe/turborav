@@ -8,7 +8,7 @@
 # This variable contains the path to an elf program. It is meant to be
 # overridden on the command line like:
 
-# 'make rom="riscv-tools/riscv-tests/isa/rv32ui-p-simple soc.test'
+# 'make ROM="riscv-tools/riscv-tests/isa/rv32ui-p-simple soc.test'
 ROM := generated/startup_program.o
 
 #TODO: Change signature to "make <module_name>.synth"
@@ -69,7 +69,7 @@ OBJDUMP_FLAGS := --architecture=riscv:rv32
 .PHONY: all
 
 # My depdencies are a bit wrong, so as a hack I delete these
-# intermediaries to prevent them from bein re-used.
+# intermediaries to prevent them from being re-used.
 .INTERMEDIATE: generated/startup_program.hex generated/startup_program.bin
 
 all:

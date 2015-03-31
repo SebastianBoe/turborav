@@ -5,9 +5,7 @@ import Common._
 
 object TurboRavTestRunner{
   def main(args: Array[String]): Unit = {
-
-    val module = if (args.length > 0) args(0) else "ravvtest"
-
+    val module = args(0)
     val mainArgs = args.slice(1, args.length)
 
     // En pils til førstemann som kan fjerne redundansen.
