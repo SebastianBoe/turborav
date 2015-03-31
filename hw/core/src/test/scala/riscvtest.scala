@@ -2,6 +2,9 @@ package TurboRav
 
 import Chisel._
 import scala.math.BigInt
+import scala.xml.PrettyPrinter
+import org.apache.commons.io.FileUtils
+import java.io.File
 
 /**
   A testbench for simulating tests in the riscv-tests repo.
@@ -10,12 +13,13 @@ import scala.math.BigInt
   failure and is able to stop the test execution once a test pass or
   failure has been detected.
   */
-class RiscvTest(c: Soc) extends Tester(c) {
+class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
   while(get_test_status() == Running)
   {
     step(1)
   }
   print_regs()
+  generate_xml_for_jenkins()
 
   def get_test_status() : TestStatus = {
     def hex2dec(hex: String): BigInt = {
@@ -51,6 +55,22 @@ class RiscvTest(c: Soc) extends Tester(c) {
       print("\n")
     }
     print("\n\n")
+  }
+
+  def generate_xml_for_jenkins() {
+    val file_name = "generated/%s.xml" format(test_name)
+    val file_contents = new PrettyPrinter(80, 2).format(
+      <testsuite>
+        <testcase classname="a_classname" name={test_name}>
+        {if (ok) "" else <failure type="a_type">error_msg</failure>}
+        </testcase>
+      </testsuite>
+    ) + "\n"
+
+    FileUtils.writeStringToFile(
+      new File(file_name),
+      file_contents
+    )
   }
 }
 

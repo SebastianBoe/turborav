@@ -84,8 +84,16 @@ clean:
 	$(DIR_SYNTH) \
 	$(SYNTHESIS_JUNK)
 
-%.test: generated/startup_program.hex $(DIR_TEST)/%test.scala 
-	sbt "test:run $*test $(CHISEL_FLAGS_C)"
+# This rule assumes you have already installed the toolchain in our
+# riscv-tools submodule.
+
+# Also, oh noes, recursive make! Is recursive make allowed if you have
+# a good reason to not change the child makefiles?
+isa/%:
+	$(MAKE) --directory=isa $*
+
+%.test: generated/startup_program.hex $(DIR_TEST)/%test.scala
+	sbt "test:run $*test $(ROM) $(CHISEL_FLAGS_C)"
 
 %.v:    generated/startup_program.hex $(DIR_SRC)/%.scala
 	sbt "run      $*     $(CHISEL_FLAGS_V)"

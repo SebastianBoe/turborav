@@ -3,5 +3,6 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "edu.berkeley.cs" %% "chisel" % "latest.release"
+  "edu.berkeley.cs" %% "chisel" % "latest.release",
+  "commons-io" % "commons-io" % "2.4"
 )
