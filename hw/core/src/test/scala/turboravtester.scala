@@ -13,8 +13,7 @@ object TurboRavTestRunner{
 	  "--compile",
 	  "--test",
 	  "--vcd",
-	  "--debug",
-      "--gen"
+	  "--debug"
     )
 
     // En pils til førstemann som kan fjerne redundansen.
