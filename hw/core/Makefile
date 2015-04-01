@@ -1,7 +1,6 @@
 # Usage:
 #	make <module_name>.test            # Run a test on the simulator
 #	make <module_name>.v               # Generate verilog
-#	make <module_name>.out             # Generate c++ simulator
 #	make clean                         # Delete generated files
 #	make synthesis/<module_name>.srp   # Create synthesis report
 
@@ -10,8 +9,6 @@
 
 # 'make ROM="riscv-tools/riscv-tests/isa/rv32ui-p-simple soc.test'
 ROM := generated/startup_program.o
-
-#TODO: Change signature to "make <module_name>.synth"
 
 # Include some generic utility functions
 include utilities.mk
@@ -22,10 +19,6 @@ DIR_GEN     := generated
 DIR_VLOG    := verilog
 DIR_SYNTH   := synthesis
 
-
-
-# Perhaps call xst in it's own directory to not get this junk in
-# hw/core
 SYNTHESIS_JUNK := \
 	xst \
 	_xmsgs/ \
@@ -39,12 +32,6 @@ CHISEL_FLAGS_V := \
 	--backend v \
 	--targetDir $(DIR_VLOG)
 
-modules := \
-	$(notdir \
-	$(basename \
-	$(wildcard \
-	$(DIR_SRC)/*.scala)))
-
 CROSS ?= riscv64-unknown-elf-
 
 CC      := $(CROSS)gcc
@@ -57,23 +44,14 @@ CFLAGS :=-march=RV32I -Wall -I./
 ASFLAGS:=-march=RV32I --fatal-warnings
 OBJDUMP_FLAGS := --architecture=riscv:rv32
 
-.PHONY: all
-
 # My depdencies are a bit wrong, so as a hack I delete these
 # intermediaries to prevent them from being re-used.
 .INTERMEDIATE: generated/startup_program.hex generated/startup_program.bin
 
+.PHONY: all
+
 all:
 	@echo "No good default make rule yet"
-
-clean:
-	rm -rf \
-	target \
-	project \
-	$(DIR_GEN) \
-	$(DIR_VLOG) \
-	$(DIR_SYNTH) \
-	$(SYNTHESIS_JUNK)
 
 # This rule assumes you have already installed the toolchain in our
 # riscv-tools submodule.
@@ -128,3 +106,13 @@ $(DIR_SYNTH)/%.prj: %.v
 # figure out how to create it properly.
 	find $(DIR_VLOG) -name \*-harness.v -o -printf "verilog work %p\n" |\
 	tail -n +2 > $@
+
+clean:
+	rm -rf \
+	target \
+	project \
+	$(DIR_GEN) \
+	$(DIR_VLOG) \
+	$(DIR_SYNTH) \
+	$(SYNTHESIS_JUNK)
+
