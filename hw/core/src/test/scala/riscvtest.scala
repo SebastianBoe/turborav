@@ -18,6 +18,7 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
   {
     step(1)
   }
+  expect(get_test_status() == Passed, "")
   print_regs()
   generate_xml_for_jenkins()
 
