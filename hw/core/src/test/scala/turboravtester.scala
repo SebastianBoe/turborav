@@ -9,7 +9,7 @@ object TurboRavTestRunner{
     val test_args = Array(
       "--genHarness",
 	  "--backend", "c",
-	  "--targetDir", "generated",
+	  "--targetDir", "generated/%s" format rom,
 	  "--compile",
 	  "--test",
 	  "--vcd",
