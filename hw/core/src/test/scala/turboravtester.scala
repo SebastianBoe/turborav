@@ -5,64 +5,73 @@ import Common._
 
 object TurboRavTestRunner{
   def main(args: Array[String]): Unit = {
-    val module = args(0)
-    val mainArgs = args.slice(1, args.length)
+    val Array(module, rom) = args
+    val test_args = Array(
+      "--genHarness",
+	  "--backend", "c",
+	  "--targetDir", "generated",
+	  "--compile",
+	  "--test",
+	  "--vcd",
+	  "--debug",
+      "--gen"
+    )
 
     // En pils til førstemann som kan fjerne redundansen.
     // Hvis du prøvde og feilet inkrementer følgende:
     // 2
     val res = module match {
       case "alutest" =>
-        chiselMainTest(mainArgs, () => Module(new Alu())){
+        chiselMainTest(test_args, () => Module(new Alu())){
           c => new AluTest(c)
         }
       case "brutest" =>
-        chiselMainTest(mainArgs, () => Module(new BranchUnit())){
+        chiselMainTest(test_args, () => Module(new BranchUnit())){
           c => new BranchUnitTest(c)
         }
       case "fwutest" =>
-        chiselMainTest(mainArgs, () => Module(new ForwardingUnit())){
+        chiselMainTest(test_args, () => Module(new ForwardingUnit())){
           c => new ForwardingUnitTest(c)
         }
       case "regbanktest" =>
-        chiselMainTest(mainArgs, () => Module(new RegBank())){
+        chiselMainTest(test_args, () => Module(new RegBank())){
           c => new RegBankTest(c)
         }
       case "multtest" =>
-        chiselMainTest(mainArgs, () => Module(new Mult())){
+        chiselMainTest(test_args, () => Module(new Mult())){
           c => new MultTest(c)
         }
       case "decodetest" =>
-        chiselMainTest(mainArgs, () => Module(new Decode())){
+        chiselMainTest(test_args, () => Module(new Decode())){
           c => new DecodeTest(c)
         }
       case "executetest" =>
-        chiselMainTest(mainArgs, () => Module(new Execute())){
+        chiselMainTest(test_args, () => Module(new Execute())){
           c => new ExecuteTest(c)
         }
       case "memorytest" =>
-        chiselMainTest(mainArgs, () => Module(new Memory())){
+        chiselMainTest(test_args, () => Module(new Memory())){
           c => new MemoryTest(c)
         }
       case "writebacktest" =>
-      chiselMainTest(mainArgs, () => Module(new Writeback())){
+      chiselMainTest(test_args, () => Module(new Writeback())){
         c => new WritebackTest(c)
       }
       case "ravvtest" =>
-        chiselMainTest(mainArgs, () => Module(new RavV())){
+        chiselMainTest(test_args, () => Module(new RavV())){
           c => new RavVTest(c)
         }
       case "soctest" =>
-        chiselMainTest(mainArgs, () => Module(new Soc())){
+        chiselMainTest(test_args, () => Module(new Soc())){
           c => new SocTest(c)
         }
       case "riscvtest" =>
         chiselMainTest(
-          mainArgs.slice(1, mainArgs.length),
+          test_args,
           () => Module(new Soc())
         )
         {
-          c => new RiscvTest(c, mainArgs(0))
+          c => new RiscvTest(c, rom)
         }
     }
   }

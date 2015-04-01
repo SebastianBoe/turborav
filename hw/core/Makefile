@@ -34,15 +34,6 @@ SYNTHESIS_JUNK := \
 
 FPGA_MODEL := xc3s250e-cp132-5
 
-CHISEL_FLAGS_C := \
-	--genHarness \
-	--backend c \
-	--targetDir $(DIR_GEN) \
-	--compile \
-	--test \
-	--vcd \
-	--debug
-
 CHISEL_FLAGS_V := \
 	--genHarness \
 	--backend v \
@@ -93,7 +84,7 @@ isa/%:
 	$(MAKE) --directory=isa $*
 
 %.test: generated/startup_program.hex $(DIR_TEST)/%test.scala
-	sbt "test:run $*test $(ROM) $(CHISEL_FLAGS_C)"
+	sbt "test:run $*test $(ROM)"
 
 %.v:    generated/startup_program.hex $(DIR_SRC)/%.scala
 	sbt "run      $*     $(CHISEL_FLAGS_V)"
