@@ -62,7 +62,7 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
     val file_name = "generated/%s.xml" format(test_name)
     val file_contents = new PrettyPrinter(80, 2).format(
       <testsuite>
-        <testcase classname="a_classname" name={test_name}>
+        <testcase classname={test_name} name="name">
         {if (ok) "" else <failure type="a_type">error_msg</failure>}
         </testcase>
       </testsuite>
