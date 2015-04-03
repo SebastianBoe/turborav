@@ -75,12 +75,12 @@ class Memory extends Module {
     is_apb_request -> response.bits.word
   ))
   io.mem_wrb <> exe_mem
-  io.mem_exe.alu_result := exe_mem.alu_result // ??? Why do we feed this back?
 
+  // Forwarding of ALU result
+  io.mem_exe.alu_result := exe_mem.alu_result
 
-  // TODO: Figure out how to resolve load-use hazards.
-  io.fwu_mem.rd_wen  := Bool(false)
-  io.fwu_mem.rd_addr := UInt(0)
+  io.fwu_mem.rd_wen  := exe_mem.wrb_ctrl.rd_wen
+  io.fwu_mem.rd_addr := exe_mem.rd_addr
 
   io.o_stall := is_apb_request && ! response.valid
 
