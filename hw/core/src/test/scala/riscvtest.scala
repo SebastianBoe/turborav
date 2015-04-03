@@ -41,6 +41,19 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
   }
 
   def print_regs() = {
+    // Names used by the toolchain, not the RISC V ISA spec.
+    val regs_canonical = Array(
+      "zero",
+      "ra",
+      "sp",
+      "gp",
+      "tp",
+      "s0", "s1",
+      "t0", "t1", "t2",
+      "a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7",
+      "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11",
+      "t3", "t4", "t5", "t6"
+    )
     val regs = Array.ofDim[BigInt](32)
 
     for(i <- 0 until 32){
@@ -51,7 +64,7 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
     for(i <- 0 until 32 / 4){
       for(j <- 0 until 4){
         val x= 4*i+j
-        print("x%02d: %08x\t".format(x,regs(x)))
+        print("%5s (x%02d): %08x\t".format(regs_canonical(x), x, regs(x)))
       }
       print("\n")
     }
