@@ -40,6 +40,7 @@ class DecodeExecute() extends Bundle {
   val imm     = UInt(OUTPUT, Config.xlen)
   val rd_addr = UInt(OUTPUT, Config.xlen)
   val pc      = UInt(OUTPUT, Config.xlen)
+  val pc_sel  = Bits(INPUT,  PC_SEL_WIDTH)
 
   val exe_ctrl = new ExecuteCtrl()
   val mem_ctrl = new MemoryCtrl()

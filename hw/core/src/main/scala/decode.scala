@@ -132,7 +132,7 @@ class Decode() extends Module {
   dec_exe.wrb_ctrl.rd_sel := Mux(is_jump(opcode), RD_PC,
     Mux(opcode === OPCODE_LOAD, RD_MEM, RD_ALU))
 
-  when(!fch_dec.instr_valid)
+  when(!fch_dec.instr_valid || dec_exe.pc_sel === PC_SEL_BRJMP)
   {
     dec_exe.wrb_ctrl.kill()
     dec_exe.mem_ctrl.kill()

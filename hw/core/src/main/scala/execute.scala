@@ -42,14 +42,17 @@ class Execute() extends Module {
   bru.io.in_a := dec_exe.rs1
   bru.io.in_b := dec_exe.rs2
   bru.io.func := ctrl.bru_func
-  io.exe_fch.pc_alu := alu.io.out
-  io.exe_fch.pc_sel := Mux(bru.io.take,
+  val pc_sel = Mux(bru.io.take,
                            PC_SEL_BRJMP,
                            PC_SEL_PC_PLUS4)
 
+  io.exe_fch.pc_alu := alu.io.out
+  io.exe_fch.pc_sel := pc_sel
+  io.dec_exe.pc_sel := pc_sel
+
   io.fwu_exe.rs1_addr := dec_exe.rs1_addr
   io.fwu_exe.rs2_addr := dec_exe.rs2_addr
-
+  io.dec_exe.pc_sel := bru.io.take
 
   io.exe_mem <> dec_exe
 }
