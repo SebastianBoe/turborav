@@ -20,12 +20,27 @@ how to get started with hw-development.
 
 ### Install packaged dependencies
 
-   yaourt -S sbt texlive-most
+   yaourt -S sbt texlive-most autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils
 
 ### Install (yet) un-packaged dependencies
 
-  Install the GNU toolchain for RISC-V from our git submodule
-  turborav/hw/core/riscv-tools/
+   Install the GNU toolchain for RISC-V from our git submodule
+
+   cd hw/core/riscv-tools
+   git submodule init
+   git submodule update
+
+   cd hw/core/riscv-tools/riscv-gnu-toolchain
+   git submodule init
+   git submodule update
+
+   cd hw/core/riscv-tools/riscv-tests/env
+   git submodule init
+   git submodule update
+
+   cd hw/core/riscv-tools/riscv-gnu-toolchain
+   ./configure --prefix=/opt/riscv # make sure you have access rights
+   make
 
 ### Test your environment
 
