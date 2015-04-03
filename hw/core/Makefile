@@ -7,7 +7,7 @@
 # This variable contains the path to an elf program. It is meant to be
 # overridden on the command line like:
 
-# 'make ROM="riscv-tools/riscv-tests/isa/rv32ui-p-simple soc.test'
+# 'make ROM=riscv-tools/riscv-tests/isa/rv32ui-p-simple soc.test'
 ROM := generated/startup_program.o
 
 # Include some generic utility functions
