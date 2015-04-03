@@ -39,8 +39,8 @@ class Execute() extends Module {
   io.exe_mem.alu_result := alu.io.out
 
   val bru = Module(new BranchUnit())
-  bru.io.in_a := dec_exe.rs1
-  bru.io.in_b := dec_exe.rs2
+  bru.io.in_a := rs1
+  bru.io.in_b := rs2
   bru.io.func := ctrl.bru_func
   val pc_sel = Mux(bru.io.take,
                            PC_SEL_BRJMP,
