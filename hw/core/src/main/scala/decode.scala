@@ -134,7 +134,6 @@ class Decode() extends Module {
 
   when(!fch_dec.instr_valid || dec_exe.pc_sel === PC_SEL_BRJMP)
   {
-    dec_exe.wrb_ctrl.kill()
-    dec_exe.mem_ctrl.kill()
+    dec_exe.kill()
   }
 }
