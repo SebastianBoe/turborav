@@ -14,7 +14,7 @@ class Writeback() extends Module {
   }
 
   val ctrl = mem_wrb.wrb_ctrl
-  val rd_data = Mux(ctrl.rd_sel === RD_PC,  mem_wrb.pc,
+  val rd_data = Mux(ctrl.rd_sel === RD_PC,  mem_wrb.pc + UInt(4),
                 Mux(ctrl.rd_sel === RD_MEM, mem_wrb.mem_read_data,
                                             mem_wrb.alu_result))
 
