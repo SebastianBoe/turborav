@@ -107,6 +107,14 @@ $(DIR_SYNTH)/%.prj: %.v
 	find $(DIR_VLOG) -name \*-harness.v -o -printf "verilog work %p\n" |\
 	tail -n +2 > $@
 
+generated/startup_program.o: rom/startup_program.S
+	$(dir_guard)
+	${AS} ${ASFLAGS} $< -o $@
+
+rom/startup_program.S:
+	mkdir -p rom
+	printf "# Dummy program, can be used for testing purposes\s#Execute: make soc.test\nloop:\n    j loop\nnop\nnop\n" > rom/startup_program.S
+
 clean:
 	rm -rf \
 	target \
