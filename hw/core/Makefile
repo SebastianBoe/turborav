@@ -41,7 +41,7 @@ OBJCOPY := $(CROSS)objcopy
 OBJDUMP := $(CROSS)objdump
 
 CFLAGS :=-march=RV32I -Wall -I./
-ASFLAGS:=-march=RV32I --fatal-warnings
+ASFLAGS:=-march=RV32IM --fatal-warnings
 OBJDUMP_FLAGS := --architecture=riscv:rv32
 
 # My depdencies are a bit wrong, so as a hack I delete these
