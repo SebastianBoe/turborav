@@ -113,7 +113,7 @@ generated/startup_program.o: rom/startup_program.S
 
 rom/startup_program.S:
 	mkdir -p rom
-	printf "# Dummy program, can be used for testing purposes\s#Execute: make soc.test\nloop:\n    j loop\nnop\nnop\n" > rom/startup_program.S
+	printf "# Dummy program, can be used for testing\n# Execute: make soc.test\nloop:\n    j loop\nnop\nnop\n" > rom/startup_program.S
 
 clean:
 	rm -rf \
