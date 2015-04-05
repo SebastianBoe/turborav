@@ -15,7 +15,7 @@ class Mult() extends Module {
     val in_b    = UInt(INPUT, xlen)
     val enable = Bool(INPUT)
     val abort  = Bool(INPUT)
-    val func   = UInt(INPUT, 3)
+    val func   = UInt(INPUT, MULT_FUNC_WIDTH)
 
     val out_lo = UInt(OUTPUT, xlen)
     val out_hi = UInt(OUTPUT, xlen)

@@ -66,6 +66,7 @@ class ExecuteIO() extends Bundle {
   val wrb_exe = new WritebackExecute().flip()
 
   val i_stall = Bool(INPUT)
+  val o_stall = Bool(OUTPUT)
 }
 
 class ExecuteCtrl() extends Bundle {
@@ -73,6 +74,8 @@ class ExecuteCtrl() extends Bundle {
   val alu_in_b_sel = Bits(OUTPUT, ALU_IN_B_SEL_WIDTH)
   val alu_func     = Bits(OUTPUT, ALU_FUNC_WIDTH)
   val bru_func     = Bits(OUTPUT, BRANCH_FUNC_WIDTH)
+  val mult_func    = Bits(OUTPUT, MULT_FUNC_WIDTH)
+  val mult_enable  = Bool(OUTPUT)
 
   def kill(){
     bru_func := BNOT
@@ -87,6 +90,13 @@ class ExecuteMemory() extends Bundle {
 
   val mem_ctrl = new MemoryCtrl()
   val wrb_ctrl = new WritebackCtrl()
+
+  def kill()
+  {
+    wrb_ctrl.kill()
+    mem_ctrl.kill()
+  }
+
 }
 
 class ExecuteFetch() extends Bundle {

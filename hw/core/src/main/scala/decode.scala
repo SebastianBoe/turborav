@@ -26,6 +26,10 @@ class Decode() extends Module {
     opcode === OPCODE_STORE
   }
 
+  def is_mult_div(opcode: Bits) = {
+    opcode === OPCODE_MULT_DIV
+  }
+
   val io = new DecodeIO()
 
   val fch_dec = Reg(init = new FetchDecode())
@@ -40,6 +44,7 @@ class Decode() extends Module {
 
   val opcode     = fch_dec.instr(6, 0)
   val func3      = fch_dec.instr(14, 12)
+  val func7      = fch_dec.instr(31, 25)
   val alu_func_r = Cat(fch_dec.instr(30), func3)
   val alu_func_i = Cat(UInt(0, width = 1), func3)
 
@@ -103,6 +108,9 @@ class Decode() extends Module {
   exe_ctrl.bru_func:= Mux(opcode === OPCODE_BRANCH, func3,
                       Mux(is_jump(opcode),          BJMP,
                                                     BNOT))
+
+  exe_ctrl.mult_func := func3
+  exe_ctrl.mult_enable := is_mult_div(opcode) && func7 === Bits("b0000001")
 
   dec_exe.imm := MuxCase( imm_i, Array(
             (opcode === OPCODE_REG_IMM && is_shift(func3))      -> shamt,

@@ -9,6 +9,7 @@ class Execute() extends Module {
   val io = new ExecuteIO()
 
   val dec_exe = Reg(init = new DecodeExecute())
+
   when(!io.i_stall){
     dec_exe := io.dec_exe
   }
@@ -36,7 +37,6 @@ class Execute() extends Module {
   alu.io.in_a := alu_in_a
   alu.io.in_b := alu_in_b
   alu.io.func := ctrl.alu_func
-  io.exe_mem.alu_result := alu.io.out
 
   val bru = Module(new BranchUnit())
   bru.io.in_a := rs1
@@ -45,6 +45,38 @@ class Execute() extends Module {
   val pc_sel = Mux(bru.io.take,
                            PC_SEL_BRJMP,
                            PC_SEL_PC_PLUS4)
+
+
+  val mult_enable = dec_exe.exe_ctrl.mult_enable
+
+  val s_normal :: s_mult :: Nil = Enum(UInt(), 2)
+  val state = Reg(init = s_normal)
+
+  val mult = Module(new Mult())
+  mult.io.in_a   := rs1
+  mult.io.in_b   := rs2
+  mult.io.func   := dec_exe.exe_ctrl.mult_func
+  mult.io.enable := (mult_enable && state === s_normal)
+
+
+  /* Insert bubbles while multiplication is executing*/
+  when(state === s_normal && mult_enable){
+    io.exe_mem.kill()
+    state := s_mult
+  }
+  .elsewhen(state === s_mult && !mult.io.done){
+    io.exe_mem.kill()
+  }
+  .otherwise{
+    state := s_normal
+  }
+
+  /* Stall as long as multiplication is executing */
+  io.o_stall :=((state === s_normal) && mult_enable)  ||
+               ((state === s_mult)   && !mult.io.done)
+
+  io.exe_mem.alu_result := Mux(state === s_mult, mult.io.out_lo,
+                                                 alu.io.out)
 
   io.exe_fch.pc_alu := alu.io.out
   io.exe_fch.pc_sel := pc_sel

@@ -85,6 +85,7 @@ object Constants {
   def OPCODE_REG_IMM    = Bits("b0010011")
   def OPCODE_FENCE      = Bits("b0001111")
   def OPCODE_SYSTEM     = Bits("b1110011")
+  def OPCODE_MULT_DIV   = Bits("b0110011")
 
   val ALU_IN_A_RS1_VAL  = 0
   val ALU_IN_A_PC_VAL   = 1
