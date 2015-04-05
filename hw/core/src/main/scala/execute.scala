@@ -6,6 +6,20 @@ import Constants._
 
 class Execute() extends Module {
 
+  def is_mult_upper(mult_func: Bits) = {
+    mult_func === MULT_MULH   ||
+    mult_func === MULT_MULHU  ||
+    mult_func === MULT_MULHSU ||
+    mult_func === MULT_REM    ||
+    mult_func === MULT_REMU
+  }
+
+  def is_mult_lower(mult_func: Bits) = {
+    mult_func === MULT_MUL  ||
+    mult_func === MULT_DIV  ||
+    mult_func === MULT_DIVU
+  }
+
   val io = new ExecuteIO()
 
   val dec_exe = Reg(init = new DecodeExecute())
@@ -48,14 +62,14 @@ class Execute() extends Module {
 
 
   val mult_enable = dec_exe.exe_ctrl.mult_enable
-
+  val mult_func = dec_exe.exe_ctrl.mult_func
   val s_normal :: s_mult :: Nil = Enum(UInt(), 2)
   val state = Reg(init = s_normal)
 
   val mult = Module(new Mult())
   mult.io.in_a   := rs1
   mult.io.in_b   := rs2
-  mult.io.func   := dec_exe.exe_ctrl.mult_func
+  mult.io.func   := mult_func
   mult.io.enable := (mult_enable && state === s_normal)
 
 
@@ -75,8 +89,10 @@ class Execute() extends Module {
   io.o_stall :=((state === s_normal) && mult_enable)  ||
                ((state === s_mult)   && !mult.io.done)
 
-  io.exe_mem.alu_result := Mux(state === s_mult, mult.io.out_lo,
-                                                 alu.io.out)
+  io.exe_mem.alu_result :=
+     Mux(is_mult_upper(mult_func) && state === s_mult, mult.io.out_hi,
+     Mux(is_mult_lower(mult_func) && state === s_mult, mult.io.out_lo,
+                                                       alu.io.out))
 
   io.exe_fch.pc_alu := alu.io.out
   io.exe_fch.pc_sel := pc_sel
