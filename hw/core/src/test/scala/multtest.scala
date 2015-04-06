@@ -53,26 +53,26 @@ class MultTest(c: Mult) extends Tester(c) {
 
 
  // TEST division
- test(0, one, MULT_DIV_VAL, 0, 0)
- test(one, one, MULT_DIV_VAL, one, 0)
- test(two, one, MULT_DIV_VAL, two, 0)
- test(max, one, MULT_DIV_VAL, max, 0)
- test(max, max, MULT_DIV_VAL, one, 0)
- test(max, two, MULT_DIV_VAL, max/two, 1)
+ test(0, one, MULT_DIVU_VAL, 0, 0)
+ test(one, one, MULT_DIVU_VAL, one, 0)
+ test(two, one, MULT_DIVU_VAL, two, 0)
+ test(max, one, MULT_DIVU_VAL, max, 0)
+ test(max, max, MULT_DIVU_VAL, one, 0)
+ test(max, two, MULT_DIVU_VAL, max/two, 1)
 
  for(i <- 0 until 10){
    val a = BigInt(c.xlen, rnd)
    val b = BigInt(c.xlen, rnd)
    var res =  a / b
    val rem =  a - (a/b)*b
-   test(a, b, MULT_DIV_VAL, res, rem)
+   test(a, b, MULT_DIVU_VAL, res, rem)
  }
 
  // TEST abort
  poke(c.io.enable, 1)
  poke(c.io.in_a, two)
  poke(c.io.in_b, one)
- poke(c.io.func, MULT_DIV_VAL)
+ poke(c.io.func, MULT_DIVU_VAL)
  // step once and deassert enable
  step(1)
  poke(c.io.enable, 0)
