@@ -54,3 +54,11 @@ holding: 0 0001 1001                 (upper holding = difference)
          0 0001                      (difference >= 0, holding(0) = '1' )
 holding: 0 0001 0011                 (upper holding = difference)
            0001 0011                 (finish)
+
+Signed:
+Make input values positive
+Perform algorithm
+if input had different sign
+    negate quotient
+if dividend sign differs from remainder sign
+    negate remainder
