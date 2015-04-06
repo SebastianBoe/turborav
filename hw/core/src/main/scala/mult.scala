@@ -25,13 +25,17 @@ class Mult() extends Module {
 
   def is_divide(func: UInt) = func(2)
 
-  /* For some reason i cannot name these with uppercase */
-  val s_idle:: s_mult :: s_div :: s_negate_input :: s_negate_output :: Nil = Enum(UInt(), 5)
+  def is_signed_divide(func: UInt) = !func(0)
+
+  val s_idle :: s_mult :: s_div :: s_negate_input :: s_negate_output_div :: s_negate_output_mult :: Nil = Enum(UInt(), 6)
 
   val state     = Reg(init = s_idle)
   val exec_func = Reg(UInt())
   val count     = Reg(UInt(width = log2Up(xlen)))
-  val negate    = Reg(init = Bool(false))
+
+  val negate                  = Reg(init = Bool(false))
+  val dividend_sign           = Reg(init = Bool(false))
+  val should_negate_quotient  = Reg(init = Bool(false))
 
   // Holds the product, or the combined quotient and remainder
   // plus one for overflow from the adder during computation
@@ -58,7 +62,13 @@ class Mult() extends Module {
 
   when (state === s_idle && io.enable) {
     when (is_divide(io.func)) {
-      state := s_div
+      when(is_signed_divide(io.func)){
+        state := s_negate_input
+        should_negate_quotient := io.in_a(xlen-1) != io.in_b(xlen-1)
+        dividend_sign := io.in_a(xlen-1)
+      }.otherwise{
+        state := s_div
+      }
       argument := io.in_b
       holding := Cat(UInt(0, width = xlen + 1), io.in_a)
     } .otherwise {
@@ -73,7 +83,11 @@ class Mult() extends Module {
 
   when (state === s_div) {
     when (count === UInt(xlen-1)) {
-      state := s_idle
+      when(is_signed_divide(exec_func)){
+        state := s_negate_output_div
+      } .otherwise {
+        state := s_idle
+      }
     }
     holding := next_holding_div
     count := count + UInt(1)
@@ -82,7 +96,7 @@ class Mult() extends Module {
   when(state === s_mult){
     when (count === UInt(xlen-1)) {
       when(negate){
-        state := s_negate_output
+        state := s_negate_output_mult
       }.otherwise {
         state := s_idle
       }
@@ -91,7 +105,27 @@ class Mult() extends Module {
     count := count + UInt(1)
   }
 
-  when(state === s_negate_output){
+  when(state === s_negate_input){
+    state := s_div
+    when(argument(xlen-1)){
+      argument := -argument
+    }
+    when(holding(xlen-1)){
+      holding(xlen-1, 0) := -holding(xlen-1, 0)
+    }
+  }
+
+  when(state === s_negate_output_div){
+    state := s_idle
+    when(dividend_sign != holding((xlen * 2) - 1)){
+      holding((xlen * 2) - 1, xlen) := -holding((xlen * 2) - 1, xlen)
+    }
+    when(should_negate_quotient){
+      holding(xlen - 1, 0) := -holding(xlen - 1, 0)
+    }
+  }
+
+  when(state === s_negate_output_mult){
     state := s_idle
     holding((xlen * 2) - 1, xlen) := -(holding((xlen * 2) - 1, xlen))
     negate := Bool(false)
