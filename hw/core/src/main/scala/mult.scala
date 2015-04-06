@@ -23,14 +23,15 @@ class Mult() extends Module {
 
   }
 
-  def isDivide(func: UInt) = func(2)
+  def is_divide(func: UInt) = func(2)
 
   /* For some reason i cannot name these with uppercase */
-  val s_idle:: s_mult :: s_div :: Nil = Enum(UInt(), 3)
+  val s_idle:: s_mult :: s_div :: s_negate_input :: s_negate_output :: Nil = Enum(UInt(), 5)
 
   val state     = Reg(init = s_idle)
   val exec_func = Reg(UInt())
   val count     = Reg(UInt(width = log2Up(xlen)))
+  val negate    = Reg(init = Bool(false))
 
   // Holds the product, or the combined quotient and remainder
   // plus one for overflow from the adder during computation
@@ -56,17 +57,18 @@ class Mult() extends Module {
     holding_shift)
 
   when (state === s_idle && io.enable) {
-    when (isDivide(io.func)) {
+    when (is_divide(io.func)) {
       state := s_div
       argument := io.in_b
       holding := Cat(UInt(0, width = xlen + 1), io.in_a)
-      } .otherwise {
-        state := s_mult
-        argument := io.in_a
-        holding := Cat(UInt(0, width = xlen + 1), io.in_b)
-      }
-      exec_func := io.func
-      count := UInt(0)
+    } .otherwise {
+      state := s_mult
+      argument := io.in_a
+      holding := Cat(UInt(0, width = xlen + 1), io.in_b)
+      negate := (io.in_a(xlen-1) && io.func === MULT_MULHSU)
+    }
+    exec_func := io.func
+    count := UInt(0)
   }
 
   when (state === s_div) {
@@ -79,10 +81,20 @@ class Mult() extends Module {
 
   when(state === s_mult){
     when (count === UInt(xlen-1)) {
-      state := s_idle
+      when(negate){
+        state := s_negate_output
+      }.otherwise {
+        state := s_idle
+      }
     }
     holding := next_holding_mult
     count := count + UInt(1)
+  }
+
+  when(state === s_negate_output){
+    state := s_idle
+    holding((xlen * 2) - 1, xlen) := -(holding((xlen * 2) - 1, xlen))
+    negate := Bool(false)
   }
 
   when (io.abort) {
