@@ -22,7 +22,7 @@ class Memory extends Module {
     mem_ctrl.read
 
   request.valid      := is_mem_transfer_instr
-  request.bits.addr  := exe_mem.alu_result
+  request.bits.addr  := clearIfDisabled(exe_mem.alu_result, is_mem_transfer_instr)
   request.bits.wdata := exe_mem.rs2
   request.bits.write := mem_ctrl.write
 
