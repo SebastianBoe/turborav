@@ -107,13 +107,8 @@ generated/startup_program.o: rom/startup_program.S
 	${AS} ${ASFLAGS} $< -o $@
 
 rom/startup_program.S:
-	mkdir -p rom
-	printf "# Dummy program, can be used for testing\n" \
-	       "# Execute: make soc.test\n" \
-		   "loop:\n" \
-           "j loop\n" \
-	       "nop\n" \
-	       "nop\n" > rom/startup_program.S
+	$(dir_guard)
+	printf "# Dummy program, can be used for testing\n# Execute: make soc.test\nloop:\nj loop\nnop\nnop\n" > rom/startup_program.S
 
 ISA_TEST_CC_FLAGS := \
 	-m32 \
@@ -144,6 +139,7 @@ clean:
 	rm -rf \
 	target \
 	project \
+	rom \
 	$(DIR_GEN) \
 	$(DIR_VLOG) \
 	$(DIR_SYNTH) \
