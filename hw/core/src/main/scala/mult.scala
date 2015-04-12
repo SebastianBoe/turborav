@@ -27,13 +27,14 @@ class Mult() extends Module {
 
   def is_signed_divide(func: UInt) = !func(0)
 
-  val s_idle :: s_mult :: s_div :: s_negate_input :: s_negate_output_div :: s_negate_output_mult :: Nil = Enum(UInt(), 6)
+  val (s_idle :: s_mult :: s_div :: s_negate_input ::
+    s_negate_output_div :: s_negate_output_mult :: Nil) = Enum(UInt(), 6)
 
   val state     = Reg(init = s_idle)
   val exec_func = Reg(UInt())
   val count     = Reg(UInt(width = log2Up(xlen)))
 
-  val negate                  = Reg(init = Bool(false))
+  val should_negate_product   = Reg(init = Bool(false))
   val dividend_sign           = Reg(init = Bool(false))
   val should_negate_quotient  = Reg(init = Bool(false))
 
@@ -75,7 +76,10 @@ class Mult() extends Module {
       state := s_mult
       argument := io.in_a
       holding := Cat(UInt(0, width = xlen + 1), io.in_b)
-      negate := (io.in_a(xlen-1) && io.func === MULT_MULHSU)
+      should_negate_product := ((io.in_a(xlen-1)
+                                && io.func === MULT_MULHSU)
+                            || ((io.in_a(xlen-1) != io.in_b(xlen-1))
+                                && io.func === MULT_MULH))
     }
     exec_func := io.func
     count := UInt(0)
@@ -95,7 +99,7 @@ class Mult() extends Module {
 
   when(state === s_mult){
     when (count === UInt(xlen-1)) {
-      when(negate){
+      when (should_negate_product){
         state := s_negate_output_mult
       }.otherwise {
         state := s_idle
@@ -127,8 +131,16 @@ class Mult() extends Module {
 
   when(state === s_negate_output_mult){
     state := s_idle
-    holding((xlen * 2) - 1, xlen) := -(holding((xlen * 2) - 1, xlen))
-    negate := Bool(false)
+
+    // When the lower xlen bits of the result is zero, we will get
+    // a carry from doing twos complement on the lower xlen bits.
+    // This implies that negating the upper bits of the product
+    // involves twos complement when the lower bits are zero, otherwise invert.
+    when(holding(xlen-1,0) === UInt(0)){
+      holding((xlen * 2) - 1, xlen) := ~(holding((xlen * 2)-1, xlen)) + UInt(1)
+    } .otherwise {
+      holding((xlen * 2) - 1, xlen) := ~(holding((xlen * 2)-1, xlen))
+    }
   }
 
   when (io.abort) {
