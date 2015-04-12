@@ -9,12 +9,13 @@ import Apb._
 class RavV extends Module {
   val io = new RequestResponseIo()
 
-  val fch = Module(new Fetch())
-  val dec = Module(new Decode())
-  val exe = Module(new Execute())
-  val mem = Module(new Memory())
-  val wrb = Module(new Writeback())
-  val fwu = Module(new ForwardingUnit())
+  val fch  = Module(new Fetch())
+  val dec  = Module(new Decode())
+  val exe  = Module(new Execute())
+  val mem  = Module(new Memory())
+  val wrb  = Module(new Writeback())
+  val fwu  = Module(new ForwardingUnit())
+  val roam = Module(new Roam())
 
   fch.io.fch_dec <> dec.io.fch_dec
   dec.io.dec_exe <> exe.io.dec_exe
@@ -37,5 +38,6 @@ class RavV extends Module {
   mem.io.i_stall := mem.io.o_stall
   wrb.io.i_stall := Bool(false)
 
-  mem.io.requestResponseIo <> io
+  mem.io.requestResponseIo <> roam.io.mem
+  fch.io.requestResponseIo <> roam.io.fch
 }

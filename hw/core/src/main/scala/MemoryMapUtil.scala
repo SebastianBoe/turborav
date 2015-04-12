@@ -43,6 +43,12 @@ object isRamAddress {
   }
 }
 
+object isRomAddress {
+  def apply(address: UInt):Bool = {
+    getMemorySegment(address) === MEMORY_SEGMENT_ROM
+  }
+}
+
 object isSpiAddress {
   def apply(address: UInt):Bool = {
     getMemorySegment(address) === MEMORY_SEGMENT_SPI

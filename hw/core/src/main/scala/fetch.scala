@@ -18,7 +18,8 @@ class Fetch() extends Module {
                                                         pc + UInt(4)
                 ))
 
-  val should_stall = io.i_stall
+  val ableToReadRom = io.requestResponseIo.response.valid
+  val should_stall = io.i_stall || ! ableToReadRom
   val has_branched = io.exe_fch.pc_sel === PC_SEL_BRJMP || take_saved_branch
 
   when(io.exe_fch.pc_sel === PC_SEL_BRJMP){
@@ -31,11 +32,13 @@ class Fetch() extends Module {
     take_saved_branch := Bool(false)
   }
 
-  val rom = Module(new Rom())
-  rom.io.pc := pc
+  io.requestResponseIo.request.bits.addr  := pc
+  io.requestResponseIo.request.bits.write := Bool(false)
+  io.requestResponseIo.request.bits.wdata := UInt(0)
+  io.requestResponseIo.request.valid := Bool(true)
 
   // Fetch to decode
   io.fch_dec.pc          := pc
-  io.fch_dec.instr_valid := !has_branched
-  io.fch_dec.instr       := rom.io.instr
+  io.fch_dec.instr_valid := !has_branched && ableToReadRom
+  io.fch_dec.instr       := io.requestResponseIo.response.bits.word
 }

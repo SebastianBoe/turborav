@@ -11,6 +11,7 @@ class FetchIO() extends Bundle {
   val fch_dec = new FetchDecode()
   val exe_fch = new ExecuteFetch().flip()
 
+  val requestResponseIo = new RequestResponseIo()
   val i_stall = Bool(INPUT)
 }
 

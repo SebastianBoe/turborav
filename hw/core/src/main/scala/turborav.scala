@@ -23,7 +23,6 @@ object TurboRav {
         case "memory"       => () => Module(new Memory())
         case "mult"         => () => Module(new Mult())
         case "ram"          => () => Module(new Ram())
-        case "RavVMemoryRequestArbiter" => () => Module(new RavVMemoryRequestArbiter())
         case "ravv"         => () => Module(new RavV())
         case "regbank"      => () => Module(new RegBank())
         case "rom"          => () => Module(new Rom())
