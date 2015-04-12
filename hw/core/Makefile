@@ -7,7 +7,7 @@
 # This variable contains the path to an elf program. It is meant to be
 # overridden on the command line like:
 
-# 'make ROM=riscv-tools/riscv-tests/isa/rv32ui-p-simple soc.test'
+# 'make ROM=generated/rv32ui-p-simple soc.test'
 ROM := generated/startup_program.o
 
 # Include some generic utility functions
@@ -53,11 +53,6 @@ OBJDUMP_FLAGS := --architecture=riscv:rv32
 all:
 	@echo "No good default make rule yet"
 
-# This rule assumes you have already installed the toolchain in our
-# riscv-tools submodule.
-
-# Also, oh noes, recursive make! Is recursive make allowed if you have
-# a good reason to not change the child makefiles?
 isa/%:
 	$(MAKE) --directory=isa $*
 
@@ -113,7 +108,37 @@ generated/startup_program.o: rom/startup_program.S
 
 rom/startup_program.S:
 	mkdir -p rom
-	printf "# Dummy program, can be used for testing\n# Execute: make soc.test\nloop:\n    j loop\nnop\nnop\n" > rom/startup_program.S
+	printf "# Dummy program, can be used for testing\n" \
+	       "# Execute: make soc.test\n" \
+		   "loop:\n" \
+           "j loop\n" \
+	       "nop\n" \
+	       "nop\n" > rom/startup_program.S
+
+ISA_TEST_CC_FLAGS := \
+	-m32 \
+	-static \
+	-nostdlib \
+	-nostartfiles \
+	-ffreestanding \
+	-Wa,-march=RVIMAFDXhwacha
+
+generated/rv32ui-p-%: generated/crt0.o src/misc/turborav.ld
+	${CC} \
+		$(ISA_TEST_CC_FLAGS) \
+		-fvisibility=hidden \
+	 	-Iriscv-tools/riscv-tests/env/p \
+		-Iisa/macros/scalar \
+		-Tsrc/misc/turborav.ld \
+		src/misc/ctr0.o \
+		isa/rv32ui/$*.S -o $@
+
+generated/crt0.o: src/misc/crt0.s
+	$(dir_guard)
+	${CC} \
+		-c \
+		$(ISA_TEST_CC_FLAGS) \
+		$< -o $@
 
 clean:
 	rm -rf \
