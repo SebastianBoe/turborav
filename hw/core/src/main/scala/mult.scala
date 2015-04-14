@@ -27,6 +27,8 @@ class Mult() extends Module {
 
   def is_signed_divide(func: UInt) = !func(0)
 
+  def is_signed_mult(func: UInt) = (func === MULT_MULH || func === MULT_MULHSU)
+
   val (s_idle :: s_mult :: s_div :: s_negate_input ::
     s_negate_output_div :: s_negate_output_mult :: Nil) = Enum(UInt(), 6)
 
@@ -73,7 +75,11 @@ class Mult() extends Module {
       argument := io.in_b
       holding := Cat(UInt(0, width = xlen + 1), io.in_a)
     } .otherwise {
-      state := s_mult
+      when(is_signed_mult(io.func)){
+        state := s_negate_input
+      } .otherwise {
+        state := s_mult
+      }
       argument := io.in_a
       holding := Cat(UInt(0, width = xlen + 1), io.in_b)
       should_negate_product := ((io.in_a(xlen-1)
@@ -110,11 +116,15 @@ class Mult() extends Module {
   }
 
   when(state === s_negate_input){
-    state := s_div
+    when(is_divide(exec_func)){
+      state := s_div
+    } .otherwise {
+      state := s_mult
+    }
     when(argument(xlen-1)){
       argument := -argument
     }
-    when(holding(xlen-1)){
+    when(holding(xlen-1) && exec_func != MULT_MULHSU){
       holding(xlen-1, 0) := -holding(xlen-1, 0)
     }
   }
