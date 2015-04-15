@@ -19,4 +19,4 @@ memcpy_loop:
     add x5, x5, 4
     bne x5, x3, memcpy_loop
 
-    b _start
+    j _start

@@ -125,7 +125,7 @@ generated/rv32ui-p-%: generated/crt0.o src/misc/turborav.ld
 	 	-Iriscv-tools/riscv-tests/env/p \
 		-Iisa/macros/scalar \
 		-Tsrc/misc/turborav.ld \
-		generated/ctr0.o \
+		generated/crt0.o \
 		isa/rv32ui/$*.S -o $@
 
 generated/crt0.o: src/misc/crt0.s
