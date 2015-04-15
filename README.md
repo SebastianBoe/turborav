@@ -20,31 +20,37 @@ how to get started with hw-development.
 
 ### Install packaged dependencies
 
-   yaourt -S sbt texlive-most autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils
+```
+yaourt -S sbt texlive-most autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils
+```
 
 ### Install (yet) un-packaged dependencies
 
-   Install the GNU toolchain for RISC-V from our git submodule
+Install the GNU toolchain for RISC-V from our git submodule
 
-   cd hw/core/riscv-tools
-   git submodule init
-   git submodule update
+```
+cd hw/core/riscv-tools
+git submodule init
+git submodule update
 
-   cd hw/core/riscv-tools/riscv-gnu-toolchain
-   git submodule init
-   git submodule update
+cd hw/core/riscv-tools/riscv-gnu-toolchain
+git submodule init
+git submodule update
 
-   cd hw/core/riscv-tools/riscv-tests/env
-   git submodule init
-   git submodule update
+cd hw/core/riscv-tools/riscv-tests/env
+git submodule init
+git submodule update
 
-   cd hw/core/riscv-tools/riscv-gnu-toolchain
-   ./configure --prefix=/opt/riscv # make sure you have access rights
-   make
+cd hw/core/riscv-tools/riscv-gnu-toolchain
+./configure --prefix=/opt/riscv # make sure you have access rights
+make
+```
 
 ### Test your environment
 
-   cd hw/core && make alu.test
+```
+cd hw/core && make alu.test
+```
 
 Peruse the issue-tracker to see if there is anything that interests
 you or create your own issue based on what you want to contribute
@@ -52,6 +58,12 @@ with. But most importantly; have fun!
 
 ## Development
 
-The below screenshot demonstrates what the development environment might look like when debugging TurboRav. On the top right hand side there is an assembly program that is assembled to the machine code seen below. This machine code is synthesized into the ROM and when simulated generates the waveform. The waveform is used to find out where things are going wrong and then the Chisel code is edited with the powerful IntelliJ IDE. Sbt continuously regenerates a new waveform and we start all over again! Pretty neat huh?
+The below screenshot demonstrates what the development environment might look
+like when debugging TurboRav. On the top right hand side there is an assembly
+program that is assembled to the machine code seen below. This machine code is
+synthesized into the ROM and when simulated generates the waveform. The waveform
+is used to find out where things are going wrong and then the Chisel code is
+edited with the powerful IntelliJ IDE. Sbt continuously regenerates a new
+waveform and we start all over again! Pretty neat huh?
 
 ![](/hw/doc/development_environment.jpg?raw=true)
