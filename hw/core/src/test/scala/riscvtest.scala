@@ -19,8 +19,15 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
     step(1)
   }
   expect(get_test_status() == Passed, "")
+
+  val error_msg = "Failed test #%d".format( peekAt(c.ravv.dec.regbank.regs, 28 ) )
+  generate_xml_for_jenkins(error_msg)
+
+  print("\n")
   print_regs()
-  generate_xml_for_jenkins()
+  if(!ok) print("%s\n".format(error_msg))
+  print("\n")
+
 
   def get_test_status() : TestStatus = {
     def hex2dec(hex: String): BigInt = {
@@ -60,7 +67,7 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
       regs(i) = peekAt(c.ravv.dec.regbank.regs, i)
     }
 
-    print("\n\nRegister bank:\n")
+    print("Register bank:\n")
     for(i <- 0 until 32 / 4){
       for(j <- 0 until 4){
         val x= i+(32/4)*j
@@ -68,15 +75,15 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
       }
       print("\n")
     }
-    print("\n\n")
+    print("\n")
   }
 
-  def generate_xml_for_jenkins() {
+  def generate_xml_for_jenkins(error_msg: String) {
     val file_name = "generated/%s.xml" format(test_name)
     val file_contents = new PrettyPrinter(80, 2).format(
       <testsuite>
         <testcase classname={test_name}>
-        {if (ok) "" else <failure type="a_type">error_msg</failure>}
+        {if (ok) "" else <failure type="a_type">{error_msg}</failure>}
         </testcase>
       </testsuite>
     ) + "\n"
