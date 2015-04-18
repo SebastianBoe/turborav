@@ -4,7 +4,7 @@ import Chisel._
 import Constants._
 
 class SocTest(c: Soc) extends Tester(c) {
-  step(200)
+  step(1000)
   print_regs()
 
   // Could easily do something similair with the memory when we want
