@@ -40,6 +40,10 @@ object TurboRavTestRunner{
         chiselMainTest(test_args, () => Module(new Mult())){
           c => new MultTest(c)
         }
+      case "timertest" =>
+        chiselMainTest(test_args, () => Module(new Timer())){
+          c => new TimerTest(c)
+        }
       case "decodetest" =>
         chiselMainTest(test_args, () => Module(new Decode())){
           c => new DecodeTest(c)
