@@ -50,7 +50,13 @@ cd hw/core/riscv-tools/riscv-gnu-toolchain
 make
 ```
 
+Add the newly compiled toolchain to path.
+```
+export PATH=$PATH:/opt/riscv/bin
+```
+
 ### Test your environment
+
 
 ```
 cd hw/core && make alu.test
