@@ -10,6 +10,11 @@ _crt0:
 	lui	x3,   %hi(data_size)
 	add	x3,x3,%lo(data_size)
 
+	lui	x6,   %hi(data_end)
+	add	x6,x6,%lo(data_end)
+
+    beq	x6,x1,_start
+
     add x5, x0, x0
 memcpy_loop:
     lw x4, 0(x2)
