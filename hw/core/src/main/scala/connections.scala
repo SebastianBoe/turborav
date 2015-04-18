@@ -119,10 +119,12 @@ class MemoryIO() extends Bundle {
 class MemoryCtrl() extends Bundle {
   val write = Bool(OUTPUT)
   val read = Bool(OUTPUT)
+  val mem_width = UInt(OUTPUT, width = 3)
 
   def kill() = {
     write := Bool(false)
     read := Bool(false)
+    mem_width := UInt(0)
   }
 }
 

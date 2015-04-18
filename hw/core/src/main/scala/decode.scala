@@ -137,6 +137,7 @@ class Decode() extends Module {
 
   dec_exe.mem_ctrl.read   := opcode === OPCODE_LOAD
   dec_exe.mem_ctrl.write  := opcode === OPCODE_STORE
+  dec_exe.mem_ctrl.mem_width := func3
   dec_exe.wrb_ctrl.rd_sel := Mux(is_jump(opcode), RD_PC,
     Mux(opcode === OPCODE_LOAD, RD_MEM, RD_ALU))
 
