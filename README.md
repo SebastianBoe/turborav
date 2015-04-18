@@ -22,9 +22,9 @@ how to get started with hw-development.
 
 ```
 yaourt -S sbt texlive-most
-
-or on an apt based system
-
+```
+Or for Debian based distro's
+```
 apt-get install sbt texlive-most autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils
 ```
 
