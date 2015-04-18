@@ -4,8 +4,11 @@ find_tests(){
          -exec basename \
          {} .S \; \
         | sort \
-        | grep --invert-match amo
+        | grep -v -E '(amo|lrsc)' \
+        | grep -v -E '(divuw|divw|mulw|lwu|ld)'
+
 }
+# Don't include A-extension (atomic operations) and rv64ui tests.
 
 for t in $(find_tests); do
     timeout 10m make ROM=generated/rv32ui-p-${t} riscv.test
