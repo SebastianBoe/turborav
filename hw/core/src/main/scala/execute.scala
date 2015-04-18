@@ -73,7 +73,7 @@ class Execute() extends Module {
   mult.io.enable := (mult_enable && state === s_normal)
 
 
-  /* Insert bubbles while multiplication is executing*/
+  /* Insert bubbles while multiplication is executing */
   when(state === s_normal && mult_enable){
     io.exe_mem.kill()
     state := s_mult
@@ -105,6 +105,8 @@ class Execute() extends Module {
 
   io.hdu_exe.rs1_addr := dec_exe.rs1_addr
   io.hdu_exe.rs2_addr := dec_exe.rs2_addr
+
+  io.exe_mem.rs2 := rs2
 
   io.exe_mem <> dec_exe
 }
