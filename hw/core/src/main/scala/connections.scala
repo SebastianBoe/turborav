@@ -10,9 +10,9 @@ import Constants._
 class FetchIO() extends Bundle {
   val fch_dec = new FetchDecode()
   val exe_fch = new ExecuteFetch().flip()
+  val hdu_fch = new HazardDetectionUnitFetch().flip()
 
   val requestResponseIo = new RequestResponseIo()
-  val i_stall = Bool(INPUT)
 }
 
 class FetchDecode() extends Bundle {
@@ -28,9 +28,7 @@ class DecodeIO() extends Bundle {
   val fch_dec = new FetchDecode().flip()
   val dec_exe = new DecodeExecute()
   val wrb_dec = new WritebackDecode().flip()
-
-  //TODO: this one should be in HDU interface or something similar.
-  val i_stall = Bool(INPUT)
+  val hdu_dec = new HazardDetectionUnitDecode().flip()
 }
 
 class DecodeExecute() extends Bundle {
@@ -65,9 +63,7 @@ class ExecuteIO() extends Bundle {
   val fwu_exe = new ForwardingExecute().flip()
   val mem_exe = new MemoryExecute().flip()
   val wrb_exe = new WritebackExecute().flip()
-
-  val i_stall = Bool(INPUT)
-  val o_stall = Bool(OUTPUT)
+  val hdu_exe = new HazardDetectionUnitExecute().flip()
 }
 
 class ExecuteCtrl() extends Bundle {
@@ -113,6 +109,7 @@ class MemoryIO() extends Bundle {
   val mem_wrb = new MemoryWriteback()
   val fwu_mem = new ForwardingMemory().flip()
   val mem_exe = new MemoryExecute()
+  val hdu_mem = new HazardDetectionUnitMemory().flip()
 
   val requestResponseIo = new RequestResponseIo()
   val i_stall = Bool(INPUT)
@@ -150,6 +147,7 @@ class WritebackIO() extends Bundle {
   val wrb_dec = new WritebackDecode()
   val fwu_wrb = new ForwardingWriteback().flip()
   val wrb_exe = new WritebackExecute()
+  val hdu_wrb = new HazardDetectionUnitWriteback().flip()
 
   val i_stall = Bool(INPUT)
 }
@@ -199,4 +197,44 @@ class ForwardingMemory()extends Bundle {
 class ForwardingWriteback() extends Bundle {
   val rd_addr = UInt(INPUT, 5)
   val rd_wen  = Bool(INPUT)
+}
+
+////////////////////////////////////////
+// Hazard Detection Unit
+////////////////////////////////////////
+class HazardDetectionUnitIO() extends Bundle {
+  val hdu_fch = new HazardDetectionUnitFetch()
+  val hdu_dec = new HazardDetectionUnitDecode()
+  val hdu_exe = new HazardDetectionUnitExecute()
+  val hdu_mem = new HazardDetectionUnitMemory()
+  val hdu_wrb = new HazardDetectionUnitWriteback()
+}
+
+class HazardDetectionUnitFetch() extends Bundle {
+  val instructionValid = Bool(INPUT)
+
+  val stall = Bool(OUTPUT)
+}
+
+class HazardDetectionUnitDecode() extends Bundle {
+  val stall = Bool(OUTPUT)
+}
+
+class HazardDetectionUnitExecute extends Bundle {
+  val mult_busy = Bool(INPUT)
+  val rs1_addr  = UInt(INPUT, 5)
+  val rs2_addr  = UInt(INPUT, 5)
+
+  val stall     = Bool(OUTPUT)
+}
+
+class HazardDetectionUnitMemory extends Bundle {
+  val mem_read = Bool(INPUT)
+  val rd_addr  = UInt(INPUT, 5)
+
+  val stall    = Bool(OUTPUT)
+}
+
+class HazardDetectionUnitWriteback extends Bundle {
+  val stall = Bool(OUTPUT)
 }

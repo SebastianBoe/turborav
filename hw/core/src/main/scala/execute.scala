@@ -24,7 +24,7 @@ class Execute() extends Module {
 
   val dec_exe = Reg(init = new DecodeExecute())
 
-  when(!io.i_stall){
+  unless(io.hdu_exe.stall){
     dec_exe := io.dec_exe
   }
 
@@ -86,8 +86,9 @@ class Execute() extends Module {
   }
 
   /* Stall as long as multiplication is executing */
-  io.o_stall :=((state === s_normal) && mult_enable)  ||
-               ((state === s_mult)   && !mult.io.done)
+  io.hdu_exe.mult_busy :=
+    ((state === s_normal) && mult_enable)  ||
+    ((state === s_mult)   && !mult.io.done)
 
   io.exe_mem.alu_result :=
      Mux(is_mult_upper(mult_func) && state === s_mult, mult.io.out_hi,
@@ -101,6 +102,9 @@ class Execute() extends Module {
   io.fwu_exe.rs1_addr := dec_exe.rs1_addr
   io.fwu_exe.rs2_addr := dec_exe.rs2_addr
   io.dec_exe.pc_sel := bru.io.take
+
+  io.hdu_exe.rs1_addr := dec_exe.rs1_addr
+  io.hdu_exe.rs2_addr := dec_exe.rs2_addr
 
   io.exe_mem <> dec_exe
 }

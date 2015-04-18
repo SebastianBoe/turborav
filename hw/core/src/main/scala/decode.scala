@@ -33,7 +33,7 @@ class Decode() extends Module {
   val io = new DecodeIO()
 
   val fch_dec = Reg(init = new FetchDecode())
-  unless(io.i_stall){
+  unless(io.hdu_dec.stall){
     fch_dec := io.fch_dec
   }
 

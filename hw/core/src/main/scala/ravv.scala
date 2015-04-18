@@ -16,6 +16,7 @@ class RavV extends Module {
   val wrb  = Module(new Writeback())
   val fwu  = Module(new ForwardingUnit())
   val roam = Module(new Roam())
+  val hdu  = Module(new HazardDetectionUnit())
 
   fch.io.fch_dec <> dec.io.fch_dec
   dec.io.dec_exe <> exe.io.dec_exe
@@ -31,12 +32,11 @@ class RavV extends Module {
   exe.io.wrb_exe <> wrb.io.wrb_exe
   fch.io.exe_fch <> exe.io.exe_fch
 
-  // TODO: Connect stall signals in a loop instead.
-  fch.io.i_stall := mem.io.o_stall || exe.io.o_stall
-  dec.io.i_stall := mem.io.o_stall || exe.io.o_stall
-  exe.io.i_stall := mem.io.o_stall || exe.io.o_stall
-  mem.io.i_stall := mem.io.o_stall
-  wrb.io.i_stall := Bool(false)
+  fch.io.hdu_fch <> hdu.io.hdu_fch
+  dec.io.hdu_dec <> hdu.io.hdu_dec
+  exe.io.hdu_exe <> hdu.io.hdu_exe
+  mem.io.hdu_mem <> hdu.io.hdu_mem
+  wrb.io.hdu_wrb <> hdu.io.hdu_wrb
 
   mem.io.requestResponseIo <> roam.io.mem
   fch.io.requestResponseIo <> roam.io.fch

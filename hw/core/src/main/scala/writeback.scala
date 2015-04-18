@@ -9,7 +9,7 @@ class Writeback() extends Module {
   val io = new WritebackIO()
 
   val mem_wrb = Reg(init = new MemoryWriteback())
-  when(!io.i_stall){
+  unless(io.hdu_wrb.stall){
     mem_wrb := io.mem_wrb
   }
 

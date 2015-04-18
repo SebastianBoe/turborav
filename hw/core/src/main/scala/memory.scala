@@ -25,7 +25,7 @@ class Memory extends Module {
 
   val ram_word = response.bits.word
 
-  when(!io.i_stall){
+  unless(io.hdu_mem.stall) {
     exe_mem := io.exe_mem
 
     // In the normal load-use hazard where the exe stage is the user
@@ -49,7 +49,8 @@ class Memory extends Module {
   io.fwu_mem.rd_wen  := exe_mem.wrb_ctrl.rd_wen
   io.fwu_mem.rd_addr := exe_mem.rd_addr
 
-  // While we have disabled apb there is no way for mem to cause
-  // stalls anymore.
-  io.o_stall := Bool(false)
+  io.hdu_mem.mem_read := mem_ctrl.read
+  io.hdu_mem.rd_addr  := exe_mem.rd_addr
+
+  io.o_stall := mem_ctrl.read
 }
