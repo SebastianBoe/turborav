@@ -25,7 +25,7 @@ yaourt -S sbt texlive-most
 ```
 Or for Debian based distro's
 ```
-apt-get install sbt texlive-most autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils
+apt-get install sbt texlive-most autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils gperf
 ```
 
 ### Install (yet) un-packaged dependencies
