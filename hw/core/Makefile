@@ -104,7 +104,7 @@ $(DIR_SYNTH)/%.prj: %.v
 
 rom/startup_program.S:
 	$(dir_guard)
-	printf "# Dummy program, can be used for testing\n# Execute: make soc.test\n.globl\n_start:\nj _start\nnop\nnop\n" > rom/startup_program.S
+	printf "# Dummy program, can be used for testing\n# Execute: make soc.test\n.globl _start\n_start:\nj _start\nnop\nnop\n" > rom/startup_program.S
 
 ISA_TEST_CC_FLAGS := \
 	-m32 \
