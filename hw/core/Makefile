@@ -102,13 +102,9 @@ $(DIR_SYNTH)/%.prj: %.v
 	find $(DIR_VLOG) -name \*-harness.v -o -printf "verilog work %p\n" |\
 	tail -n +2 > $@
 
-generated/startup_program.o: rom/startup_program.S
-	$(dir_guard)
-	${AS} ${ASFLAGS} $< -o $@
-
 rom/startup_program.S:
 	$(dir_guard)
-	printf "# Dummy program, can be used for testing\n# Execute: make soc.test\nloop:\nj loop\nnop\nnop\n" > rom/startup_program.S
+	printf "# Dummy program, can be used for testing\n# Execute: make soc.test\n.globl\n_start:\nj _start\nnop\nnop\n" > rom/startup_program.S
 
 ISA_TEST_CC_FLAGS := \
 	-m32 \
@@ -118,7 +114,19 @@ ISA_TEST_CC_FLAGS := \
 	-ffreestanding \
 	-Wa,-march=RVIMAFDXhwacha
 
-generated/rv32ui-p-%: generated/crt0.o src/misc/turborav.ld
+generated/startup_program.o: rom/startup_program.S generated/crt0.o src/misc/turborav.ld
+	$(dir_guard)
+	${CC} \
+		$(ISA_TEST_CC_FLAGS) \
+		-fvisibility=hidden \
+	 	-Iriscv-tools/riscv-tests/env/p \
+		-Iisa/macros/scalar \
+		-Tsrc/misc/turborav.ld \
+		generated/crt0.o \
+		rom/startup_program.S \
+		-o $@
+# FAIL: update above and below
+generated/rv32ui-p-%: isa/rv32ui/%.S generated/crt0.o src/misc/turborav.ld
 	${CC} \
 		$(ISA_TEST_CC_FLAGS) \
 		-fvisibility=hidden \
