@@ -20,10 +20,6 @@ class Ram extends Module {
   val words                        = Config.ram_size_in_bytes / word_size_in_bytes
   val most_significant_address_bit = byte_offset_size + log2Up(words)
 
-  assert(io.addr(byte_offset_size - 1, 0) === UInt(0),
-    "We assume word-aligned addresses."
-  )
-
   val ram = Mem(
     UInt(width = Config.xlen),
     words
