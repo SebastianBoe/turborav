@@ -112,8 +112,6 @@ class MemoryIO() extends Bundle {
   val hdu_mem = new HazardDetectionUnitMemory().flip()
 
   val requestResponseIo = new RequestResponseIo()
-  val i_stall = Bool(INPUT)
-  val o_stall = Bool(OUTPUT)
 }
 
 class MemoryCtrl() extends Bundle {
@@ -150,8 +148,6 @@ class WritebackIO() extends Bundle {
   val fwu_wrb = new ForwardingWriteback().flip()
   val wrb_exe = new WritebackExecute()
   val hdu_wrb = new HazardDetectionUnitWriteback().flip()
-
-  val i_stall = Bool(INPUT)
 }
 
 class WritebackCtrl() extends Bundle {

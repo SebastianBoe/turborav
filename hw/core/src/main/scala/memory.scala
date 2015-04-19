@@ -40,5 +40,4 @@ class Memory extends Module {
   io.hdu_mem.mem_read := mem_ctrl.read
   io.hdu_mem.rd_addr  := exe_mem.rd_addr
 
-  io.o_stall := mem_ctrl.read
 }
