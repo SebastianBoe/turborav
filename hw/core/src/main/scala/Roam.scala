@@ -24,7 +24,7 @@ class Roam extends Module {
   val ram = Module(new Ram())
 
   val memReadingRom =
-    io.mem.request.valid&& isRomAddress(io.mem.request.bits.addr)
+    io.mem.request.valid && isRomAddress(io.mem.request.bits.addr)
 
   rom.io.pc := Mux(
     memReadingRom,
@@ -32,9 +32,11 @@ class Roam extends Module {
     io.fch.request.bits.addr
   )
 
-  ram.io.addr   := io.mem.request.bits.addr
-  ram.io.word_w := io.mem.request.bits.wdata
-  ram.io.wen    := io.mem.request.valid && io.mem.request.bits.write
+  ram.io.addr    := io.mem.request.bits.addr
+  ram.io.word_w  := io.mem.request.bits.wdata
+  ram.io.byte_en := io.mem.request.bits.byte_en
+  ram.io.wen     := io.mem.request.valid &&  io.mem.request.bits.write
+  ram.io.ren     := io.mem.request.valid && !io.mem.request.bits.write
 
   // Since the memory stage has priority over the fetch stage and both
   // the ROM and the RAM have single-cycle access the response valid

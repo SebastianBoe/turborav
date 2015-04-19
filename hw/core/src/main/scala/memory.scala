@@ -14,21 +14,29 @@ class Memory extends Module {
   val response = io.requestResponseIo.response
   val mem_ctrl = exe_mem.mem_ctrl
 
-  val is_mem_transfer_instr =
-    mem_ctrl.write ||
-    mem_ctrl.read
+  val isMemTransfer = mem_ctrl.write || mem_ctrl.read
 
-  request.valid      := is_mem_transfer_instr
-  request.bits.addr  := clearIfDisabled(exe_mem.alu_result, is_mem_transfer_instr)
-  request.bits.wdata := exe_mem.rs2
-  request.bits.write := mem_ctrl.write
-  request.bits.bytes := mem_ctrl.mem_width
+  request.valid        := isMemTransfer
+  request.bits.addr    := clearIfDisabled(exe_mem.alu_result, isMemTransfer)
+  request.bits.wdata   := exe_mem.rs2
+  request.bits.write   := mem_ctrl.write
+  request.bits.byte_en := Cat(mem_ctrl.isHalfword, mem_ctrl.isByte)
 
   unless(io.hdu_mem.stall) {
     exe_mem := io.exe_mem
   }
 
-  io.mem_wrb.mem_read_data := response.bits.word
+  val word = response.bits.word(Config.xlen-1, 0)
+
+  val signExtHalfword = Cat(Fill(word(15), Config.xlen-16), word(15, 0))
+  val signExtByte     = Cat(Fill(word( 7), Config.xlen- 8), word( 7, 0))
+
+  val read_data =
+    Mux(mem_ctrl.signExtend && mem_ctrl.isHalfword, signExtHalfword,
+    Mux(mem_ctrl.signExtend && mem_ctrl.isByte,     signExtByte,
+                                                    word))
+
+  io.mem_wrb.mem_read_data := read_data
   io.mem_wrb <> exe_mem
 
   // Forwarding of ALU result

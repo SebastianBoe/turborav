@@ -7,11 +7,11 @@ import Apb._
 
 // See RRApbAdapter for documentation about this bundle.
 class RequestResponseIo extends Bundle {
-  val request  = new ValidIO( new Bundle {
-    val addr  = UInt(width = Config.xlen)
-    val wdata = UInt(width = Config.xlen)
-    val bytes = UInt(width = 3)
-    val write = Bool()
+  val request = new ValidIO( new Bundle {
+    val addr    = UInt(width = Config.xlen)
+    val wdata   = UInt(width = Config.xlen)
+    val byte_en = UInt(width = Config.xlen / 8)
+    val write   = Bool()
   })
 
   val response = new ValidIO(new Bundle {
