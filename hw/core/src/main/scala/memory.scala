@@ -22,6 +22,7 @@ class Memory extends Module {
   request.bits.addr  := clearIfDisabled(exe_mem.alu_result, is_mem_transfer_instr)
   request.bits.wdata := exe_mem.rs2
   request.bits.write := mem_ctrl.write
+  request.bits.bytes := mem_ctrl.mem_width
 
   unless(io.hdu_mem.stall) {
     exe_mem := io.exe_mem

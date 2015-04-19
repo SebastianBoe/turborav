@@ -10,10 +10,12 @@ class RequestResponseIo extends Bundle {
   val request  = new ValidIO( new Bundle {
     val addr  = UInt(width = Config.xlen)
     val wdata = UInt(width = Config.xlen)
+    val bytes = UInt(width = 3)
     val write = Bool()
   })
 
   val response = new ValidIO(new Bundle {
-    val word = UInt(width = Config.xlen)
+    val word  = UInt(width = Config.xlen)
+    val bytes = UInt(width = 3)
   }).flip()
 }
