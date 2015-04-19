@@ -21,11 +21,11 @@ how to get started with hw-development.
 ### Install packaged dependencies
 
 ```
-yaourt -S sbt texlive-most
+yaourt -S sbt
 ```
 Or for Debian based distro's
 ```
-apt-get install sbt texlive-most autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils gperf
+apt-get install sbt autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils gperf
 ```
 
 ### Install (yet) un-packaged dependencies
