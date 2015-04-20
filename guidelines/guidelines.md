@@ -39,6 +39,7 @@ class MyModule() extends Module {
 
   //Chisel code.
 
-  io.out := false
+  io.out := Bool(false)
 }
 ```
+
