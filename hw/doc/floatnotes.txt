@@ -1,0 +1,15 @@
+Addition:
+  1. Shift until exponent matches (increase smallest)
+  2. Add (this is a regular add I think)
+  3. Normalize result by shifting value and exponent
+  4. Check for over/underflow
+  5. Follow rounding rules and round result
+  (6.) Check if result needs to be re-normalized (only 9's in result)
+
+Multiplication:
+  1. Add the exponents (biased versions (+127) - 127)
+  2. Multiply significands
+    - Add number of bits to the right of the decimal point for the result
+  3. Normalize, check for over/underflow
+  4. Round. Normalized? If not goto 3
+  5. Sign it, if sign of operands are different, its negative, otherwise positive
