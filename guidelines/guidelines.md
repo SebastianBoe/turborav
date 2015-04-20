@@ -6,7 +6,7 @@ Workflow is up to the programmer.
 Merge commits should be avoided when there are no conflicts.
 
 ### Code style
-Unless stated otherwise one must follow the style guide of the
+Unless stated otherwise one must follow the language's style guide.
 
 * No trailing-whitespace.
 * No tabs.
