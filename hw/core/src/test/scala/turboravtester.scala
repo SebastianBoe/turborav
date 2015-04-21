@@ -65,13 +65,13 @@ object TurboRavTestRunner{
           c => new RavVTest(c)
         }
       case "soctest" =>
-        chiselMainTest(test_args, () => Module(new Soc())){
+        chiselMainTest(test_args, () => Module(new Soc(2, 2))){
           c => new SocTest(c)
         }
       case "riscvtest" =>
         chiselMainTest(
           test_args,
-          () => Module(new Soc())
+          () => Module(new Soc(2, 2))
         )
         {
           c => new RiscvTest(c, rom)

@@ -38,6 +38,8 @@ class RavV extends Module {
   mem.io.hdu_mem <> hdu.io.hdu_mem
   wrb.io.hdu_wrb <> hdu.io.hdu_wrb
 
+  // Roam
   mem.io.requestResponseIo <> roam.io.mem
   fch.io.requestResponseIo <> roam.io.fch
+  io <> roam.io.mmio_rr
 }

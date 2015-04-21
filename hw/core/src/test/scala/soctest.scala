@@ -4,6 +4,7 @@ import Chisel._
 import Constants._
 
 class SocTest(c: Soc) extends Tester(c) {
+  poke(c.io.pin_inputs, 2)
   step(1000)
   print_regs()
 

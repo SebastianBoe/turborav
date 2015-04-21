@@ -7,41 +7,23 @@ import Constants._
 // The System-on-Chip module.
 
 // The SoC module instantiates and connects with an apb bus the
-// processor to the APB peripherals. It is the toplevel of Chisel
-// code, if we go any higher we venture into nasty fpga-specific
-// verilog.
+// processor to the APB peripherals. It is the toplevel module.
 
 // See MemoryMapUtil for how the memory map is laid out.
 
-class Soc extends Module {
-  val io = new Bundle { val spi = new SpiIo() }
+class Soc(num_pin_inputs: Int, num_pin_outputs: Int) extends Module {
+  val io = new Bundle {
+    val pin_inputs  = UInt(INPUT , width = num_pin_inputs )
+    val pin_outputs = UInt(OUTPUT, width = num_pin_outputs)
+  }
 
   val ravv    = Module(new RavV())
-  val adapter = Module(new RRApbAdapter())
-  val spi     = Module(new Spi())
+  val gpio    = Module(new Gpio(num_pin_inputs, num_pin_outputs))
 
-  io.spi <> spi.io.spi
+  // Connect the peripherals to the SoC pins
+  gpio.io.pin_inputs := io.pin_inputs
+  io.pin_outputs := gpio.io.pin_outputs
 
-  // Connect the bus master
-  ravv.io <> adapter.io.rr
-
-  val master_apb = adapter.io.apb // For convenience
-  val is_spi_request = isSpiAddress(master_apb.addr)
-
-  // Bah, was tricky to make this beautiful, try again later.
-  spi.io.apb.addr   := clearIfDisabled(master_apb.addr  , enabled = is_spi_request)
-  spi.io.apb.sel    := clearIfDisabled(master_apb.sel   , enabled = is_spi_request)
-  spi.io.apb.wdata  := clearIfDisabled(master_apb.wdata , enabled = is_spi_request)
-  spi.io.apb.write  := clearIfDisabled(master_apb.write , enabled = is_spi_request)
-
-  // This redundancy is bad, but when we get a tristate bus it can be deprecated.
-  master_apb.enable := MuxCase(Bool(false), Array(
-    is_spi_request -> spi.io.apb.enable
-  ))
-  master_apb.rdata := MuxCase(UInt(0), Array(
-    is_spi_request -> spi.io.apb.rdata
-  ))
-  master_apb.ready := MuxCase(Bool(false), Array(
-    is_spi_request -> spi.io.apb.ready
-  ))
+  // CONNECT the bus master
+  ravv.io <> gpio.io.rr
 }

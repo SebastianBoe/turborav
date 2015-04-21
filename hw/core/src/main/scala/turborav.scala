@@ -27,7 +27,7 @@ object TurboRav {
         case "regbank"      => () => Module(new RegBank())
         case "rom"          => () => Module(new Rom())
         case "RRApbAdapter" => () => Module(new RRApbAdapter())
-        case "soc"          => () => Module(new Soc())
+        case "soc"          => () => Module(new Soc(2, 2))
         case "spi"          => () => Module(new Spi())
         case "writeback"    => () => Module(new Writeback())
         case _              => () => throw new Exception(

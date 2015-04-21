@@ -15,8 +15,9 @@ import Constants._
   */
 class Roam extends Module {
   val io = new Bundle {
-    val fch = new RequestResponseIo().flip
-    val mem = new RequestResponseIo().flip
+    val fch     = new RequestResponseIo().flip
+    val mem     = new RequestResponseIo().flip
+    val mmio_rr = new RequestResponseIo()
   }
   // TODO: change the rom and ram modules to support the RR interface
   // instead. That would kill a lot of code here.
@@ -24,7 +25,10 @@ class Roam extends Module {
   val ram = Module(new Ram())
 
   val memReadingRom =
-    io.mem.request.valid&& isRomAddress(io.mem.request.bits.addr)
+    io.mem.request.valid && isRomAddress(io.mem.request.bits.addr)
+
+  val memRequestingMmio =
+    io.mem.request.valid && isApbAddress(io.mem.request.bits.addr)
 
   rom.io.pc := Mux(
     memReadingRom,
@@ -40,12 +44,14 @@ class Roam extends Module {
   // the ROM and the RAM have single-cycle access the response valid
   // signal becomes equivalent to the request valid signal.
   io.mem.response.valid := io.mem.request.valid
-  io.mem.response.bits.word  := Mux(
-    memReadingRom,
-    rom.io.instr,
-    ram.io.word_r
-  )
+  io.mem.response.bits.word  := MuxCase(ram.io.word_r, Array(
+    memReadingRom     -> (rom.io.instr)                  ,
+    memRequestingMmio -> (io.mmio_rr.response.bits.word)
+  ))
 
   io.fch.response.bits.word  := rom.io.instr
   io.fch.response.valid := ! memReadingRom && io.fch.request.valid
+
+  io.mmio_rr.request.bits := io.mem.request.bits
+  io.mmio_rr.request.valid := memRequestingMmio
 }
