@@ -67,7 +67,7 @@ class Ram extends Module {
     val readWordLow  = ram(ramAddr)
 
     val doubleWord = Cat(readWordHigh, readWordLow)
-    val word_shifted = doubleWord >> byteOffset
+    val word_shifted = doubleWord >> (byteOffset * UInt(8))
 
     val word =  Mux(io.byte_en(0), word_shifted & maskByte,
                 Mux(io.byte_en(1), word_shifted & maskHalfword,
