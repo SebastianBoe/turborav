@@ -45,7 +45,7 @@ class Roam extends Module {
   // signal becomes equivalent to the request valid signal.
   io.mem.response.valid := io.mem.request.valid
   io.mem.response.bits.word  := MuxCase(ram.io.word_r, Array(
-    memReadingRom     -> (rom.io.instr)                  ,
+    memReadingRom     -> (rom.io.instr),
     memRequestingMmio -> (io.mmio_rr.response.bits.word)
   ))
 

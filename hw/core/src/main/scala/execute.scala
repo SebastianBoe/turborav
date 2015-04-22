@@ -101,7 +101,7 @@ class Execute() extends Module {
 
   io.fwu_exe.rs1_addr := dec_exe.rs1_addr
   io.fwu_exe.rs2_addr := dec_exe.rs2_addr
-  io.dec_exe.pc_sel := bru.io.take
+  io.dec_exe.pc_sel   := bru.io.take
 
   // hdu_exe.rs_addr values are used to determine if we have a
   // load-use hazard. When the current instruction is a store-word
