@@ -26,6 +26,17 @@ class Memory extends Module {
 
   unless(io.hdu_mem.stall) {
     exe_mem := io.exe_mem
+
+    // In the normal load-use hazard where the exe stage is the user
+    // we need a stall no matter what (in an in-order-processor). But
+    // not when the mem stage itself is the user, like in memcpy:
+
+    // lw tp,0(sp)
+    // sw tp,0(ra)
+    //
+    // In this case we can forward to ourselves. We do this below.
+
+    exe_mem.rs2 := Mux(mem_ctrl.read, response.bits.word, io.exe_mem.rs2)
   }
 
   io.mem_wrb.mem_read_data := response.bits.word

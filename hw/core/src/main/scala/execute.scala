@@ -103,8 +103,21 @@ class Execute() extends Module {
   io.fwu_exe.rs2_addr := dec_exe.rs2_addr
   io.dec_exe.pc_sel := bru.io.take
 
+  // hdu_exe.rs_addr values are used to determine if we have a
+  // load-use hazard. When the current instruction is a store-word
+  // instruction we have a load-use hazard that can be resolved by
+  // forwarding from mem to mem. So we use is_mem_write and
+  // clearIfDisabled to lie to the hazard detection unit about what
+  // register we are using to avoid stalls. Another way of thinking
+  // about it is that the value represents what register values are
+  // USED by execute. During memory writes rs2 is just passed
+  // unmodified through to mem and is not used by this stage.
+  val is_mem_write = dec_exe.mem_ctrl.write
   io.hdu_exe.rs1_addr := dec_exe.rs1_addr
-  io.hdu_exe.rs2_addr := dec_exe.rs2_addr
+  io.hdu_exe.rs2_addr := clearIfDisabled(
+    dec_exe.rs2_addr,
+    enabled = ! is_mem_write
+    )
 
   io.exe_mem.rs2 := rs2
 
