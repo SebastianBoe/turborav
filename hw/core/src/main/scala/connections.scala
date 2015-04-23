@@ -37,7 +37,7 @@ class DecodeExecute() extends Bundle {
   val rs2_addr= UInt(OUTPUT, 5)
   val rs2     = UInt(OUTPUT, Config.xlen)
   val imm     = UInt(OUTPUT, Config.xlen)
-  val rd_addr = UInt(OUTPUT, Config.xlen)
+  val rd_addr = UInt(OUTPUT, 5)
   val pc      = UInt(OUTPUT, Config.xlen)
   val pc_sel  = Bits(INPUT,  PC_SEL_WIDTH)
 

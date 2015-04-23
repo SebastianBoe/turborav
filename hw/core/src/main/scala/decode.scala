@@ -26,8 +26,21 @@ class Decode() extends Module {
     opcode === OPCODE_STORE
   }
 
+  def isLoad(opcode: Bits) = {
+    opcode === OPCODE_LOAD
+  }
+
+  def isBranch(opcdoe: Bits) = {
+    opcode === OPCODE_BRANCH
+  }
+
   def is_mult_div(opcode: Bits) = {
     opcode === OPCODE_MULT_DIV
+  }
+
+  def isRegop(opcode: Bits) = {
+    opcode === OPCODE_REG_IMM ||
+    opcode === OPCODE_REG_REG
   }
 
   val io = new DecodeIO()
@@ -40,7 +53,7 @@ class Decode() extends Module {
   val rs1_addr   = fch_dec.instr(19, 15)
   val rs2_addr   = fch_dec.instr(24, 20)
 
-  val rd_addr: UInt = fch_dec.instr(11, 7)
+  val rd_addr    = fch_dec.instr(11, 7)
 
   val opcode     = fch_dec.instr(6, 0)
   val func3      = fch_dec.instr(14, 12)
@@ -127,18 +140,17 @@ class Decode() extends Module {
   dec_exe.rs2 :=regbank.io.rs2_data
   dec_exe.rd_addr  := rd_addr
 
-  dec_exe.mem_ctrl.isHalfword :=  func3(0)
-  dec_exe.mem_ctrl.isByte     := !func3(1) && !func3(0)
-  dec_exe.mem_ctrl.signExtend := !func3(2)
+  dec_exe.mem_ctrl.isHalfword := isLoad(opcode) && ( func3(0))
+  dec_exe.mem_ctrl.isByte     := isLoad(opcode) && (!func3(1) && !func3(0))
+  dec_exe.mem_ctrl.signExtend := isLoad(opcode) && (!func3(2))
 
   dec_exe.mem_ctrl.write     := opcode === OPCODE_STORE
   dec_exe.mem_ctrl.read      := opcode === OPCODE_LOAD
 
   dec_exe.wrb_ctrl.rd_wen :=
     rd_addr != UInt(0) && Any(
-      opcode === OPCODE_REG_IMM,
-      opcode === OPCODE_REG_REG,
-      opcode === OPCODE_LOAD,
+      isLoad(opcode),
+      isRegop(opcode),
       is_upper(opcode),
       is_jump(opcode)
   )
