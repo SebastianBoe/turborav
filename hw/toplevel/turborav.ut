@@ -12,7 +12,7 @@
 -g UnusedPin:PullDown
 -g UserID:0xFFFFFFFF
 -g DCMShutdown:Disable
--g StartUpClk:CClk
+-g StartupClk:JtagClk
 -g DONE_cycle:4
 -g GTS_cycle:5
 -g GWE_cycle:6

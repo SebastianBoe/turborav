@@ -1,0 +1,3 @@
+NET "clk" LOC = "B8";
+NET "reset" LOC = "A7";
+

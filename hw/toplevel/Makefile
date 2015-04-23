@@ -5,9 +5,10 @@
 ####################################################################
 # Project-dependent variables 
 ####################################################################
-PROJECT_NAME = Basys2UserDemo
+PROJECT_NAME = turborav
 FPGA_MODEL = xc3s250e-cp132-5
-TOP_MODULE = Basys2UserDemo
+TOP_MODULE = Soc
+BITFILE = $(PROJECT_NAME).bit
 
 # Multithreading the map command. It varies from fpga to fpga if this
 # can be enabled. This is a bit ugly, but the map command will not
@@ -24,28 +25,25 @@ endif
 #################################################################
 # Project independent variables
 #################################################################
-HDL_FILES = $(wildcard src/*.vhd) $(wildcard src/*.v)
+#HDL_FILES = $(wildcard src/*.vhd) $(wildcard src/*.v)
+HDL_FILES = ../core/verilog/Soc.v
 INTSTYLE = silent
 #################################################################
 # Makefile body
 #################################################################
 
-.PHONY: default
-default: build/programming.log
+.PHONY: all program bitfile
+all: program
 
 # Generate the prj file, which is sort of like
 # a list of all the source files that you intend to use.
 build/project.prj: $(HDL_FILES)
-	@{ find src/ -name '*.vhd' -printf "vhdl work %p\n"; \
-	  find src/ -name '*.v'   -printf "verilog work %p\n"; } \
-	> build/project.prj
+	mkdir -p build
+	@find .. -name 'Soc.v'   -printf "verilog work %p\n" > $@
 
-# I tried using sed, and even the C preprocessor (big mistake) to
-# generate this file. But I have concluded that simply echoing it is
-# the best way to do this.
 build/xst_script.xst: build/project.prj
 	@echo "run                           " >  $@
-	@echo "-ifn build/project.prj        " >> $@
+	@echo "-ifn $<        				 " >> $@
 	@echo "-ofn build/$(PROJECT_NAME).ngc" >> $@
 	@echo "-p $(FPGA_MODEL)              " >> $@
 	@echo "-top $(TOP_MODULE)            " >> $@
@@ -62,12 +60,12 @@ build/$(PROJECT_NAME).ngc: build/xst_script.xst
 
 	@rm -r $(TOP_MODULE).lso _xmsgs xst
 
-build/native_generic_database.ngd: build/$(PROJECT_NAME).ngc src/user_constraints_file.ucf
+build/native_generic_database.ngd: build/$(PROJECT_NAME).ngc $(PROJECT_NAME).ucf
 	ngdbuild \
 	-p $(FPGA_MODEL) \
 	-sd build \
 	-dd build \
-	-uc src/user_constraints_file.ucf \
+	-uc turborav.ucf \
 	-intstyle $(INTSTYLE) \
 	-quiet \
 	$(PROJECT_NAME) \
@@ -86,8 +84,6 @@ build/design.ncd: build/native_generic_database.ngd
 	build/native_generic_database.ngd \
 	build/physical_constraints_file.pcf
 
-	@rm -r xilinx_device_details.xml Basys2UserDemo_map.xrpt _xmsgs/
-
 build/design_routed.ncd: build/design.ncd
 	par \
 	$(MUTLITHREADED_MAP_CMD_LINE_OPTION) \
@@ -100,24 +96,20 @@ build/design_routed.ncd: build/design.ncd
 	$@ \
 	build/physical_constraints_file.pcf
 
-	@rm Basys2UserDemo_par.xrpt
-
-build/bitfile.bit: build/design_routed.ncd
+build/$(PROJECT_NAME).bit: build/design_routed.ncd
 	bitgen \
 	-intstyle $(INTSTYLE) \
-	-f src/$(PROJECT_NAME).ut \
+	-f $(PROJECT_NAME).ut \
 	$< \
 	$@ \
 	build/physical_constraints_file.pcf
 
 	@rm -r xilinx_device_details.xml _xmsgs/
 
-build/programming.log: build/bitfile.bit
-	echo "Y" '#Say yes to a prompt I dont understand yet' | \
-	djtgcfg prog \
-	-d Basys2 \
-	--index 0 \
-	--file $< > $@
+bitfile: build/$(BITFILE)
+
+program: bitfile
+	djtgcfg prog -d Basys2 --index 0 --file build/$(BITFILE) > build/programming.log
 
 clean:
 	rm -rf build/*
