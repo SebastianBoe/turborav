@@ -115,14 +115,16 @@ class MemoryIO() extends Bundle {
 }
 
 class MemoryCtrl() extends Bundle {
-  val write     = Bool(OUTPUT)
-  val read      = Bool(OUTPUT)
-  val mem_width = UInt(OUTPUT, width = 3)
+  val write = Bool(OUTPUT)
+  val read  = Bool(OUTPUT)
+
+  val isHalfword = Bool(OUTPUT)
+  val isByte     = Bool(OUTPUT)
+  val signExtend = Bool(OUTPUT)
 
   def kill() = {
     write     := Bool(false)
     read      := Bool(false)
-    mem_width := UInt(0)
   }
 }
 
@@ -157,7 +159,6 @@ class WritebackCtrl() extends Bundle {
   def kill() = {
     rd_wen := Bool(false)
   }
-
 }
 
 class WritebackExecute() extends Bundle {

@@ -126,18 +126,22 @@ class Decode() extends Module {
   dec_exe.rs2_addr := rs2_addr
   dec_exe.rs2 :=regbank.io.rs2_data
   dec_exe.rd_addr  := rd_addr
+
+  dec_exe.mem_ctrl.isHalfword :=  func3(0)
+  dec_exe.mem_ctrl.isByte     := !func3(1) && !func3(0)
+  dec_exe.mem_ctrl.signExtend := !func3(2)
+
+  dec_exe.mem_ctrl.write     := opcode === OPCODE_STORE
+  dec_exe.mem_ctrl.read      := opcode === OPCODE_LOAD
+
   dec_exe.wrb_ctrl.rd_wen :=
-  rd_addr != UInt(0) && Any(
+    rd_addr != UInt(0) && Any(
       opcode === OPCODE_REG_IMM,
       opcode === OPCODE_REG_REG,
       opcode === OPCODE_LOAD,
       is_upper(opcode),
       is_jump(opcode)
   )
-
-  dec_exe.mem_ctrl.write     := opcode === OPCODE_STORE
-  dec_exe.mem_ctrl.read      := opcode === OPCODE_LOAD
-  dec_exe.mem_ctrl.mem_width := func3
 
   dec_exe.wrb_ctrl.rd_sel := Mux(is_jump(opcode), RD_PC,
     Mux(opcode === OPCODE_LOAD, RD_MEM, RD_ALU))
