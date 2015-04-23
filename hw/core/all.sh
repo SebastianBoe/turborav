@@ -4,7 +4,7 @@ find_tests(){
          -exec basename \
          {} .S \; \
         | sort \
-        | grep -v -E '(amo|lrsc)' \
+        | grep -v -E '(amo|lrsc|fence)' \
         | grep -v -E '(divuw|divw|mulw|lwu|ld)'
 
 }
