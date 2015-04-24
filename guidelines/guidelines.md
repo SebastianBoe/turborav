@@ -7,6 +7,8 @@ Merge commits should be avoided when there are no conflicts.
 
 ### Code style
 Unless stated otherwise one must follow the language's style guide.
+Variables must be snake case.
+
 
 * No trailing-whitespace.
 * No tabs.
