@@ -12,7 +12,7 @@ class FetchIO() extends Bundle {
   val exe_fch = new ExecuteFetch().flip()
   val hdu_fch = new HazardDetectionUnitFetch().flip()
 
-  val requestResponseIo = new RequestResponseIo()
+  val rr_io = new RequestResponseIo()
 }
 
 class FetchDecode() extends Bundle {
@@ -111,16 +111,16 @@ class MemoryIO() extends Bundle {
   val mem_exe = new MemoryExecute()
   val hdu_mem = new HazardDetectionUnitMemory().flip()
 
-  val requestResponseIo = new RequestResponseIo()
+  val rr_io = new RequestResponseIo()
 }
 
 class MemoryCtrl() extends Bundle {
   val write = Bool(OUTPUT)
   val read  = Bool(OUTPUT)
 
-  val isHalfword = Bool(OUTPUT)
-  val isByte     = Bool(OUTPUT)
-  val signExtend = Bool(OUTPUT)
+  val is_halfword = Bool(OUTPUT)
+  val is_byte     = Bool(OUTPUT)
+  val sign_extend = Bool(OUTPUT)
 
   def kill() = {
     write     := Bool(false)

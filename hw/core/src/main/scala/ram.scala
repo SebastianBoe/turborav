@@ -21,55 +21,52 @@ class Ram extends Module {
     val word_r = UInt(OUTPUT, Config.xlen)
   }
 
-  val wordSizeInBytes = Config.xlen / 8
-  val numWords        = Config.ramSizeInBytes / wordSizeInBytes
-  val addrLSB         = log2Down(wordSizeInBytes)
-  val addrMSB         = addrLSB + log2Up(numWords)
+  val word_size_in_bytes = Config.xlen / 8
+  val num_words          = Config.ram_size_in_bytes / word_size_in_bytes
 
-  val ram = Mem(UInt(width = Config.xlen), numWords)
+  val addr_lsb         = log2Down(word_size_in_bytes)
+  val addr_msb         = addr_lsb + log2Up(num_words)
 
-  val ramAddr = io.addr(addrMSB, addrLSB)
+  val ram = Mem(UInt(width = Config.xlen), num_words)
+
+  val ram_addr = io.addr(addr_msb, addr_lsb)
 
   io.word_r := UInt(0) // Default
 
-  val maskByte = UInt("h000000FF", width = 64)
+  val mask_byte     = UInt("h000000FF", width = 64)
+  val mask_halfword = UInt("h0000FFFF", width = 64)
+  val mask_word     = UInt("hFFFFFFFF", width = 64)
 
-  val maskHalfword = Cat( Fill(Bool(false), 2*Config.xlen-16),
-                          Fill(Bool(true),    Config.xlen-16))
-
-  val maskWord     = Cat( Fill(Bool(false),   Config.xlen),
-                          Fill(Bool(true),    Config.xlen))
-
-  val byteOffset = io.addr(addrLSB-1, 0)
+  val byte_offset = io.addr(addr_lsb-1, 0)
 
   when(io.wen) {
-    val maskBits =  Mux(io.byte_en(0), maskByte,
-                    Mux(io.byte_en(1), maskHalfword,
-                                       maskWord
+    val mask_bits = Mux(io.byte_en(0), mask_byte,
+                    Mux(io.byte_en(1), mask_halfword,
+                                       mask_word
                     ))
 
-    val doubleMask = maskBits  << (byteOffset * UInt(8))
-    val doubleWord = io.word_w << (byteOffset * UInt(8))
+    val double_mask = mask_bits << (byte_offset * UInt(8))
+    val double_word = io.word_w << (byte_offset * UInt(8))
 
-    val wordHigh = doubleWord(2*Config.xlen-1, Config.xlen)
-    val wordLow  = doubleWord(  Config.xlen,             0)
+    val word_high = double_word(2*Config.xlen-1, Config.xlen)
+    val word_low  = double_word(  Config.xlen,             0)
 
-    val maskHigh = doubleMask(2*Config.xlen-1, Config.xlen)
-    val maskLow  = doubleMask(  Config.xlen-1,           0)
+    val mask_high = double_mask(2*Config.xlen-1, Config.xlen)
+    val mask_low  = double_mask(  Config.xlen-1,           0)
 
-    ram.write(ramAddr+UInt(1), wordHigh, maskHigh)
-    ram.write(ramAddr        , wordLow,  maskLow )
+    ram.write(ram_addr+UInt(1), word_high, mask_high)
+    ram.write(ram_addr        , word_low,  mask_low )
   }
   .elsewhen(io.ren) {
-    val readWordHigh = ram(ramAddr+UInt(1))
-    val readWordLow  = ram(ramAddr)
+    val read_word_high = ram(ram_addr+UInt(1))
+    val read_word_low  = ram(ram_addr)
 
-    val doubleWord = Cat(readWordHigh, readWordLow)
-    val word_shifted = doubleWord >> (byteOffset * UInt(8))
+    val double_word = Cat(read_word_high, read_word_low)
+    val word_shifted = double_word >> (byte_offset * UInt(8))
 
-    val word =  Mux(io.byte_en(0), word_shifted & maskByte,
-                Mux(io.byte_en(1), word_shifted & maskHalfword,
-                                   word_shifted & maskWord
+    val word =  Mux(io.byte_en(0), word_shifted & mask_byte,
+                Mux(io.byte_en(1), word_shifted & mask_halfword,
+                                   word_shifted & mask_word
                 ))
 
     io.word_r := word(Config.xlen-1, 0)

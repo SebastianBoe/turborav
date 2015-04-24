@@ -9,19 +9,23 @@ class Decode() extends Module {
   require(Config.xlen == 32 || Config.xlen == 64 || Config.xlen == 128)
 
   // all shift codes end in 01
-  def is_shift(func3: Bits) = (!func3(1) && func3(0))
+  def isShift(func3: Bits) = (!func3(1) && func3(0))
 
-  def is_jump(opcode: Bits) = {
+  def isJump(opcode: Bits) = {
     opcode === OPCODE_JAL ||
     opcode === OPCODE_JALR
   }
 
-  def is_upper(opcode: Bits) = {
+  def isLongJump(opcode: Bits) = {
+    opcode === OPCODE_JAL
+  }
+
+  def isUpper(opcode: Bits) = {
     opcode === OPCODE_AUIPC ||
     opcode === OPCODE_LUI
   }
 
-  def is_lw_sw(opcode: Bits) = {
+  def isMemop(opcode: Bits) = {
     opcode === OPCODE_LOAD ||
     opcode === OPCODE_STORE
   }
@@ -30,11 +34,15 @@ class Decode() extends Module {
     opcode === OPCODE_LOAD
   }
 
+  def isStore(opcode: Bits) = {
+    opcode === OPCODE_STORE
+  }
+
   def isBranch(opcdoe: Bits) = {
     opcode === OPCODE_BRANCH
   }
 
-  def is_mult_div(opcode: Bits) = {
+  def isMultop(opcode: Bits) = {
     opcode === OPCODE_MULT_DIV
   }
 
@@ -43,9 +51,18 @@ class Decode() extends Module {
     opcode === OPCODE_REG_REG
   }
 
+  def isRegImm(opcode: Bits) = {
+    opcode === OPCODE_REG_IMM
+  }
+
+  def isRegReg(opcode: Bits) = {
+    opcode === OPCODE_REG_REG
+  }
+
   val io = new DecodeIO()
 
   val fch_dec = Reg(init = new FetchDecode())
+
   unless(io.hdu_dec.stall){
     fch_dec := io.fch_dec
   }
@@ -106,57 +123,56 @@ class Decode() extends Module {
                            Mux(opcode === OPCODE_LUI,     ALU_IN_A_ZERO,
                                                           ALU_IN_A_RS1))
 
-  exe_ctrl.alu_in_b_sel := Mux(opcode === OPCODE_REG_REG,
-                               ALU_IN_B_RS2,
-                               ALU_IN_B_IMM)
+  exe_ctrl.alu_in_b_sel := Mux(isRegReg(opcode), ALU_IN_B_RS2, ALU_IN_B_IMM)
 
-  exe_ctrl.alu_func := Mux(opcode === OPCODE_REG_IMM &&
-                           !is_shift(func3),                     alu_func_i,
-                       Mux(is_jump(opcode)   ||
-                           is_upper(opcode)  ||
-                           opcode === OPCODE_BRANCH ||
-                           is_lw_sw(opcode),                     ALU_ADD,
-                                                                 alu_func_r))
+  exe_ctrl.alu_func := Mux(isRegImm(opcode) &&
+                           !isShift(func3),     alu_func_i,
+                       Mux(isJump(opcode)   ||
+                           isUpper(opcode)  ||
+                           isBranch(opcode) ||
+                           isMemop(opcode),     ALU_ADD,
+                                                alu_func_r))
 
-  exe_ctrl.bru_func:= Mux(opcode === OPCODE_BRANCH, func3,
-                      Mux(is_jump(opcode),          BJMP,
-                                                    BNOT))
+  exe_ctrl.bru_func:= Mux(isBranch(opcode), func3,
+                      Mux(isJump(opcode),   BJMP,
+                                            BNOT  ))
 
-  exe_ctrl.mult_func := func3
-  exe_ctrl.mult_enable := is_mult_div(opcode) && func7 === Bits("b0000001")
+  exe_ctrl.mult_func   := func3
+  exe_ctrl.mult_enable := isMultop(opcode) && func7 === Bits("b0000001")
 
   dec_exe.imm := MuxCase( imm_i, Array(
-            (opcode === OPCODE_REG_IMM && is_shift(func3))      -> shamt,
-            (is_upper(opcode))                                  -> imm_u,
-            (opcode === OPCODE_STORE)                           -> imm_s,
-            (opcode === OPCODE_BRANCH)                          -> imm_b,
-            (opcode === OPCODE_JAL)                             -> imm_j
+            (isRegImm(opcode) && isShift(func3)) -> shamt,
+            (isUpper(opcode))                    -> imm_u,
+            (isStore(opcode))                    -> imm_s,
+            (isBranch(opcode))                   -> imm_b,
+            (isLongJump(opcode))                 -> imm_j
             ))
 
-  dec_exe.pc := fch_dec.pc
+  dec_exe.pc       := fch_dec.pc
   dec_exe.rs1_addr := rs1_addr
-  dec_exe.rs1 :=regbank.io.rs1_data
+  dec_exe.rs1      := regbank.io.rs1_data
   dec_exe.rs2_addr := rs2_addr
-  dec_exe.rs2 :=regbank.io.rs2_data
+  dec_exe.rs2      := regbank.io.rs2_data
   dec_exe.rd_addr  := rd_addr
 
-  dec_exe.mem_ctrl.isHalfword := isLoad(opcode) && ( func3(0))
-  dec_exe.mem_ctrl.isByte     := isLoad(opcode) && (!func3(1) && !func3(0))
-  dec_exe.mem_ctrl.signExtend := isLoad(opcode) && (!func3(2))
+  dec_exe.mem_ctrl.is_halfword := isLoad(opcode) && ( func3(0))
+  dec_exe.mem_ctrl.is_byte     := isLoad(opcode) && (!func3(1) && !func3(0))
+  dec_exe.mem_ctrl.sign_extend := isLoad(opcode) && (!func3(2))
 
-  dec_exe.mem_ctrl.write     := opcode === OPCODE_STORE
-  dec_exe.mem_ctrl.read      := opcode === OPCODE_LOAD
+  dec_exe.mem_ctrl.write := isStore(opcode)
+  dec_exe.mem_ctrl.read  := isLoad(opcode)
 
   dec_exe.wrb_ctrl.rd_wen :=
     rd_addr != UInt(0) && Any(
       isLoad(opcode),
       isRegop(opcode),
-      is_upper(opcode),
-      is_jump(opcode)
+      isUpper(opcode),
+      isJump(opcode)
   )
 
-  dec_exe.wrb_ctrl.rd_sel := Mux(is_jump(opcode), RD_PC,
-    Mux(opcode === OPCODE_LOAD, RD_MEM, RD_ALU))
+  dec_exe.wrb_ctrl.rd_sel := Mux(isJump(opcode), RD_PC,
+                             Mux(isLoad(opcode), RD_MEM,
+                                                 RD_ALU))
 
   when(!fch_dec.instr_valid || dec_exe.pc_sel === PC_SEL_BRJMP)
   {

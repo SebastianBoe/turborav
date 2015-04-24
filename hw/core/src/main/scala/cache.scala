@@ -8,52 +8,55 @@ class Cache() extends Module {
 
   val io = new Bundle {
     val write_address = UInt(INPUT, Config.xlen)
-    val read_address = UInt(INPUT, Config.xlen)
-    val write_data = UInt(INPUT, Config.xlen)
-    val read_data = UInt(OUTPUT, Config.xlen)
-    val read = Bool(INPUT)
-    val write = Bool(INPUT)
-    val hit = Bool(OUTPUT)
+    val read_address  = UInt(INPUT, Config.xlen)
+    val write_data    = UInt(INPUT, Config.xlen)
+    val read_data     = UInt(OUTPUT, Config.xlen)
+    val read          = Bool(INPUT)
+    val write         = Bool(INPUT)
+    val hit           = Bool(OUTPUT)
   }
 
   val read_address = Reg(init = UInt(0), next = io.read_address)
 
   // Extract configuration for convenience
-  val cacheLineWidth = Config.cache.cacheLineWidth
-  val numEntries     = Config.cache.numEntries
+  val cache_line_width = Config.cache.cache_line_width
+  val num_entries     = Config.cache.num_entries
   val associativity  = Config.cache.associativity
 
-  require(isPow2(numEntries))
-  require(numEntries % associativity == 0)
-  require(cacheLineWidth % INSTRUCTION_WIDTH == 0)
+  require(isPow2(num_entries))
+  require(num_entries % associativity == 0)
+  require(cache_line_width % INSTRUCTION_WIDTH == 0)
 
-  val entriesPerBank = numEntries / associativity
-  val instrPerCacheLine = cacheLineWidth / INSTRUCTION_WIDTH
+  val entries_per_bank  = num_entries / associativity
+  val instrPerCacheLine = cache_line_width / INSTRUCTION_WIDTH
 
-  val byteOffsetSize  = log2Down(Config.xlen / BITS_IN_BYTE)
-  val blockOffsetSize = log2Down(cacheLineWidth / INSTRUCTION_WIDTH)
-  val indexSize = log2Down(entriesPerBank)
-  val nonTagSize = indexSize + blockOffsetSize + byteOffsetSize
-  val tagSize = INSTRUCTION_WIDTH - nonTagSize
+  val byte_offset_size  = log2Down(Config.xlen / BITS_IN_BYTE)
+  val block_offset_size = log2Down(cache_line_width / INSTRUCTION_WIDTH)
+  val index_size        = log2Down(entries_per_bank)
+  val non_tag_size      = index_size + block_offset_size + byte_offset_size
+  val tag_size          = INSTRUCTION_WIDTH - non_tag_size
 
-  val read_tag = read_address(INSTRUCTION_WIDTH-1, nonTagSize)
-  val read_index = read_address(nonTagSize-1, blockOffsetSize + byteOffsetSize)
+  val read_tag   = read_address(INSTRUCTION_WIDTH-1, non_tag_size)
+  val read_index = read_address(non_tag_size-1,
+                                block_offset_size + byte_offset_size)
 
-  val tagArray = Mem(Bits(width = tagSize*associativity), entriesPerBank,
-                     seqRead = true)
-  val validArray = Reg(init = Bits(0, associativity * entriesPerBank))
+  val tag_array  = Mem( Bits(width = tag_size*associativity), entries_per_bank,
+                        seqRead = true)
+  val validArray = Reg(init = Bits(0, associativity * entries_per_bank))
 
-  val read_lines= Vec.fill(associativity) { Bits() }
-  val tagHits = Vec.fill(associativity) { Bool() }
+  val read_lines = Vec.fill(associativity) { Bits() }
+  val tag_hits   = Vec.fill(associativity) { Bool() }
 
   /* Linear Feedback register used for random replacement policy */
   val shift = LFSR16(io.write)
 
   for( i <- 0 until associativity) {
-    val bank = Mem(Bits(width = cacheLineWidth), entriesPerBank,seqRead = true)
-    val tag = tagArray(read_index)((i+1)*tagSize - 1, i*tagSize)
+    val bank = Mem(Bits(width = cache_line_width),
+                  entries_per_bank,
+                  seqRead = true)
+    val tag = tag_array(read_index)((i+1)*tag_size - 1, i*tag_size)
     // TODO: check valid bit
-    tagHits(i) := tag === read_tag
+    tag_hits(i) := tag === read_tag
 
     when(io.read){
       read_lines(i) := bank(read_index)
@@ -63,8 +66,8 @@ class Cache() extends Module {
 
   }
 
-  val read_line = Mux1H(tagHits, read_lines)
+  val read_line = Mux1H(tag_hits, read_lines)
   //TODO: select out word from cache line
   io.read_data := read_line(Config.xlen-1,0)
-  io.hit := tagHits.exists((x: Bool) => x === Bool(true))
+  io.hit := tag_hits.exists((x: Bool) => x === Bool(true))
 }

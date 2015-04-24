@@ -6,7 +6,7 @@ import Constants._
 
 class Execute() extends Module {
 
-  def is_mult_upper(mult_func: Bits) = {
+  def isMultUpper(mult_func: Bits) = {
     mult_func === MULT_MULH   ||
     mult_func === MULT_MULHU  ||
     mult_func === MULT_MULHSU ||
@@ -14,7 +14,7 @@ class Execute() extends Module {
     mult_func === MULT_REMU
   }
 
-  def is_mult_lower(mult_func: Bits) = {
+  def isMultLower(mult_func: Bits) = {
     mult_func === MULT_MUL  ||
     mult_func === MULT_DIV  ||
     mult_func === MULT_DIVU
@@ -91,9 +91,9 @@ class Execute() extends Module {
     ((state === s_mult)   && !mult.io.done)
 
   io.exe_mem.alu_result :=
-     Mux(is_mult_upper(mult_func) && state === s_mult, mult.io.out_hi,
-     Mux(is_mult_lower(mult_func) && state === s_mult, mult.io.out_lo,
-                                                       alu.io.out))
+     Mux(isMultUpper(mult_func) && state === s_mult, mult.io.out_hi,
+     Mux(isMultLower(mult_func) && state === s_mult, mult.io.out_lo,
+                                                     alu.io.out))
 
   io.exe_fch.pc_alu := alu.io.out
   io.exe_fch.pc_sel := pc_sel

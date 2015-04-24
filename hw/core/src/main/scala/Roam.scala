@@ -17,21 +17,21 @@ class Roam extends Module {
   val io = new Bundle {
     val fch     = new RequestResponseIo().flip
     val mem     = new RequestResponseIo().flip
-    val mmio_rr = new RequestResponseIo()
+    val rr_mmio = new RequestResponseIo()
   }
   // TODO: change the rom and ram modules to support the RR interface
   // instead. That would kill a lot of code here.
   val rom = Module(new Rom())
   val ram = Module(new Ram())
 
-  val memReadingRom =
+  val mem_reading_rom =
     io.mem.request.valid && isRomAddress(io.mem.request.bits.addr)
 
-  val memRequestingMmio =
+  val mem_requesting_mmio =
     io.mem.request.valid && isApbAddress(io.mem.request.bits.addr)
 
   rom.io.pc := Mux(
-    memReadingRom,
+    mem_reading_rom,
     io.mem.request.bits.addr,
     io.fch.request.bits.addr
   )
@@ -45,15 +45,15 @@ class Roam extends Module {
   // Since the memory stage has priority over the fetch stage and both
   // the ROM and the RAM have single-cycle access the response valid
   // signal becomes equivalent to the request valid signal.
-  io.mem.response.valid := io.mem.request.valid
-  io.mem.response.bits.word  := MuxCase(ram.io.word_r, Array(
-    memReadingRom     -> (rom.io.instr),
-    memRequestingMmio -> (io.mmio_rr.response.bits.word)
+  io.mem.response.valid     := io.mem.request.valid
+  io.mem.response.bits.word := MuxCase(ram.io.word_r, Array(
+    mem_reading_rom     -> (rom.io.instr),
+    mem_requesting_mmio -> (io.rr_mmio.response.bits.word)
   ))
 
   io.fch.response.bits.word  := rom.io.instr
-  io.fch.response.valid := ! memReadingRom && io.fch.request.valid
+  io.fch.response.valid      := ! mem_reading_rom && io.fch.request.valid
 
-  io.mmio_rr.request.bits := io.mem.request.bits
-  io.mmio_rr.request.valid := memRequestingMmio
+  io.rr_mmio.request.bits  := io.mem.request.bits
+  io.rr_mmio.request.valid := mem_requesting_mmio
 }
