@@ -23,7 +23,6 @@ class Ram extends Module {
 
   val wordSizeInBytes = Config.xlen / 8
   val numWords        = Config.ramSizeInBytes / wordSizeInBytes
-  // val addrLSB         = log2Down(wordSizeInBytes)
   val addrLSB         = log2Down(wordSizeInBytes)
   val addrMSB         = addrLSB + log2Up(numWords)
 
@@ -33,8 +32,7 @@ class Ram extends Module {
 
   io.word_r := UInt(0) // Default
 
-  val maskByte     = Cat( Fill(Bool(false), 2*Config.xlen- 8),
-                          Fill(Bool(true),    Config.xlen-24))
+  val maskByte = UInt("h000000FF", width = 64)
 
   val maskHalfword = Cat( Fill(Bool(false), 2*Config.xlen-16),
                           Fill(Bool(true),    Config.xlen-16))

@@ -30,16 +30,8 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
 
 
   def get_test_status() : TestStatus = {
-    def hex2dec(hex: String): BigInt = {
-       // There has to be a better way to do this in scala, i don't
-       // understand why BigInt("81923ba", 16) didn't work.
-      hex.toLowerCase().toList.map(
-        "0123456789abcdef".indexOf(_)).map(
-        BigInt(_)).reduceLeft( _ * 16 + _)
-    }
-
-    val TestPassInstr = hex2dec("51e0d073")
-    val TestFailInstr = hex2dec("51ee1073")
+    val TestPassInstr = ScalaUtil.hex2dec("51e0d073")
+    val TestFailInstr = ScalaUtil.hex2dec("51ee1073")
     peek(c.ravv.dec.fch_dec.instr) match {
       case TestPassInstr => Passed
       case TestFailInstr => Failed
