@@ -210,7 +210,7 @@ class HazardDetectionUnitIO() extends Bundle {
 }
 
 class HazardDetectionUnitFetch() extends Bundle {
-  val instructionValid = Bool(INPUT)
+  val instr_valid= Bool(INPUT)
 
   val stall = Bool(OUTPUT)
 }

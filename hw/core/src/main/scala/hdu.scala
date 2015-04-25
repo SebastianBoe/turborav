@@ -23,11 +23,11 @@ class HazardDetectionUnit() extends Module {
 
   val mult_busy = io.hdu_exe.mult_busy
 
-  val fetchValidInstruction = io.hdu_fch.instructionValid
+  val fch_instr_valid = io.hdu_fch.instr_valid
 
   // It is the responsebility of the pipeline stage
   // to insert bubbles when it is stalling.
-  io.hdu_fch.stall := load_use || mult_busy || !fetchValidInstruction
+  io.hdu_fch.stall := load_use || mult_busy || !fch_instr_valid
   io.hdu_dec.stall := load_use || mult_busy
   io.hdu_exe.stall := load_use || mult_busy
   io.hdu_mem.stall := Bool(false)

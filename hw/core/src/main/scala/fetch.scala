@@ -23,7 +23,7 @@ class Fetch() extends Module {
     take_saved_branch := Bool(false)
   }
 
-  val instruction_valid = io.rr_io.response.valid
+  val instr_valid = io.rr_io.response.valid
   val has_branched = io.exe_fch.pc_sel === PC_SEL_BRJMP || take_saved_branch
 
   when(io.exe_fch.pc_sel === PC_SEL_BRJMP){
@@ -38,8 +38,8 @@ class Fetch() extends Module {
 
   // Fetch to decode
   io.fch_dec.pc          := pc
-  io.fch_dec.instr_valid := !has_branched && instruction_valid
+  io.fch_dec.instr_valid := !has_branched && instr_valid
   io.fch_dec.instr       := io.rr_io.response.bits.word
 
-  io.hdu_fch.instructionValid := instruction_valid
+  io.hdu_fch.instr_valid := instr_valid
 }
