@@ -31,13 +31,13 @@ class Ram extends Module {
 
   val ram_addr = io.addr(addr_msb, addr_lsb)
 
-  io.word_r := UInt(0) // Default
-
   val mask_byte     = UInt("h000000FF", width = 64)
   val mask_halfword = UInt("h0000FFFF", width = 64)
   val mask_word     = UInt("hFFFFFFFF", width = 64)
 
   val byte_offset = io.addr(addr_lsb-1, 0)
+
+  val word_out = Reg(UInt())
 
   when(io.wen) {
     val mask_bits = Mux(io.byte_en(0), mask_byte,
@@ -69,7 +69,9 @@ class Ram extends Module {
                                    word_shifted & mask_word
                 ))
 
-    io.word_r := word(Config.xlen-1, 0)
+    word_out := word(Config.xlen-1, 0)
   }
+
+  io.word_r := word_out
 
 }

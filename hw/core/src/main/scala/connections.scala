@@ -121,7 +121,6 @@ class MemoryCtrl() extends Bundle {
 
   val is_halfword = Bool(OUTPUT)
   val is_byte     = Bool(OUTPUT)
-  val sign_extend = Bool(OUTPUT)
 
   def kill() = {
     write     := Bool(false)
@@ -158,8 +157,12 @@ class WritebackIO() extends Bundle {
 }
 
 class WritebackCtrl() extends Bundle {
-  val rd_wen = Bool(OUTPUT)
-  val rd_sel = Bits(OUTPUT, RD_SEL_WIDTH)
+  val rd_wen         = Bool(OUTPUT)
+  val rd_sel         = Bits(OUTPUT, RD_SEL_WIDTH)
+  val has_wait_state = Bool(OUTPUT)
+  val is_halfword    = Bool(OUTPUT)
+  val is_byte        = Bool(OUTPUT)
+  val sign_extend    = Bool(OUTPUT)
 
   def kill() = {
     rd_wen := Bool(false)

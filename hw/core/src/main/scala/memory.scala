@@ -28,17 +28,8 @@ class Memory extends Module {
     exe_mem := io.exe_mem
   }
 
-  val word = response.bits.word(Config.xlen-1, 0)
-
-  val sign_ext_halfword = Cat(Fill(word(15), Config.xlen-16), word(15, 0))
-  val sign_ext_byte     = Cat(Fill(word( 7), Config.xlen- 8), word( 7, 0))
-
-  val read_data =
-    Mux(mem_ctrl.sign_extend && mem_ctrl.is_halfword, sign_ext_halfword,
-    Mux(mem_ctrl.sign_extend && mem_ctrl.is_byte,     sign_ext_byte,
-                                                     word))
-
-  io.mem_wrb.mem_read_data := read_data
+  io.mem_wrb.mem_read_data := response.bits.word
+  io.mem_wrb.wrb_ctrl.has_wait_state := response.bits.has_wait_state
   io.mem_wrb <> exe_mem
 
   // Forwarding of ALU result

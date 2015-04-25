@@ -27,6 +27,9 @@ class Roam extends Module {
   val mem_reading_rom =
     io.mem.request.valid && isRomAddress(io.mem.request.bits.addr)
 
+  val mem_reading_ram =
+    io.mem.request.valid && isRamAddress(io.mem.request.bits.addr)
+
   val mem_requesting_mmio =
     io.mem.request.valid && isApbAddress(io.mem.request.bits.addr)
 
@@ -50,6 +53,7 @@ class Roam extends Module {
     mem_reading_rom     -> (rom.io.instr),
     mem_requesting_mmio -> (io.rr_mmio.response.bits.word)
   ))
+  io.mem.response.bits.has_wait_state := mem_reading_ram
 
   io.fch.response.bits.word  := rom.io.instr
   io.fch.response.valid      := ! mem_reading_rom && io.fch.request.valid

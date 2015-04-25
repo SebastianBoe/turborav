@@ -157,9 +157,16 @@ class Decode() extends Module {
   dec_exe.rs2      := regbank.io.rs2_data
   dec_exe.rd_addr  := rd_addr
 
-  dec_exe.mem_ctrl.is_halfword := isLoad(opcode) && ( func3(0))
-  dec_exe.mem_ctrl.is_byte     := isLoad(opcode) && (!func3(1) && !func3(0))
-  dec_exe.mem_ctrl.sign_extend := isLoad(opcode) && (!func3(2))
+  val is_halfword = isLoad(opcode) && ( func3(0))
+  val is_byte     = isLoad(opcode) && (!func3(1) && !func3(0))
+  val sign_extend = isLoad(opcode) && (!func3(2))
+
+  dec_exe.mem_ctrl.is_halfword := is_halfword
+  dec_exe.mem_ctrl.is_byte     := is_byte
+
+  dec_exe.wrb_ctrl.is_halfword := is_halfword
+  dec_exe.wrb_ctrl.is_byte     := is_byte
+  dec_exe.wrb_ctrl.sign_extend := sign_extend
 
   dec_exe.mem_ctrl.write := isStore(opcode)
   dec_exe.mem_ctrl.read  := isLoad(opcode)
