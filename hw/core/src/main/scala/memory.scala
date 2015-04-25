@@ -22,7 +22,9 @@ class Memory extends Module {
   request.bits.write   := mem_ctrl.write
   request.bits.byte_en := Cat(mem_ctrl.is_halfword, mem_ctrl.is_byte)
 
-  unless(io.hdu_mem.stall) {
+  when(io.hdu_mem.stall) {
+    io.mem_wrb.kill()
+  } .otherwise {
     exe_mem := io.exe_mem
   }
 

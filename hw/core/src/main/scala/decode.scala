@@ -63,7 +63,9 @@ class Decode() extends Module {
 
   val fch_dec = Reg(init = new FetchDecode())
 
-  unless(io.hdu_dec.stall){
+  when(io.hdu_dec.stall){
+    io.dec_exe.kill()
+  } .otherwise {
     fch_dec := io.fch_dec
   }
 
@@ -174,8 +176,8 @@ class Decode() extends Module {
                              Mux(isLoad(opcode), RD_MEM,
                                                  RD_ALU))
 
-  when(!fch_dec.instr_valid || dec_exe.pc_sel === PC_SEL_BRJMP)
-  {
-    dec_exe.kill()
+  when(!fch_dec.instr_valid || io.dec_exe.pc_sel === PC_SEL_BRJMP) {
+    io.dec_exe.kill()
   }
+
 }

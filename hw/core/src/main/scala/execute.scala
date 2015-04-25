@@ -24,7 +24,10 @@ class Execute() extends Module {
 
   val dec_exe = Reg(init = new DecodeExecute())
 
-  unless(io.hdu_exe.stall){
+  when(io.hdu_exe.stall){
+      io.exe_mem.kill()
+  } .otherwise
+  {
     dec_exe := io.dec_exe
   }
 
@@ -72,16 +75,10 @@ class Execute() extends Module {
   mult.io.func   := mult_func
   mult.io.enable := (mult_enable && state === s_normal)
 
-
-  /* Insert bubbles while multiplication is executing */
   when(state === s_normal && mult_enable){
-    io.exe_mem.kill()
     state := s_mult
   }
-  .elsewhen(state === s_mult && !mult.io.done){
-    io.exe_mem.kill()
-  }
-  .otherwise{
+  .elsewhen (!(state === s_mult && !mult.io.done)){
     state := s_normal
   }
 

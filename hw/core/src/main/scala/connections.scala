@@ -76,6 +76,7 @@ class ExecuteCtrl() extends Bundle {
 
   def kill(){
     bru_func := BNOT
+    mult_enable := Bool(false)
   }
 }
 
@@ -135,6 +136,10 @@ class MemoryWriteback() extends Bundle {
   val pc            = UInt(OUTPUT, Config.xlen)
 
   val wrb_ctrl = new WritebackCtrl()
+
+  def kill() = {
+    wrb_ctrl.kill()
+  }
 }
 
 class MemoryExecute() extends Bundle {
