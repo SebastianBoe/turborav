@@ -14,7 +14,7 @@ class Ram extends Module {
     // write
     val word_w   = UInt(INPUT, Config.xlen)
     val wen      = Bool(INPUT)
-    val byte_en  = UInt(INPUT, Config.xlen)
+    val byte_en  = UInt(INPUT, 2)
 
     // read
     val ren    = Bool(INPUT)
