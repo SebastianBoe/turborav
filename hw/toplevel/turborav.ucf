@@ -1,3 +1,11 @@
+# TODO: Auto-generate this file to have a configurable number of pins
+# in the design.
+
 NET "clk" LOC = "B8";
 NET "reset" LOC = "A7";
 
+NET "io_pin_inputs<0>" LOC = "G12";
+NET "io_pin_inputs<1>" LOC = "C11";
+
+NET "io_pin_outputs<0>" LOC = "M5";
+NET "io_pin_outputs<1>" LOC = "M11";
