@@ -1,6 +1,7 @@
 package TurboRav
 
 import Chisel._
+import scala.annotation.tailrec
 
 // This module contains constructs that are not specific to the
 // TurboRav project but could be useful in any Chisel project.
@@ -19,4 +20,20 @@ object clearIfDisabled {
 object Any {
   def apply[T <: Data](mod: T, mods: T*): Bool = apply(mod :: mods.toList)
   def apply[T <: Data](mods: Seq[T]):     Bool = orR(Cat(mods))
+}
+
+object rightRotate {
+  /**
+   * Returns the circular right shift of "shiftAmount" bits of the UInt "word".
+   * @param word The UInt to be right rotated.
+   * @param shiftAmount The number of bits to be shifted.
+   * @return A bitwise right rotation.
+   */
+  @tailrec
+  def apply(word: UInt, shiftAmount: Int): UInt = {
+    if (shiftAmount == 0) word
+    else rightRotate(rightRotate(word), shiftAmount - 1)
+  }
+
+  def apply(word: UInt) = word(0) ## word(word.getWidth() - 1, 1)
 }
