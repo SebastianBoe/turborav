@@ -5,7 +5,7 @@ object Config {
   val apb_addr_len      = 32
   val apb_data_len      = 32
   val cache             = new CacheConfig()
-  val ram_size_in_bytes = 256
+  val ram_size_in_bytes = 1024
 }
 
 class CacheConfig {
