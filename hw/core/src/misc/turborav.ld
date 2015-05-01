@@ -22,6 +22,7 @@ SECTIONS
 {
     .text :
     {
+        *(.text.startup)
         *(.text)
     } > REGION_TEXT
     .rodata :
