@@ -84,6 +84,8 @@ build/design.ncd: build/native_generic_database.ngd
 	build/native_generic_database.ngd \
 	build/physical_constraints_file.pcf
 
+	@rm $(TOP_MODULE)_map.xrpt
+
 build/design_routed.ncd: build/design.ncd
 	par \
 	$(MUTLITHREADED_MAP_CMD_LINE_OPTION) \
@@ -95,6 +97,9 @@ build/design_routed.ncd: build/design.ncd
 	build/design.ncd \
 	$@ \
 	build/physical_constraints_file.pcf
+
+	@rm $(TOP_MODULE)_par.xrpt
+
 
 build/$(PROJECT_NAME).bit: build/design_routed.ncd
 	bitgen \
