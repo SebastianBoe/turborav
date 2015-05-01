@@ -1,11 +1,37 @@
+# This file contains a mapping from verilog wire names to Basys2 board
+# pin names. It could also contain timing constraints.
+
 # TODO: Auto-generate this file to have a configurable number of pins
-# in the design.
+# in the design. Perhaps Soc.scala should generate it?
 
-NET "clk" LOC = "B8";
-NET "reset" LOC = "A7";
+NET "clk"               LOC = "B8";
 
-NET "io_pin_inputs<0>" LOC = "G12";
-NET "io_pin_inputs<1>" LOC = "C11";
+# Reset is connected to some floating pin at Jumper group JA.
+NET "reset"             LOC = "B2";
 
-NET "io_pin_outputs<0>" LOC = "M5";
-NET "io_pin_outputs<1>" LOC = "M11";
+# BTNs
+NET "io_pin_inputs<0>"  LOC = "G12"; # BTN0
+NET "io_pin_inputs<1>"  LOC = "C11"; # BTN1
+NET "io_pin_inputs<2>"  LOC = "M4" ; # BTN2
+NET "io_pin_inputs<3>"  LOC = "A7" ; # BTN3
+
+# SWs
+NET "io_pin_inputs<4>"  LOC = "P11" ; # SW0
+NET "io_pin_inputs<5>"  LOC = "L3"  ; # SW1
+NET "io_pin_inputs<6>"  LOC = "K3"  ; # SW2
+NET "io_pin_inputs<7>"  LOC = "B4"  ; # SW3
+NET "io_pin_inputs<8>"  LOC = "G3"  ; # SW4
+NET "io_pin_inputs<9>"  LOC = "F3"  ; # SW5
+NET "io_pin_inputs<10>" LOC = "E2"  ; # SW6
+NET "io_pin_inputs<11>" LOC = "N3"  ; # SW7
+
+# LEDs
+NET "io_pin_outputs<0>" LOC = "M5" ; # LD0
+NET "io_pin_outputs<1>" LOC = "M11"; # LD1
+NET "io_pin_outputs<2>" LOC = "P7" ; # LD2
+NET "io_pin_outputs<3>" LOC = "P6" ; # LD3
+NET "io_pin_outputs<4>" LOC = "N5" ; # LD4
+NET "io_pin_outputs<5>" LOC = "N4" ; # LD5
+NET "io_pin_outputs<6>" LOC = "P4" ; # LD6
+NET "io_pin_outputs<7>" LOC = "G1" ; # LD7
+
