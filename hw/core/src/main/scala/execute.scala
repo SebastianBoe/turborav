@@ -25,9 +25,8 @@ class Execute() extends Module {
   val dec_exe = Reg(init = new DecodeExecute())
 
   when(io.hdu_exe.stall){
-      io.exe_mem.kill()
-  } .otherwise
-  {
+    io.exe_mem.kill()
+  } .otherwise {
     dec_exe := io.dec_exe
   }
   // Default to pipelining decodes values.

@@ -31,11 +31,11 @@ class Fetch() extends Module {
     saved_branch_addr := io.exe_fch.pc_alu
   }
 
-  io.rr_io.request.bits.addr  := pc
-  io.rr_io.request.bits.write := Bool(false)
-  io.rr_io.request.bits.wdata := UInt(0)
-  io.rr_io.request.valid := Bool(true)
+  io.rr_io.request.bits.addr    := pc
+  io.rr_io.request.bits.write   := Bool(false)
+  io.rr_io.request.bits.wdata   := UInt(0)
   io.rr_io.request.bits.byte_en := UInt(0)
+  io.rr_io.request.valid        := Bool(true)
 
   // Fetch to decode
   io.fch_dec.pc          := pc

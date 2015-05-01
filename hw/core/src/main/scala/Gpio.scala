@@ -28,6 +28,6 @@ class Gpio(num_pin_inputs: Int, num_pin_outputs: Int) extends Module {
 
   // There is no heavy lifting done in this peripheral so we can
   // immediately respond positively to requests.
-  io.rr.response.valid := Bool(true)
+  io.rr.response.valid               := Bool(true)
   io.rr.response.bits.has_wait_state := Bool(false)
 }
