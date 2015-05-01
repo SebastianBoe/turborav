@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 uint32_t get_cpu_freq_hz(void)
 {
     return 50 * 1000 * 1000;
