@@ -35,6 +35,7 @@ class Fetch() extends Module {
   io.rr_io.request.bits.write := Bool(false)
   io.rr_io.request.bits.wdata := UInt(0)
   io.rr_io.request.valid := Bool(true)
+  io.rr_io.request.bits.byte_en := UInt(0)
 
   // Fetch to decode
   io.fch_dec.pc          := pc

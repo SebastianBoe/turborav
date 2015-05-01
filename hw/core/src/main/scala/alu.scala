@@ -28,14 +28,14 @@ class Alu () extends Module {
     Array(
       ALU_ADD  -> (io.in_a + io.in_b),
       ALU_SUB  -> (io.in_a - io.in_b),
-      ALU_SLT  -> (io.in_a.toSInt() < io.in_b.toSInt()),
+      ALU_SLT  -> (io.in_a.toSInt() < io.in_b.toSInt()).toUInt,
       ALU_SLTU -> (io.in_a < io.in_b),
       ALU_AND  -> (io.in_a & io.in_b),
       ALU_OR   -> (io.in_a | io.in_b),
       ALU_XOR  -> (io.in_a ^ io.in_b),
       ALU_SLL  -> (io.in_a << shamt),
       ALU_SRL  -> (io.in_a >> shamt),
-      ALU_SRA  -> (io.in_a.toSInt() >> shamt)
+      ALU_SRA  -> (io.in_a.toSInt() >> shamt).toUInt
     )
   )
 }

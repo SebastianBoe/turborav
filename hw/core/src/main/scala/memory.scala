@@ -27,10 +27,10 @@ class Memory extends Module {
   } .otherwise {
     exe_mem := io.exe_mem
   }
+  io.mem_wrb := exe_mem
 
   io.mem_wrb.mem_read_data := response.bits.word
   io.mem_wrb.wrb_ctrl.has_wait_state := response.bits.has_wait_state
-  io.mem_wrb <> exe_mem
 
   // Forwarding of ALU result
   io.mem_exe.alu_result := exe_mem.alu_result

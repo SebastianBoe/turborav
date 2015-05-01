@@ -30,6 +30,8 @@ class Execute() extends Module {
   {
     dec_exe := io.dec_exe
   }
+  // Default to pipelining decodes values.
+  io.exe_mem := dec_exe
 
   val ctrl = dec_exe.exe_ctrl
   val zero = UInt(0, width = Config.xlen)
@@ -104,6 +106,4 @@ class Execute() extends Module {
   io.hdu_exe.rs2_addr := dec_exe.rs2_addr
 
   io.exe_mem.rs2 := rs2
-
-  io.exe_mem <> dec_exe
 }
