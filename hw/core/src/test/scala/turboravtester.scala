@@ -2,14 +2,28 @@ package TurboRav
 
 import Chisel._
 import Common._
+import org.apache.commons.io.FilenameUtils;
 
 object TurboRavTestRunner{
   def main(args: Array[String]): Unit = {
-    val Array(module, rom) = args
+    val Array( // Parse argument list
+      module,
+      rom,
+      num_pin_inputs,
+      num_pin_outputs
+    ) = args
+
+    // Only use the basename when determining where the target
+    // directory of the test is. This is needed to ensure all tests
+    // end up in the generated directory.
+    val target_dir = "generated/ctd/%s" format(
+      FilenameUtils.getName(rom)
+    )
+
     val test_args = Array(
       "--genHarness",
 	  "--backend", "c",
-	  "--targetDir", "generated/%s" format rom,
+	  "--targetDir", target_dir,
 	  "--compile",
 	  "--test",
 	  "--vcd",
@@ -65,16 +79,16 @@ object TurboRavTestRunner{
           c => new RavVTest(c)
         }
       case "soctest" =>
-        chiselMainTest(test_args, () => Module(new Soc(2, 2))){
+        chiselMainTest(test_args, () => Module(new Soc(num_pin_inputs.toInt, num_pin_outputs.toInt))){
           c => new SocTest(c)
         }
       case "riscvtest" =>
         chiselMainTest(
           test_args,
-          () => Module(new Soc(2, 2))
+          () => Module(new Soc(num_pin_inputs.toInt, num_pin_outputs.toInt))
         )
         {
-          c => new RiscvTest(c, rom)
+          c => new RiscvTest(c, target_dir)
         }
     }
   }

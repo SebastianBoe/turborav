@@ -1,17 +1,17 @@
 # Usage:
-#	make <module_name>.test            # Run a test on the simulator
-#	make <module_name>.v               # Generate verilog
-#	make clean                         # Delete generated files
-#	make synthesis/<module_name>.srp   # Create synthesis report
-
-# This variable contains the path to an elf program. It is meant to be
-# overridden on the command line like:
-
-# 'make ROM=generated/rv32ui-p-simple soc.test'
-ROM := generated/startup_program.o
+#	make <module_name>.test                     # Run a unit test on the simulator
+#	make <module_name>.v                        # Generate verilog
+#   make ROM=path_to_elf_file soc.test          # Run a custom program on Turborav
+#   make ROM=generated/rv32ui-p-addi riscv.test # Run a riscv test
 
 # Include some generic utility functions
 include utilities.mk
+
+NUM_PIN_INPUTS  := 12 # See turborav.ucf
+NUM_PIN_OUTPUTS := 8
+
+# Path to an elf file.
+ROM := generated/startup_program.o
 
 DIR_SRC     := src/main/scala
 DIR_TEST    := src/test/scala
@@ -19,21 +19,15 @@ DIR_GEN     := generated
 DIR_VLOG    := verilog
 DIR_SYNTH   := synthesis
 
-CHISEL_FLAGS_V := \
-	--genHarness \
-	--backend v \
-
 CROSS ?= riscv64-unknown-elf
 
 CC      := $(CROSS)-gcc
 LD      := $(CROSS)-ld
 AS      := $(CROSS)-as
 OBJCOPY := $(CROSS)-objcopy
-OBJDUMP := $(CROSS)-objdump
 
 CFLAGS :=-march=RV32I -Wall -I./
 ASFLAGS:=-march=RV32IM --fatal-warnings
-OBJDUMP_FLAGS := --architecture=riscv:rv32
 
 # My depdencies are a bit wrong, so as a hack I delete these
 # intermediaries to prevent them from being re-used.
@@ -47,10 +41,10 @@ isa/%:
 	$(MAKE) --directory=isa $*
 
 %.test: generated/startup_program.hex $(DIR_TEST)/%test.scala
-	sbt "test:run $*test $(ROM)"
+	sbt "test:run $*test $(ROM) $(NUM_PIN_INPUTS) $(NUM_PIN_OUTPUTS)"
 
-%.v: generated/startup_program.hex $(DIR_SRC)/%.scala
-	sbt "run $* $(CHISEL_FLAGS_V) --targetDir $(DIR_VLOG)"
+%.v:    generated/startup_program.hex $(DIR_SRC)/%.scala
+	sbt "run      $*     $(ROM) $(NUM_PIN_INPUTS) $(NUM_PIN_OUTPUTS)"
 
 generated/startup_program.hex: generated/startup_program.bin
 	hexdump -v -e '1/4 "%08X" "\n"' $< > $@

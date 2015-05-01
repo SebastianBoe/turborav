@@ -71,7 +71,7 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
   }
 
   def generate_xml_for_jenkins(error_msg: String) {
-    val file_name = "generated/%s.xml" format(test_name)
+    val file_name = "%s/jenkins.xml" format(test_name)
     val file_contents = new PrettyPrinter(80, 2).format(
       <testsuite>
         <testcase classname={test_name}>
