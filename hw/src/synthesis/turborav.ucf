@@ -6,6 +6,10 @@
 
 NET "clk"               LOC = "B8";
 
+# Clock shall not be slower than 50MHz = 20ns due to the motherboard
+# crystal being 50MHz.
+NET "clk"               PERIOD = 20 ns;
+
 # Reset is connected to some floating pin at Jumper group JA.
 NET "reset"             LOC = "B2";
 
