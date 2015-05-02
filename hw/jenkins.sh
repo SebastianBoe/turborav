@@ -22,8 +22,18 @@ synthesize(){
     make bitfile
 }
 
-parse_synthesis_reports(){
+parse_slices(){
     awk '/Number of Slices/{ print $4 }' generated/design_routed.par > generated/slices.txt
+}
+
+parse_timing(){
+    awk -F "|" '/NET "clk_/{ print $4 }' generated/design_routed.par | \
+        python src/synthesis/period_to_frequency.py > generated/timing.txt
+}
+
+parse_synthesis_reports(){
+    parse_slices
+    parse_timing
 }
 
 main(){
