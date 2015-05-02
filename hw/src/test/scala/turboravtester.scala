@@ -79,8 +79,11 @@ object TurboRavTestRunner{
           c => new RavVTest(c)
         }
       case "soctest" =>
-        chiselMainTest(test_args, () => Module(new Soc(num_pin_inputs.toInt, num_pin_outputs.toInt))){
-          c => new SocTest(c)
+        chiselMainTest(test_args,
+          () => Module(new Soc(num_pin_inputs.toInt, num_pin_outputs.toInt))
+        )
+        {
+          c  => new SocTest(c)
         }
       case "riscvtest" =>
         chiselMainTest(
