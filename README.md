@@ -21,7 +21,7 @@ how to get started with hw-development.
 ### Install packaged dependencies
 
 ```
-yaourt -S sbt
+yaourt -S sbt python-pint
 ```
 Or for Debian based distro's
 ```
