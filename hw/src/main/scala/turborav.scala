@@ -34,7 +34,6 @@ object TurboRav {
         case "ravv"         => () => Module(new RavV())
         case "regbank"      => () => Module(new RegBank())
         case "rom"          => () => Module(new Rom())
-        case "RRApbAdapter" => () => Module(new RRApbAdapter())
         case "Soc"          => () => Module(new Soc(num_pin_inputs.toInt, num_pin_outputs.toInt))
         case "spi"          => () => Module(new Spi())
         case "writeback"    => () => Module(new Writeback())
