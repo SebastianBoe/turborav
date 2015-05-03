@@ -48,7 +48,9 @@ class Roam extends Module {
   // Since the memory stage has priority over the fetch stage and both
   // the ROM and the RAM have single-cycle access the response valid
   // signal becomes equivalent to the request valid signal.
-  io.mem.response.valid     := io.mem.request.valid
+  io.mem.response.valid     := Mux(mem_requesting_mmio,
+                                   io.rr_mmio.response.valid,
+                                   io.mem.request.valid)
   io.mem.response.bits.word := MuxCase(ram.io.word_r, Array(
     mem_reading_rom     -> (rom.io.instr),
     mem_requesting_mmio -> (io.rr_mmio.response.bits.word)
