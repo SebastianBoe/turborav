@@ -1,0 +1,28 @@
+import os
+import textwrap
+
+ccflags = ("-m32"
+           " -static"
+           " -nostdlib"
+           " -nostartfiles"
+           " -ffreestanding"
+           " -Wa,-march=RVIMAFDXhwacha"
+           " -Tsrc/misc/turborav.ld"
+)
+
+env = Environment(
+    CC = '/opt/riscv/bin/riscv64-unknown-elf-gcc',
+    CCFLAGS = ccflags,
+    ASFLAGS = ccflags,
+    LINKFLAGS = ccflags
+)
+
+VariantDir('build', 'isa/rv32ui')
+
+env.Program(
+    'build/j.S',
+    CPPPATH = [
+        'isa/macros/scalar/',
+        'riscv-tools/riscv-tests/env/p'
+        ]
+)
