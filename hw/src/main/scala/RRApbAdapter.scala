@@ -3,7 +3,6 @@ package TurboRav
 import Chisel._
 import Common._
 import Constants._
-import Apb._
 
 // This module implements an adapter from the Request-Response (RR)
 // protocol (patent pending) to the apb protocol.

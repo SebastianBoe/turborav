@@ -4,7 +4,6 @@ import Chisel._
 
 import Common._
 import Array._
-import Apb._
 import java.math.BigInteger;
 
 class Rom extends Module {
