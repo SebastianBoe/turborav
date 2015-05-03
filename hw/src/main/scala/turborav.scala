@@ -37,6 +37,7 @@ object TurboRav {
         case "Soc"          => () => Module(new Soc(num_pin_inputs.toInt, num_pin_outputs.toInt))
         case "spi"          => () => Module(new Spi())
         case "writeback"    => () => Module(new Writeback())
+        case "apb"          => () => Module(new ApbController())
         case _              => () => throw new Exception(
           "You forgot to add the module to turborav.scala"
         )

@@ -79,6 +79,10 @@ object TurboRavTestRunner{
         chiselMainTest(test_args, () => Module(new RavV())){
           c => new RavVTest(c)
         }
+      case "apbtest" =>
+        chiselMainTest(test_args, () => Module(new ApbController())){
+          c => new ApbControllerTest(c)
+        }
       case "soctest" =>
         chiselMainTest(test_args,
           () => Module(new Soc(num_pin_inputs.toInt, num_pin_outputs.toInt))

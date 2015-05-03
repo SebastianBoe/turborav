@@ -2,7 +2,7 @@ package Common
 
 object Config {
   val xlen              = 32
-  val apb_addr_len      = 32
+  val apb_addr_len      = 16
   val apb_data_len      = 32
   val cache             = new CacheConfig()
   val ram_size_in_bytes = 1024
