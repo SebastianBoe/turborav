@@ -5,8 +5,9 @@ import Chisel._
 import Common._
 import Array._
 import java.math.BigInteger;
+import scala.sys.process._;
 
-class Rom extends Module {
+class Rom(elf_path: String) extends Module {
   val io = new Bundle {
     val pc    = UInt(INPUT, Config.xlen)
     val instr = UInt(OUTPUT, Config.xlen)
@@ -20,22 +21,29 @@ class Rom extends Module {
   assert(io.pc(1,0) === UInt(0), "We assume word-aligned addresses.")
 
   // Create ROM
-  val rom_array = parseRomContents()
-  val rom = Vec(rom_array.map(UInt(_)))
+  val rom_array = parseRomContents(elf_path)
+  val rom = Vec(rom_array)
 
   // Read from rom
   io.instr := rom(word_addr)
 
-  // Assumes there is a file at path with
-  // contents like
-  // 12
-  // deadbeef
-  // 29381ad
-  def parseRomContents():Array[BigInteger] = {
-    val path = "generated/startup_program.hex"
-    val source = scala.io.Source.fromFile(path)
-    val lines = source.mkString
-    source.close()
-    return lines.split("\\n").map(new BigInteger(_, 16))
+  def parseRomContents(elf_path: String): Array[UInt] = {
+    Seq(
+      "riscv64-unknown-elf-objcopy",
+      "-O",
+      "binary",
+      elf_path,
+      s"$elf_path.bin"
+    ).!
+    return Seq(
+      "hexdump",
+      "-v",
+      "-e",
+      "1/4 \"%08X\" \"\\n\"",
+      s"$elf_path.bin"
+    ).lineStream
+    .toArray
+    .map(new BigInteger(_, 16))
+    .map(UInt(_))
   }
 }

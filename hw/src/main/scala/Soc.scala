@@ -11,13 +11,13 @@ import Constants._
 
 // See MemoryMapUtil for how the memory map is laid out.
 
-class Soc(num_pin_inputs: Int, num_pin_outputs: Int) extends Module {
+class Soc(elf_path: String, num_pin_inputs: Int, num_pin_outputs: Int) extends Module {
   val io = new Bundle {
     val pin_inputs  = UInt(INPUT , width = num_pin_inputs )
     val pin_outputs = UInt(OUTPUT, width = num_pin_outputs)
   }
 
-  val ravv    = Module(new RavV())
+  val ravv    = Module(new RavV(elf_path))
   val gpio    = Module(new Gpio(num_pin_inputs, num_pin_outputs))
 
   // Connect the peripherals to the SoC pins

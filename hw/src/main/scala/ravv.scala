@@ -5,7 +5,7 @@ import Common._
 import Constants._
 
 /* The Rav V processor core */
-class RavV extends Module {
+class RavV(elf_path: String) extends Module {
   val io = new RequestResponseIo()
 
   val fch  = Module(new Fetch())
@@ -14,7 +14,7 @@ class RavV extends Module {
   val mem  = Module(new Memory())
   val wrb  = Module(new Writeback())
   val fwu  = Module(new ForwardingUnit())
-  val roam = Module(new Roam())
+  val roam = Module(new Roam(elf_path))
   val hdu  = Module(new HazardDetectionUnit())
 
   fch.io.fch_dec <> dec.io.fch_dec

@@ -1,28 +1,73 @@
 import os
 import textwrap
+from src.build_system import scons_utils
 
-ccflags = ("-m32"
+SetOption(
+    'num_jobs', 8
+) # Can be overriden on command line with -j
+
+###############
+# riscv-tests
+###############
+
+vars = Variables()
+vars.Add(
+    EnumVariable(
+        'riscvtest',
+        'Select a test from isa/rv32ui/, e.g. j',
+        'j',
+        allowed_values=scons_utils.find_riscv_tests()
+    )
+)
+
+CCFLAGS = ("-m32"
            " -static"
            " -nostdlib"
            " -nostartfiles"
            " -ffreestanding"
            " -Wa,-march=RVIMAFDXhwacha"
-           " -Tsrc/misc/turborav.ld"
-)
+           " -Tsrc/misc/turborav.ld")
+CC = '/opt/riscv/bin/riscv64-unknown-elf-gcc'
 
-env = Environment(
-    CC = '/opt/riscv/bin/riscv64-unknown-elf-gcc',
-    CCFLAGS = ccflags,
-    ASFLAGS = ccflags,
-    LINKFLAGS = ccflags
+riscv_tests_env = Environment(
+    variables = vars,
+    CC = CC,
+    CCFLAGS = CCFLAGS,
+    ASFLAGS = CCFLAGS,
+    LINKFLAGS = CCFLAGS
 )
 
 VariantDir('build', 'isa/rv32ui')
 
-env.Program(
-    'build/j.S',
+riscv_tests_env.Program(
+    'build/{0}.S'.format(riscv_tests_env['riscvtest']),
     CPPPATH = [
         'isa/macros/scalar/',
         'riscv-tools/riscv-tests/env/p'
         ]
 )
+
+###############
+# Chisel
+###############
+
+vars.Add(
+    EnumVariable(
+        'toplevel',
+        'Select what the top-level HW module should be. e.g. Soc',
+        'Soc',
+        allowed_values=Glob("src/main/scala/*.scala", strings=True)
+    )
+)
+
+chisel_env = Environment(
+    JAVAC = "scalac",
+    JAVASUFFIX = ".scala",
+    JAVACLASSPATH = [
+        "/usr/share/java/chisel/chisel.jar",
+        "/usr/share/java/commons-io/commons-io.jar"
+    ],
+    JAVACFLAGS = "-feature -language:reflectiveCalls -Xlint -Xfatal-warnings"
+)
+chisel_env.Java('build/chisel', 'src/main')
+chisel_env.Jar("turborav", Glob("build/chisel/*") + ["MANIFEST"])
