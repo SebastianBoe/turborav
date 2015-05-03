@@ -1,4 +1,4 @@
-package Apb
+package TurboRav
 
 // This package contains the constructs needed to connect to an APB
 // bus. See ARM's documentation of APB for the signal meanings and

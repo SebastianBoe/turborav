@@ -3,7 +3,6 @@ package TurboRav
 import Chisel._
 import Common._
 import Constants._
-import Apb._
 
 /* The Rav V processor core */
 class RavV extends Module {
