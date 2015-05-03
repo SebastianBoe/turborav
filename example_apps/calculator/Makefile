@@ -7,8 +7,7 @@ calculator: main.c Makefile
 	-ffreestanding							\
 	-fvisibility=hidden						\
 	-Wa,-march=RVIMAFDXhwacha				\
-	-T../../hw/core/src/misc/turborav.ld	\
+	-T../../hw/src/misc/turborav.ld	\
 	-I../lib/								\
 	$<										\
-	../lib/tr.o								\
 	-o $@
