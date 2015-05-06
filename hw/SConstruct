@@ -60,14 +60,44 @@ vars.Add(
     )
 )
 
-chisel_env = Environment(
+# chisel_env = Environment(
+#     JAVAC = "scalac",
+#     JAVASUFFIX = ".scala",
+#     JAVACLASSPATH = [
+#         "/usr/share/java/chisel/chisel.jar",
+#         "/usr/share/java/commons-io/commons-io.jar"
+#     ],
+#     JAVACFLAGS = "-feature -language:reflectiveCalls -Xlint -Xfatal-warnings"
+# )
+# chisel_env.Java('build/scala', 'src/main')
+
+CHISEL_JAR = "/usr/share/java/chisel/chisel.jar"
+COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
+
+Java(
+    target = 'build/classes',
+    source = 'src/main',
     JAVAC = "scalac",
     JAVASUFFIX = ".scala",
-    JAVACLASSPATH = [
-        "/usr/share/java/chisel/chisel.jar",
-        "/usr/share/java/commons-io/commons-io.jar"
-    ],
-    JAVACFLAGS = "-feature -language:reflectiveCalls -Xlint -Xfatal-warnings"
+    JAVACLASSPATH  = [
+         CHISEL_JAR,
+         COMMONS_IO_JAR
+     ],
+     JAVACFLAGS = "-feature -language:reflectiveCalls -Xlint -Xfatal-warnings"
 )
-chisel_env.Java('build/chisel', 'src/main')
-chisel_env.Jar("turborav", Glob("build/chisel/*") + ["MANIFEST"])
+Jar(
+    target = 'build/turborav.jar',
+    source = 'build/classes'
+)
+
+env = Environment(ENV = os.environ)
+a = env.Command(
+    'verilog/Soc.v',
+    'build/turborav.jar',
+    'scala -classpath build/classes:{0}:{1} TurboRav.TurboRav Soc build/j 12 8'
+    .format(
+        CHISEL_JAR,
+        COMMONS_IO_JAR
+    )
+)
+
