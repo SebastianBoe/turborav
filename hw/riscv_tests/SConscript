@@ -1,0 +1,29 @@
+from subprocess import check_output
+
+RV32UI_PATH = "riscv-tools/riscv-tests/isa/rv32ui/"
+
+test_sources = Glob(RV32UI_PATH + "/*.S")
+
+CCFLAGS = ("-m32"
+           " -static"
+           " -nostdlib"
+           " -nostartfiles"
+           " -ffreestanding"
+           " -Wa,-march=RVIMAFDXhwacha"
+           " -Tsrc/misc/turborav.ld")
+
+CC = '/opt/riscv/bin/riscv64-unknown-elf-gcc'
+
+env = Environment(
+    CC = CC,
+    CCFLAGS = CCFLAGS,
+    ASFLAGS = CCFLAGS,
+    LINKFLAGS = CCFLAGS
+)
+
+CPPPATH = [
+    'riscv-tools/riscv-tests/isa/macros/scalar/',
+    'riscv-tools/riscv-tests/env/p'
+]
+programs = [ env.Program(test, CPPPATH = CPPPATH) for test in test_sources ]
+Return('programs')

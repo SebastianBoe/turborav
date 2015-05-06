@@ -33,19 +33,19 @@ apt-get install sbt autoconf automake autotools-dev libmpc-dev libmpfr-dev libgm
 Install the GNU toolchain for RISC-V from our git submodule
 
 ```
-cd hw/riscv-tools
+cd hw/riscv_tests/riscv-tools
 git submodule init
 git submodule update
 
-cd hw/riscv-tools/riscv-gnu-toolchain
+cd hw/riscv_tests/riscv-tools/riscv-gnu-toolchain
 git submodule init
 git submodule update
 
-cd hw/riscv-tools/riscv-tests/env
+cd hw/riscv_tests/riscv-tools/riscv-tests/env
 git submodule init
 git submodule update
 
-cd hw/riscv-tools/riscv-gnu-toolchain
+cd hw/riscv_tests/riscv-tools/riscv-gnu-toolchain
 ./configure --prefix=/opt/riscv # make sure you have access rights
 make
 ```

@@ -1,56 +1,16 @@
 import os
-import textwrap
-from src.build_system import scons_utils
 
-SetOption(
-    'num_jobs', 8
-) # Can be overriden on command line with -j
+SetOption('num_jobs', 8)
 
-###############
-# riscv-tests
-###############
+riscv_tests  = SConscript('riscv_tests/SConscript'   , variant_dir='build' , duplicate=0)
+
+CHISEL_JAR     = "/usr/share/java/chisel/chisel.jar"
+COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
+Export('CHISEL_JAR COMMONS_IO_JAR')
+
+turborav_jar = SConscript('src/main/scala/SConscript')
 
 vars = Variables()
-vars.Add(
-    EnumVariable(
-        'riscvtest',
-        'Select a test from isa/rv32ui/, e.g. j',
-        'j',
-        allowed_values=scons_utils.find_riscv_tests()
-    )
-)
-
-CCFLAGS = ("-m32"
-           " -static"
-           " -nostdlib"
-           " -nostartfiles"
-           " -ffreestanding"
-           " -Wa,-march=RVIMAFDXhwacha"
-           " -Tsrc/misc/turborav.ld")
-CC = '/opt/riscv/bin/riscv64-unknown-elf-gcc'
-
-riscv_tests_env = Environment(
-    variables = vars,
-    CC = CC,
-    CCFLAGS = CCFLAGS,
-    ASFLAGS = CCFLAGS,
-    LINKFLAGS = CCFLAGS
-)
-
-VariantDir('build', 'isa/rv32ui')
-
-riscv_tests_env.Program(
-    'build/{0}.S'.format(riscv_tests_env['riscvtest']),
-    CPPPATH = [
-        'isa/macros/scalar/',
-        'riscv-tools/riscv-tests/env/p'
-        ]
-)
-
-###############
-# Chisel
-###############
-
 vars.Add(
     EnumVariable(
         'toplevel',
@@ -60,44 +20,18 @@ vars.Add(
     )
 )
 
-# chisel_env = Environment(
-#     JAVAC = "scalac",
-#     JAVASUFFIX = ".scala",
-#     JAVACLASSPATH = [
-#         "/usr/share/java/chisel/chisel.jar",
-#         "/usr/share/java/commons-io/commons-io.jar"
-#     ],
-#     JAVACFLAGS = "-feature -language:reflectiveCalls -Xlint -Xfatal-warnings"
-# )
-# chisel_env.Java('build/scala', 'src/main')
-
-CHISEL_JAR = "/usr/share/java/chisel/chisel.jar"
-COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
-
-Java(
-    target = 'build/classes',
-    source = 'src/main',
-    JAVAC = "scalac",
-    JAVASUFFIX = ".scala",
-    JAVACLASSPATH  = [
-         CHISEL_JAR,
-         COMMONS_IO_JAR
-     ],
-     JAVACFLAGS = "-feature -language:reflectiveCalls -Xlint -Xfatal-warnings"
-)
-Jar(
-    target = 'build/turborav.jar',
-    source = 'build/classes'
-)
-
 env = Environment(ENV = os.environ)
-a = env.Command(
-    'verilog/Soc.v',
-    'build/turborav.jar',
-    'scala -classpath build/classes:{0}:{1} TurboRav.TurboRav Soc build/j 12 8'
-    .format(
-        CHISEL_JAR,
-        COMMONS_IO_JAR
-    )
-)
 
+for test in riscv_tests:
+    elf_path = test[0]
+    a = env.Command(
+        '{0}/Soc.v'.format(elf_path),
+        turborav_jar,
+        'scala -classpath build/scala/classes:{0}:{1} TurboRav.TurboRav Soc {2} 12 8'
+        .format(
+            CHISEL_JAR,
+            COMMONS_IO_JAR,
+            elf_path
+        )
+    )
+#    Depends(a, [turborav_jar, test])
