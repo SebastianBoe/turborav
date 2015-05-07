@@ -25,3 +25,4 @@ rom/startup_program.S
 
 # IDE files
 .idea/
+.sconsign.dblite
