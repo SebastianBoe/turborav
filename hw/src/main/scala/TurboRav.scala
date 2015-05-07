@@ -8,18 +8,18 @@ object TurboRav {
   def main(args: Array[String]): Unit = {
     val Array( // Parse argument list
       module,
+      target_dir,
       rom,
       num_pin_inputs,
       num_pin_outputs
     ) = args
 
-    val verilog_args = Array(
-      "--genHarness",
-      "--backend", "v",
-      "--targetDir", "verilog"
-    )
     val res = chiselMain(
-      verilog_args,
+      Array(
+        "--genHarness",
+        "--backend", "v",
+        "--targetDir", target_dir
+      ),
       module match
       {
         case "alu"          => () => Module(new Alu())
