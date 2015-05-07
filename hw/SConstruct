@@ -24,13 +24,15 @@ env = Environment(ENV = os.environ)
 
 for test in riscv_tests:
     elf_path = test[0]
+    target_dir = "{0}_/".format(elf_path)
     a = env.Command(
-        '{0}/Soc.v'.format(elf_path),
+        target_dir + "Soc.v",
         turborav_jar,
-        'scala -classpath build/scala/classes:{0}:{1} TurboRav.TurboRav Soc {2} 12 8'
+        'scala -classpath build/scala/classes:{0}:{1} TurboRav.TurboRav Soc {2} {3} 12 8'
         .format(
             CHISEL_JAR,
             COMMONS_IO_JAR,
+            target_dir,
             elf_path
         )
     )

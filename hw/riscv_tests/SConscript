@@ -2,7 +2,30 @@ from subprocess import check_output
 
 RV32UI_PATH = "riscv-tools/riscv-tests/isa/rv32ui/"
 
-test_sources = Glob(RV32UI_PATH + "/*.S")
+black_list_names = [
+    'amoswap_w',
+    'amomaxu_w',
+    'amominu_w',
+    'amoadd_w',
+    'amoand_w',
+    'amomax_w',
+    'amomin_w',
+    'amoor_w',
+    'fence',
+    'divuw',
+    'lsrc',
+    'divw',
+    'mulw',
+    'lwu',
+    'ld'
+]
+
+black_list = [
+    File("{0}{1}.S".format(RV32UI_PATH, name))
+    for name in black_list_names
+]
+
+test_sources = set(Glob(RV32UI_PATH + "/*.S")) - set(black_list)
 
 CCFLAGS = ("-m32"
            " -static"
