@@ -1,7 +1,6 @@
 package TurboRav
 
 import Chisel._
-import Common._
 import Constants._
 
 // Utility functions for working with the memory map.

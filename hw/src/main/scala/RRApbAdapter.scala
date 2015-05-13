@@ -1,7 +1,6 @@
 package TurboRav
 
 import Chisel._
-import Common._
 import Constants._
 
 // This module implements an adapter from the Request-Response (RR)

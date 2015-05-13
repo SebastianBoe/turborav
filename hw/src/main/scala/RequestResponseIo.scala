@@ -1,7 +1,6 @@
 package TurboRav
 
 import Chisel._
-import Common._
 import Constants._
 
 // See RRApbAdapter for documentation about this bundle.

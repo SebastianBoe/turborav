@@ -2,7 +2,6 @@ package TurboRav
 
 import Chisel._
 
-import Common._
 import Array._
 
 class Ram extends Module {

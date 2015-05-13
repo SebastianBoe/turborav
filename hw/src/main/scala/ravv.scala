@@ -1,7 +1,6 @@
 package TurboRav
 
 import Chisel._
-import Common._
 import Constants._
 
 /* The Rav V processor core */

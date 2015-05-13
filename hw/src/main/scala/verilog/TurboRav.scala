@@ -1,7 +1,7 @@
-package TurboRav
+package verilog
 
 import Chisel._
-import Common._
+import TurboRav._
 import org.apache.commons.io.FilenameUtils;
 
 object TurboRav {

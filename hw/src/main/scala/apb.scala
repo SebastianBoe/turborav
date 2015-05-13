@@ -5,7 +5,6 @@ package TurboRav
 // protocol spec.
 
 import Chisel._
-import Common._
 
 class SlaveToApbIo() extends Bundle {
   val addr  =  UInt(INPUT, Config.apb_addr_len)

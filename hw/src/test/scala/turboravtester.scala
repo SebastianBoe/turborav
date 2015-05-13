@@ -1,7 +1,6 @@
 package TurboRav
 
 import Chisel._
-import Common._
 import org.apache.commons.io.FilenameUtils;
 
 object TurboRavTestRunner{
