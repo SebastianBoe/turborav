@@ -1,0 +1,18 @@
+Import('CHISEL_JAR COMMONS_IO_JAR')
+Java(
+    target = '#build/test/classes',
+    source = ['.', '#src/main/scala'],
+    JAVAC = 'scalac',
+    JAVASUFFIX = ".scala",
+    JAVACLASSPATH  = [
+         CHISEL_JAR,
+         COMMONS_IO_JAR
+     ],
+     JAVACFLAGS = "-feature -language:reflectiveCalls -Xlint -Xfatal-warnings"
+)
+turborav_tester_jar = Jar(
+    target = '#build/test/turborav_tester.jar',
+    source = '#build/test/classes'
+)
+
+Return('turborav_tester_jar')
