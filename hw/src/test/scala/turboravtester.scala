@@ -74,17 +74,17 @@ object TurboRavTestRunner{
         c => new WritebackTest(c)
       }
       case "ravvtest" =>
-        chiselMainTest(test_args, () => Module(new RavV())){
+        chiselMainTest(test_args, () => Module(new RavV(rom))){
           c => new RavVTest(c)
         }
       case "soctest" =>
-        chiselMainTest(test_args, () => Module(new Soc(num_pin_inputs.toInt, num_pin_outputs.toInt))){
+        chiselMainTest(test_args, () => Module(new Soc(rom, num_pin_inputs.toInt, num_pin_outputs.toInt))){
           c => new SocTest(c)
         }
       case "riscvtest" =>
         chiselMainTest(
           test_args,
-          () => Module(new Soc(num_pin_inputs.toInt, num_pin_outputs.toInt))
+          () => Module(new Soc(rom, num_pin_inputs.toInt, num_pin_outputs.toInt))
         )
         {
           c => new RiscvTest(c, target_dir)
