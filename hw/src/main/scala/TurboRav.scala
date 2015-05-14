@@ -1,4 +1,4 @@
-package verilog
+package TurboRav
 
 import Chisel._
 import TurboRav._
