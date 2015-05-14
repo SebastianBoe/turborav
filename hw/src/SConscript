@@ -1,0 +1,11 @@
+Import('CHISEL_JAR COMMONS_IO_JAR')
+
+env = Environment()
+classes = env.Command('#build/scala/classes', 'main/scala', "mkdir -p build/scala/classes && scalac -feature -language:reflectiveCalls -Xlint -Xfatal-warnings -classpath /usr/share/java/chisel/chisel.jar:/usr/share/java/commons-io/commons-io.jar -d build/scala/classes src/main/scala/*.scala src/test/scala/*.scala")
+
+turborav_jar = Jar(
+    target = '#build/scala/turborav.jar',
+    source = '#build/scala/classes/'
+)
+Depends(turborav_jar, classes)
+Return('turborav_jar')

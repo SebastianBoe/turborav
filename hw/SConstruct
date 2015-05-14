@@ -8,7 +8,7 @@ CHISEL_JAR     = "/usr/share/java/chisel/chisel.jar"
 COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
 Export('CHISEL_JAR COMMONS_IO_JAR')
 
-turborav_jar = SConscript('src/main/scala/SConscript')
+turborav_jar = SConscript('src/SConscript')
 
 # Verilog code generation
 env = Environment(ENV = os.environ)
@@ -26,6 +26,3 @@ for test in riscv_tests:
             elf_path
         )
     )
-
-# Riscv test simulations
-turborav_tester_jar = SConscript('src/test/scala/SConscript')
