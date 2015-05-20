@@ -33,7 +33,7 @@ for test in riscv_tests:
     target_dir = "{0}_/".format(elf_path)
     a = env.Command(
         target_dir + "jenkins.xml",
-        turborav_jar,
+        [turborav_jar, test],
         'scala -classpath build/scala/classes:{0}:{1} TurboRav.TurboRavTestRunner riscvtest {2} {3} 12 8 || true'
         .format(
             CHISEL_JAR,
