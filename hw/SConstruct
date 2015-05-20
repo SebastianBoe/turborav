@@ -26,3 +26,19 @@ for test in riscv_tests:
             elf_path
         )
     )
+
+# Riscv-tests
+for test in riscv_tests:
+    elf_path = test[0]
+    target_dir = "{0}_/".format(elf_path)
+    a = env.Command(
+        target_dir + "jenkins.xml",
+        turborav_jar,
+        'scala -classpath build/scala/classes:{0}:{1} TurboRav.TurboRavTestRunner riscvtest {2} {3} 12 8 || true'
+        .format(
+            CHISEL_JAR,
+            COMMONS_IO_JAR,
+            target_dir,
+            elf_path
+        )
+    )
