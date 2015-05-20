@@ -7,17 +7,11 @@ object TurboRavTestRunner{
   def main(args: Array[String]): Unit = {
     val Array( // Parse argument list
       module,
+      target_dir,
       rom,
       num_pin_inputs,
       num_pin_outputs
     ) = args
-
-    // Only use the basename when determining where the target
-    // directory of the test is. This is needed to ensure all tests
-    // end up in the generated directory.
-    val target_dir = "generated/ctd/%s" format(
-      FilenameUtils.getName(rom)
-    )
 
     val test_args = Array(
       "--genHarness",
