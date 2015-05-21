@@ -21,9 +21,9 @@ how to get started with hw-development.
 ### Install packaged dependencies
 
 ```
-yaourt -S java-commons-io scala
+yaourt -S java-commons-io scala clang
 ```
-Or for Debian based distro's
+Or for Debian based distro's (NB: Might be out-of-date, Arch is the only officially supported distro)
 ```
 apt-get install sbt autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils gperf
 ```
