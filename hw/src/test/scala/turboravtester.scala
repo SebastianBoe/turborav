@@ -23,6 +23,10 @@ object TurboRavTestRunner{
 	  "--debug"
     )
 
+    // NB: The below list of modules is duplicated in
+    // turborav/hw/SConstruct. Respect if you can remove this
+    // duplication.
+
     // En pils til førstemann som kan fjerne redundansen.
     // Hvis du prøvde og feilet inkrementer følgende:
     // 2

@@ -1,5 +1,7 @@
 from subprocess import check_output
 
+Import('riscv_program_env')
+
 RV32UI_PATH = "riscv-tools/riscv-tests/isa/rv32ui/"
 
 black_list_names = [
@@ -27,22 +29,8 @@ black_list = [
 
 test_sources = set(Glob(RV32UI_PATH + "/*.S")) - set(black_list)
 
-CCFLAGS = ("-m32"
-           " -static"
-           " -nostdlib"
-           " -nostartfiles"
-           " -ffreestanding"
-           " -Wa,-march=RVIMAFDXhwacha"
-           " -Tsrc/misc/turborav.ld")
-
-CC = '/opt/riscv/bin/riscv64-unknown-elf-gcc'
-
-env = Environment(
-    CC = CC,
-    CCFLAGS = CCFLAGS,
-    ASFLAGS = CCFLAGS,
-    LINKFLAGS = CCFLAGS
-)
+env = riscv_program_env.Clone()
+env.Append(CCFLAGS = ["-Tsrc/misc/turborav.ld"])
 
 CPPPATH = [
     'riscv-tools/riscv-tests/isa/macros/scalar/',

@@ -1,7 +1,20 @@
-Import('CHISEL_JAR COMMONS_IO_JAR')
+Import('CLASSPATH')
+
+SCALAFLAGS = ("-feature "
+              "-language:reflectiveCalls "
+              "-Xlint "
+              "-Xfatal-warnings"
+)
 
 env = Environment()
-classes = env.Command('#build/scala/classes/TurboRav/TurboRav.class', Glob('main/scala/*'), "fsc -feature -language:reflectiveCalls -Xlint -Xfatal-warnings -classpath /usr/share/java/chisel/chisel.jar:/usr/share/java/commons-io/commons-io.jar -d build/scala/classes src/main/scala/*.scala src/test/scala/*.scala")
+classes = env.Command(
+    '#build/scala/classes/TurboRav/TurboRav.class',
+    Glob('main/scala/*'),
+    "fsc {0} -classpath {1} -d build/scala/classes src/main/scala/*.scala src/test/scala/*.scala".format(
+        SCALAFLAGS,
+        CLASSPATH
+    )
+)
 
 turborav_jar = Jar(
     target = '#build/scala/turborav.jar',
