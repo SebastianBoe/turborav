@@ -47,7 +47,7 @@ env.Command(
 
 # Riscv-tests
 for test in riscv_tests:
-    target_dir = "build/{0}_proj/".format(test)
+    target_dir = "build/test/riscv/{0}_proj/".format(test)
     test_basename = ""
     a = env.Command(
         target_dir + "jenkins.xml",
