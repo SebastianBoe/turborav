@@ -13,7 +13,7 @@ import Constants._
 // Bit 31,30,29,28
 //      0, 0, 0, 0 // ROM memory map
 //      0, 0, 0, 1 // RAM memory map
-//      0, 0, 1, 0 // MMIO // Coming in the future.
+//      0, 0, 1, 0 // Apb
 //      otherwise  // Reserved for future use
 
 // See the following 32 bit addresses as an example
@@ -22,7 +22,7 @@ import Constants._
 // 0x2000_0000 // Peripheral hardware register address
 // 0x3000_0000 // Reserved
 
-// Get the Memory map offsets from Constants.BASE_ADDR_XXX
+// The Memory map offsets are in Constants.BASE_ADDR_XXX
 
 object getMemorySegment {
   def apply(address: UInt):UInt = {
