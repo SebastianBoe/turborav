@@ -61,33 +61,31 @@ for test in riscv_tests:
         )
     )
 
-# Unit tests AKA testbenches
+# Unit tests, or Chisel based testbenches.
 # NB: Duplicated in turboravtester.scala
-test_benches = [ x + "test" for x in
-                 [
-                     "alu",
-                     "bru",
-                     "fwu",
-                     "regbank",
-                     "mult",
-                     "timer",
-                     "decode",
-                     "execute",
-                     "memory",
-                     "writeback",
-                     "ravv",
-                     "soc"
-                ]
+test_benches = [
+    "alu",
+    "bru",
+    "fwu",
+    "regbank",
+    "mult",
+    "timer",
+    "decode",
+    "execute",
+    "memory",
+    "writeback",
+    "ravv",
+    "soc"
 ]
 for module in test_benches:
-    target_dir = "build/{0}/".format(module)
+    target_dir = "build/test/unit/{0}/".format(module)
     env.Command(
         target_dir + "jenkins.xml",
         [turborav_jar, default_program],
         'CXX=clang++ scala -classpath build/scala/classes:{0} TurboRav.TurboRavTestRunner {1} {2} {3} 12 8 || true'
         .format(
             CLASSPATH,
-            module,
+            module + "test",
             target_dir,
             default_program
         )
