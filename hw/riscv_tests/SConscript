@@ -15,7 +15,7 @@ black_list_names = [
     'amoor_w',
     'fence',
     'divuw',
-    'lsrc',
+    'lrsc',
     'divw',
     'mulw',
     'lwu',
