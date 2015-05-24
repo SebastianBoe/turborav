@@ -47,12 +47,13 @@ env.Command(
 
 # Riscv-tests
 for test in riscv_tests:
-    target_dir = "build/test/riscv/{0}_proj/".format(test)
-    test_basename = ""
-    a = env.Command(
+    test_path = str(test)
+    test_name = test_path.split('/')[-1]
+    target_dir = "build/test/riscv/{0}/".format(test_name)
+    env.Command(
         target_dir + "jenkins.xml",
         [turborav_jar, test],
-        'CXX=clang++ scala -classpath build/scala/classes:{0} TurboRav.TurboRavTestRunner riscvtest {1} {2} 12 8 || true'
+        'CXX=clang++ scala -classpath build/scala/classes:{0} TurboRav.TurboRavTestRunner riscvtest {1} {2} 12 8'
         .format(
             CLASSPATH,
             target_dir,
