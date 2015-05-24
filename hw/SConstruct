@@ -52,10 +52,9 @@ for test in riscv_tests:
     a = env.Command(
         target_dir + "jenkins.xml",
         [turborav_jar, test],
-        'CXX=clang++ scala -classpath build/scala/classes:{0}:{1} TurboRav.TurboRavTestRunner riscvtest {2} {3} 12 8 || true'
+        'CXX=clang++ scala -classpath build/scala/classes:{0} TurboRav.TurboRavTestRunner riscvtest {1} {2} 12 8 || true'
         .format(
-            CHISEL_JAR,
-            COMMONS_IO_JAR,
+            CLASSPATH,
             target_dir,
             test
         )
