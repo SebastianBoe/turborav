@@ -13,7 +13,7 @@ black_list_names = [
     'amomax_w',
     'amomin_w',
     'amoor_w',
-    'fence',
+    'fence_i',
     'divuw',
     'lrsc',
     'divw',
