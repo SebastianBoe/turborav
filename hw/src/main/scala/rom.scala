@@ -17,7 +17,6 @@ class Rom(elf_path: String) extends Module {
   // a byte-addressable address to a word addressable address we
   // right-shift twice.
   val word_addr = io.pc >> UInt(2)
-  assert(io.pc(1,0) === UInt(0), "We assume word-aligned addresses.")
 
   // Create ROM
   val rom_array = parseRomContents(elf_path)

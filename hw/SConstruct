@@ -10,7 +10,8 @@ CCFLAGS = ("-m32"
            " -Wa,-march=RVIMAFDXhwacha"
 )
 
-CC = '/opt/riscv/bin/riscv64-unknown-elf-gcc'
+TOOLCHAIN = '/opt/riscv/bin/riscv64-unknown-elf-'
+CC = TOOLCHAIN + 'gcc'
 
 riscv_program_env = Environment(
     CC = CC,
@@ -28,9 +29,10 @@ COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
 CLASSPATH = "{0}:{1}".format(CHISEL_JAR, COMMONS_IO_JAR)
 Export('CLASSPATH')
 
-riscv_tests     = SConscript('riscv_tests/SConscript', variant_dir='build/riscv_tests' , duplicate=0)
+riscv_tests     = SConscript('riscv_tests/SConscript',  variant_dir='build/riscv_tests' , duplicate=0)
 turborav_jar    = SConscript('src/SConscript')
-default_program = SConscript('src/programs/SConscript', variant_dir='build/programs' , duplicate=0)
+default_program = SConscript('src/programs/SConscript', variant_dir='build/programs'    , duplicate=0)
+startup_file    = SConscript('src/misc/SConscript'    , variant_dir='build/misc'        , duplicate=0)
 
 # Verilog code generation of build/verilog/Soc.v
 env = Environment(ENV = os.environ)
