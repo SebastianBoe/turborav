@@ -30,6 +30,10 @@ apt-get install sbt autoconf automake autotools-dev libmpc-dev libmpfr-dev libgm
 
 ### Install (yet) un-packaged dependencies
 
+Install Chisel
+
+sudo curl --silent --create-dirs http://central.maven.org/maven2/edu/berkeley/cs/chisel_2.10/2.2.27/chisel_2.10-2.2.27.jar -o /usr/share/java/chisel/chisel.jar && chmod 777 /usr/share/java/chisel/
+
 Install the GNU toolchain for RISC-V from our git submodule
 
 ```
