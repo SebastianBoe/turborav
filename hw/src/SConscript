@@ -18,6 +18,6 @@ classes = env.Command(
 
 turborav_jar = Jar(
     target = '#build/scala/turborav.jar',
-    source = '#build/scala/classes/TurboRav/TurboRav.class'
+    source = Glob('#build/scala/classes/TurboRav/*')
 )
 Return('turborav_jar')
