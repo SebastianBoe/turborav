@@ -1,13 +1,16 @@
 import os
 
 SetOption('num_jobs', 8)
+COMMON_FLAGS = (" -m32"
+                " -Wa,-march=RVIMAFDXhwacha "
+                " -nostdlib "
+)
 
-CCFLAGS = ("-m32"
-           " -static"
-           " -nostdlib"
+CCFLAGS = COMMON_FLAGS + \
+          (" -static"
            " -nostartfiles"
            " -ffreestanding"
-           " -Wa,-march=RVIMAFDXhwacha"
+           " -c"
 )
 
 TOOLCHAIN = '/opt/riscv/bin/riscv64-unknown-elf-'
@@ -19,7 +22,8 @@ riscv_program_env = Environment(
     LD = CC,
     CCFLAGS = CCFLAGS,
     ASFLAGS = CCFLAGS,
-    LINKFLAGS = CCFLAGS
+    LINKFLAGS = COMMON_FLAGS + " -Tsrc/misc/turborav.ld "
+
 )
 Export('riscv_program_env')
 
