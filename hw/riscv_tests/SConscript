@@ -37,4 +37,7 @@ CPPPATH = [
     'riscv-tools/riscv-tests/env/p'
 ]
 programs = [ env.Program([test, startup_file], CPPPATH = CPPPATH)[0] for test in test_sources ]
+for p in programs:
+    Depends(p, "#src/misc/turborav.ld")
+
 Return('programs')
