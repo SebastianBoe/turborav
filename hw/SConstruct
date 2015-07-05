@@ -28,7 +28,7 @@ riscv_program_env = Environment(
 Export('riscv_program_env')
 
 
-CHISEL_JAR     = "/usr/share/java/chisel/chisel.jar"
+CHISEL_JAR     = "/usr/share/scala/chisel/chisel.jar"
 COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
 CLASSPATH = "{0}:{1}".format(CHISEL_JAR, COMMONS_IO_JAR)
 Export('CLASSPATH')
