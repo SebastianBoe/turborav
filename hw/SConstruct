@@ -51,18 +51,7 @@ riscv_tests     = SConscript(
 turborav_jar    = SConscript('src/SConscript')
 default_program = SConscript('src/programs/SConscript', variant_dir='build/programs'    , duplicate=0)
 
-# Verilog code generation of build/verilog/Soc.v
 env = Environment(ENV = os.environ)
-env.Command(
-    "build/verilog/Soc.v",
-    [turborav_jar, default_program],
-    'scala -classpath build/scala/classes:{0} TurboRav.TurboRav Soc {1} {2} 12 8'
-    .format(
-        CLASSPATH,
-        "build/verilog/".format(default_program),
-        default_program
-    )
-)
 
 # Riscv-tests
 for test in riscv_tests:
@@ -109,3 +98,28 @@ for module in test_benches:
             default_program
         )
     )
+
+# Verilog code generation of build/verilog/Soc.v
+soc_v = env.Command(
+    "build/verilog/Soc.v",
+    [turborav_jar, default_program],
+    'scala -classpath build/scala/classes:{0} TurboRav.TurboRav Soc {1} {2} 12 8'
+    .format(
+        CLASSPATH,
+        "build/verilog/".format(default_program),
+        default_program
+    )
+)[0]
+
+# Synthesis of build/synthesis/turborav.bit and flashing
+VariantDir('build/synthesis', 'src/synthesis', duplicate=1)
+env.Command(
+    "build/synthesis/programming.log",
+    [
+        soc_v,
+        'build/synthesis/Makefile',
+        'build/synthesis/turborav.ucf',
+        'build/synthesis/turborav.ut'
+    ],
+    'make --dir=build/synthesis HDL_FILE={0} program'.format(soc_v.abspath)
+)
