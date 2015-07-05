@@ -29,10 +29,23 @@ COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
 CLASSPATH = "{0}:{1}".format(CHISEL_JAR, COMMONS_IO_JAR)
 Export('CLASSPATH')
 
-riscv_tests     = SConscript('riscv_tests/SConscript',  variant_dir='build/riscv_tests' , duplicate=0)
+startup_file    = SConscript(
+    'src/misc/SConscript',
+    variant_dir='build/misc',
+    duplicate=0,
+    exports = 'riscv_program_env'
+)
+Export('startup_file')
+
+riscv_tests     = SConscript(
+    'riscv_tests/SConscript',
+    variant_dir='build/riscv_tests',
+    duplicate=0,
+    exports = 'startup_file'
+)
+
 turborav_jar    = SConscript('src/SConscript')
 default_program = SConscript('src/programs/SConscript', variant_dir='build/programs'    , duplicate=0)
-startup_file    = SConscript('src/misc/SConscript'    , variant_dir='build/misc'        , duplicate=0)
 
 # Verilog code generation of build/verilog/Soc.v
 env = Environment(ENV = os.environ)

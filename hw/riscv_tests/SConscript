@@ -1,6 +1,6 @@
 from subprocess import check_output
 
-Import('riscv_program_env')
+Import('riscv_program_env startup_file')
 
 RV32UI_PATH = "riscv-tools/riscv-tests/isa/rv32ui/"
 
@@ -36,5 +36,5 @@ CPPPATH = [
     'riscv-tools/riscv-tests/isa/macros/scalar/',
     'riscv-tools/riscv-tests/env/p'
 ]
-programs = [ env.Program(test, CPPPATH = CPPPATH)[0] for test in test_sources ]
+programs = [ env.Program([test, startup_file], CPPPATH = CPPPATH)[0] for test in test_sources ]
 Return('programs')
