@@ -36,8 +36,11 @@ CPPPATH = [
     'riscv-tools/riscv-tests/isa/macros/scalar/',
     'riscv-tools/riscv-tests/env/p'
 ]
-programs = [ env.Program([test, startup_file], CPPPATH = CPPPATH)[0] for test in test_sources ]
-for p in programs:
-    Depends(p, "#src/misc/turborav.ld")
+
+programs = []
+for test in test_sources:
+    program = env.Program([test, startup_file], CPPPATH = CPPPATH)[0]
+    programs.append(program)
+    Depends(program, "#src/misc/turborav.ld")
 
 Return('programs')
