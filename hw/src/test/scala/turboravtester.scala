@@ -71,10 +71,6 @@ object TurboRavTestRunner{
       chiselMainTest(test_args, () => Module(new Writeback())){
         c => new WritebackTest(c)
       }
-      case "ravvtest" =>
-        chiselMainTest(test_args, () => Module(new RavV(rom))){
-          c => new RavVTest(c)
-        }
       case "soctest" =>
         chiselMainTest(test_args, () => Module(new Soc(
           rom,
