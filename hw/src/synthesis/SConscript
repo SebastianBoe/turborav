@@ -1,0 +1,10 @@
+Command(
+    "slices.txt",
+    "design_routed.par",
+    "awk '/Number of Slices/{ print $4 }' $SOURCE > $TARGET"
+)
+
+# parse_timing(){
+#     awk -F "|" '/NET "clk_/{ print $4 }' generated/design_routed.par | \
+#         python src/synthesis/period_to_frequency.py > generated/timing.txt
+# }

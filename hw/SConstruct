@@ -160,3 +160,6 @@ env.Command(
     ],
     'make --dir=build/synthesis HDL_FILE={0} program'.format(soc_v.abspath)
 )
+
+VariantDir('build/synthesis', 'src/synthesis')
+SConscript("build/synthesis/SConscript")
