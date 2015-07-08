@@ -1,0 +1,46 @@
+from subprocess import check_output
+
+Import('riscv_program_env startup_file')
+
+RV32UI_PATH = "riscv-tools/riscv-tests/isa/rv32ui/"
+
+black_list_names = [
+    'amoswap_w',
+    'amomaxu_w',
+    'amominu_w',
+    'amoadd_w',
+    'amoand_w',
+    'amomax_w',
+    'amomin_w',
+    'amoor_w',
+    'fence_i',
+    'divuw',
+    'lrsc',
+    'divw',
+    'mulw',
+    'lwu',
+    'ld'
+]
+
+black_list = [
+    File("{0}{1}.S".format(RV32UI_PATH, name))
+    for name in black_list_names
+]
+
+test_sources = set(Glob(RV32UI_PATH + "/*.S")) - set(black_list)
+
+env = riscv_program_env.Clone()
+env.Append(CCFLAGS = ["-Tsrc/misc/turborav.ld"])
+
+CPPPATH = [
+    'riscv-tools/riscv-tests/isa/macros/scalar/',
+    'riscv-tools/riscv-tests/env/p'
+]
+
+programs = []
+for test in test_sources:
+    program = env.Program([test, startup_file], CPPPATH = CPPPATH)[0]
+    programs.append(program)
+    Depends(program, "#src/misc/turborav.ld")
+
+Return('programs')

@@ -2,8 +2,6 @@ package TurboRav
 
 import Chisel._
 
-import Apb._
-import Common._
 import Constants._
 
 class SpiIo() extends Bundle {

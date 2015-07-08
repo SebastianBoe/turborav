@@ -1,7 +1,6 @@
 package TurboRav
 
 import Chisel._
-import Common._
 
 class RegBank() extends Module {
 

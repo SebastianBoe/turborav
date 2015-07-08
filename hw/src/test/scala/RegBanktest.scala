@@ -1,7 +1,6 @@
 package TurboRav
 
 import Chisel._
-import Common._
 
 class RegBankTest(c: RegBank) extends Tester(c) {
   val xlen = Config.xlen

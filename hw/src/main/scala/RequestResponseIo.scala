@@ -1,9 +1,7 @@
 package TurboRav
 
 import Chisel._
-import Common._
 import Constants._
-import Apb._
 
 // See RRApbAdapter for documentation about this bundle.
 class RequestResponseIo extends Bundle {

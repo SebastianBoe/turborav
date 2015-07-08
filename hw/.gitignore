@@ -1,26 +1,10 @@
-target/
-project/
-generated/
-rom/
+build/
 
-*.cpp
-*.h
 *.out
-*.v
 *.hex
 *.flo
 *.o
 
-/doc/instr-table.tex
-
-# Generated during synthesis
-*.lso
-_xmsgs/
-xst/
-
-# Put a symlink here that points to your test code instead.
-# (Temporary hack)
-rom/startup_program.S
-
 # IDE files
 .idea/
+.sconsign.dblite

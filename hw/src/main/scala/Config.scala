@@ -1,4 +1,7 @@
-package Common
+package TurboRav
+
+// Contains configuaration constants. This looks like a code smell, we
+// should be passing this values around in constructors i believe.
 
 object Config {
   val xlen              = 32

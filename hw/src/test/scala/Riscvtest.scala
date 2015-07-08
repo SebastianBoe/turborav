@@ -63,7 +63,7 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
     for(i <- 0 until 32 / 4){
       for(j <- 0 until 4){
         val x= i+(32/4)*j
-        print("%5s (x%02d): %08x\t".format(regs_canonical(x), x, regs(x)))
+        print("\t%5s (x%02d): %08x".format(regs_canonical(x), x, regs(x)))
       }
       print("\n")
     }

@@ -2,9 +2,7 @@ package TurboRav
 
 import Chisel._
 
-import Common._
 import Array._
-import Apb._
 
 class Ram extends Module {
   val io = new Bundle {

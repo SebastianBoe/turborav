@@ -21,31 +21,37 @@ how to get started with hw-development.
 ### Install packaged dependencies
 
 ```
-yaourt -S sbt python-pint
+yaourt -S java-commons-io scala clang scons chisel jdk python-pint
 ```
-Or for Debian based distro's
+Or for Debian based distro's (NB: Might be out-of-date, Arch is the only officially supported distro)
 ```
-apt-get install sbt autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils gperf
+apt-get install sbt autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils gperf scons
 ```
 
 ### Install (yet) un-packaged dependencies
 
+Arch has packaged chisel, but on other systems you need to install it
+manually. (It might be simplest to just get it from a friend.)
+
+NB: The jar in maven is not compatible with our codebase, because we
+use scala 2.11 features, whilst the jar in maven is a scala 2.10 jar.
+
 Install the GNU toolchain for RISC-V from our git submodule
 
 ```
-cd hw/riscv-tools
+cd hw/riscv_tests/riscv-tools
 git submodule init
 git submodule update
 
-cd hw/riscv-tools/riscv-gnu-toolchain
+cd hw/riscv_tests/riscv-tools/riscv-gnu-toolchain
 git submodule init
 git submodule update
 
-cd hw/riscv-tools/riscv-tests/env
+cd hw/riscv_tests/riscv-tools/riscv-tests/env
 git submodule init
 git submodule update
 
-cd hw/riscv-tools/riscv-gnu-toolchain
+cd hw/riscv_tests/riscv-tools/riscv-gnu-toolchain
 ./configure --prefix=/opt/riscv # make sure you have access rights
 make
 ```

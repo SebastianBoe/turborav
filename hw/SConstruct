@@ -1,0 +1,162 @@
+import os
+
+Help("""
+       Type: 'scons build/test'                      to run all tests,
+             'scons build/test/riscv/'               to run all riscv tests,
+             'scons build/test/riscv/add'            to run the riscv add test,
+             'scons build/test/unit/'                to run all unit tests,
+             'scons build/test/unit/alu'             to run the alu unit test,
+             'scons build/synthesis/turborav.bit'    to generate a netlist,
+             'scons build/synthesis/programming.log' to program a netlist,
+             'scons build'                           to build everything.
+
+       All build targets are files, or directories of files that can
+       be "built" by the build system. Even programming a netlist is
+       considered just a build target that generates a programming.log
+       text file.
+""")
+
+Clean("build", "build") # Force cleaning of entire build dir.
+
+COMMON_FLAGS = (" -m32"
+                " -Wa,-march=RVIMAFDXhwacha "
+                " -nostdlib "
+)
+
+CCFLAGS = COMMON_FLAGS + \
+          (" -static"
+           " -nostartfiles"
+           " -ffreestanding"
+           " -c"
+)
+
+TOOLCHAIN = '/opt/riscv/bin/riscv64-unknown-elf-'
+CC = TOOLCHAIN + 'gcc'
+
+riscv_program_env = Environment(
+    CC = CC,
+    AS = CC,
+    LD = CC,
+    CCFLAGS = CCFLAGS,
+    ASFLAGS = CCFLAGS,
+    LINKFLAGS = COMMON_FLAGS + " -Tsrc/misc/turborav.ld "
+
+)
+Export('riscv_program_env')
+
+
+CHISEL_JAR     = "/usr/share/scala/chisel/chisel.jar"
+COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
+CLASSPATH = "{0}:{1}".format(CHISEL_JAR, COMMONS_IO_JAR)
+Export('CLASSPATH')
+
+startup_file    = SConscript(
+    'src/misc/SConscript',
+    variant_dir='build/misc',
+    duplicate=0,
+    exports = 'riscv_program_env'
+)
+Export('startup_file')
+
+riscv_tests     = SConscript(
+    'riscv_tests/SConscript',
+    variant_dir='build/riscv_tests',
+    duplicate=0,
+    exports = 'startup_file'
+)
+
+turborav_jar    = SConscript('src/SConscript')
+default_program = SConscript('src/programs/SConscript', variant_dir='build/programs'    , duplicate=0)
+
+env = Environment(ENV = os.environ)
+
+def chisel_cpp_targets(module):
+    """Returns the files that Chisel generates when a Chisel cpp
+    simulation is run on a module.
+
+    """
+    return [
+            module + "-emulator.cpp",
+            module + "-emulator.o",
+            "emulator_mod.h",
+            "emulator_api.h",
+            "emulator.h",
+            module + ".cpp",
+            module + ".h",
+            module + ".o",
+            module,
+            module + ".vcd"
+        ]
+
+# Riscv-tests
+for test in riscv_tests:
+    test_path = str(test)
+    test_name = test_path.split('/')[-1]
+    target_dir = "build/test/riscv/{0}/".format(test_name)
+    env.Command(
+        [target_dir + x for x in chisel_cpp_targets("Soc") + ["jenkins.xml"]],
+        [turborav_jar, test],
+        'CXX=clang++ scala -classpath build/scala/classes:{0} TurboRav.TurboRavTestRunner Riscvtest {1} {2} 12 8'
+        .format(
+            CLASSPATH,
+            target_dir,
+            test
+        )
+    )
+
+# Unit tests, or Chisel based testbenches.
+# NB: Duplicated in turboravtester.scala
+test_benches = [
+    "Alu",
+    "BranchUnit",
+    "ForwardingUnit",
+    "RegBank",
+    "Mult",
+    "Timer",
+    "Decode",
+    "Execute",
+    "Memory",
+    "Writeback",
+    "Soc"
+]
+for module in test_benches:
+    target_dir = "build/test/unit/{0}/".format(module)
+    env.Command(
+        [target_dir + x for x in chisel_cpp_targets(module)],
+        [turborav_jar, default_program],
+        'CXX=clang++ scala -classpath build/scala/classes:{0} TurboRav.TurboRavTestRunner {1} {2} {3} 12 8 || true'
+        .format(
+            CLASSPATH,
+            module + "test",
+            target_dir,
+            default_program
+        )
+    )
+
+# Verilog code generation of build/verilog/Soc.v
+soc_v = env.Command(
+    [
+        "build/verilog/Soc.v",
+        "build/verilog/Soc-harness.v"
+    ],
+    [turborav_jar, default_program],
+    'scala -classpath build/scala/classes:{0} TurboRav.TurboRav Soc {1} {2} 12 8'
+    .format(
+        CLASSPATH,
+        "build/verilog/".format(default_program),
+        default_program
+    )
+)[0]
+
+# Synthesis of build/synthesis/turborav.bit and flashing
+VariantDir('build/synthesis', 'src/synthesis', duplicate=1)
+env.Command(
+    "build/synthesis/programming.log",
+    [
+        soc_v,
+        'build/synthesis/Makefile',
+        'build/synthesis/turborav.ucf',
+        'build/synthesis/turborav.ut'
+    ],
+    'make --dir=build/synthesis HDL_FILE={0} program'.format(soc_v.abspath)
+)

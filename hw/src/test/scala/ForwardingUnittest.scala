@@ -1,7 +1,6 @@
 package TurboRav
 
 import Constants._
-import Common._
 import Chisel._
 
 class ForwardingUnitTest(c: ForwardingUnit) extends Tester(c) {

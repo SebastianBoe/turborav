@@ -2,7 +2,6 @@ package TurboRav
 
 import Chisel._
 import Constants._
-import Common._
 
 class Mult() extends Module {
   val xlen = Config.xlen // Extract xlen for convenience
