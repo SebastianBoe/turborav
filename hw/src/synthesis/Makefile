@@ -74,6 +74,7 @@ design.ncd: native_generic_database.ngd
 	-p $(FPGA_MODEL) \
 	-o design.ncd \
 	-timing \
+	-detail \
 	native_generic_database.ngd \
 	physical_constraints_file.pcf
 
