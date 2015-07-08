@@ -33,15 +33,17 @@ class Rom(elf_path: String) extends Module {
       elf_path,
       s"$elf_path.bin"
     ).!
-    return Seq(
+    val dump = Seq(
       "hexdump",
       "-v",
       "-e",
       "1/4 \"%08X\" \"\\n\"",
       s"$elf_path.bin"
     ).lineStream
-    .toArray
-    .map(new BigInteger(_, 16))
-    .map(UInt(_))
+    Seq("rm", s"$elf_path.bin").! // Delete the temp file.
+    return dump
+      .toArray
+      .map(new BigInteger(_, 16))
+      .map(UInt(_))
   }
 }

@@ -16,6 +16,10 @@ classes = env.Command(
     )
 )
 
+# workaround to make sure classes are cleaned
+# http://stackoverflow.com/a/23815492
+env.Clean(classes, env.Dir("#build/scala/classes"))
+
 turborav_jar = Jar(
     target = '#build/scala/turborav.jar',
     source = Glob('#build/scala/classes/TurboRav/*')
