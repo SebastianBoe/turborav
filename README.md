@@ -21,7 +21,7 @@ how to get started with hw-development.
 ### Install packaged dependencies
 
 ```
-yaourt -S java-commons-io scala clang scons chisel
+yaourt -S java-commons-io scala clang scons chisel jdk
 ```
 Or for Debian based distro's (NB: Might be out-of-date, Arch is the only officially supported distro)
 ```
