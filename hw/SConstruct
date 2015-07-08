@@ -1,6 +1,5 @@
 import os
 
-SetOption('num_jobs', 8)
 COMMON_FLAGS = (" -m32"
                 " -Wa,-march=RVIMAFDXhwacha "
                 " -nostdlib "
