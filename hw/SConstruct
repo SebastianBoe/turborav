@@ -1,5 +1,20 @@
 import os
 
+Help("""
+       Type: 'scons build/test'                      to run all tests,
+             'scons build/test/riscv/'               to run all riscv tests,
+             'scons build/test/riscv/add'            to run the riscv add test,
+             'scons build/test/unit/'                to run all unit tests,
+             'scons build/test/unit/alu'             to run the alu unit test,
+             'scons build/synthesis/turborav.bit'    to generate a netlist,
+             'scons build/synthesis/programming.log' to program a netlist,
+             'scons build'                           to build everything.
+
+       All build targets are files, or directories of files that can
+       be "built" by the build system. Even programming a netlist is
+       considered just a build target that generates a programming.log
+       text file.
+""")
 COMMON_FLAGS = (" -m32"
                 " -Wa,-march=RVIMAFDXhwacha "
                 " -nostdlib "
