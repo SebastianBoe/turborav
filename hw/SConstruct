@@ -148,19 +148,29 @@ soc_v = env.Command(
     )
 )[0]
 
-# Synthesis of build/synthesis/turborav.bit and flashing
 VariantDir('build/synthesis', 'src/synthesis', duplicate=1)
+# Synthesis of build/synthesis/turborav.bit
 env.Command(
-    [
-        "build/synthesis/programming.log",
-        "build/synthesis/design_routed.par"
-    ],
+    "build/synthesis/design_routed.ncd",
     [
         soc_v,
         'build/synthesis/Makefile',
         'build/synthesis/turborav.ucf',
         'build/synthesis/turborav.ut'
     ],
+    'make --dir=build/synthesis HDL_FILE={0} design_routed.ncd'.format(soc_v.abspath)
+)
+SideEffect("build/synthesis/design_routed.par", "build/synthesis/design_routed.ncd")
+
+env.Command(
+    "build/synthesis/turborav.bit",
+    "build/synthesis/design_routed.ncd",
+    'make --dir=build/synthesis HDL_FILE={0} turborav.bit'.format(soc_v.abspath)
+)
+
+env.Command(
+    "build/synthesis/programming.log",
+    "build/synthesis/turborav.bit",
     'make --dir=build/synthesis HDL_FILE={0} program'.format(soc_v.abspath)
 )
 
