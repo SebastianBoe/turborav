@@ -71,22 +71,10 @@ object TurboRavTestRunner{
       chiselMainTest(test_args, () => Module(new Writeback())){
         c => new WritebackTest(c)
       }
-<<<<<<< HEAD:hw/src/test/scala/turboravtester.scala
-      case "ravvtest" =>
-        chiselMainTest(test_args, () => Module(new RavV())){
-          c => new RavVTest(c)
-        }
-      case "apbtest" =>
+      case "Apbtest" =>
         chiselMainTest(test_args, () => Module(new ApbController())){
           c => new ApbControllerTest(c)
         }
-      case "soctest" =>
-        chiselMainTest(test_args,
-          () => Module(new Soc(num_pin_inputs.toInt, num_pin_outputs.toInt))
-        )
-        {
-          c  => new SocTest(c)
-=======
       case "Soctest" =>
         chiselMainTest(test_args, () => Module(new Soc(
           rom,
@@ -94,7 +82,6 @@ object TurboRavTestRunner{
           num_pin_outputs.toInt
         ))){
           c => new SocTest(c)
->>>>>>> master:hw/src/test/scala/Turboravtester.scala
         }
       case "Riscvtest" =>
         chiselMainTest(test_args, () => Module(new Soc(
