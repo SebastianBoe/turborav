@@ -1,1 +1,1 @@
-scons build/test/
+scons build/test/ build/synthesis/slices.txt
