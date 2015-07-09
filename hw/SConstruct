@@ -117,6 +117,7 @@ test_benches = [
     "Execute",
     "Memory",
     "Writeback",
+    "Apb",
     "Soc"
 ]
 for module in test_benches:
