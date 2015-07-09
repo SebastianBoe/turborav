@@ -2,7 +2,6 @@ package TurboRav
 
 import Chisel._
 import Constants._
-import Common._
 
 // This class tries to implement the flow chart on page 29 in the DVI spec V1.0
 class dvi_tmds_encoder() extends Module {

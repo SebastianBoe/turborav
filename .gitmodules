@@ -1,3 +1,0 @@
-[submodule "hw/riscv-tools"]
-	path = hw/riscv-tools
-	url = https://github.com/riscv/riscv-tools

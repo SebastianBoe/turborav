@@ -2,7 +2,6 @@ package TurboRav
 
 import Chisel._
 import Constants._
-import Common._
 
 /*
   in_start: Start timer

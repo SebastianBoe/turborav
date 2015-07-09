@@ -1,3 +1,4 @@
+.section .text.startup
 _crt0:
     lui	x1,   %hi(data_start)
 	add	x1,x1,%lo(data_start)

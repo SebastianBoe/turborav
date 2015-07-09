@@ -1,7 +1,6 @@
 package TurboRav
 
 import Chisel._
-import Common._
 import Constants._
 
 class Memory extends Module {
@@ -40,5 +39,6 @@ class Memory extends Module {
 
   io.hdu_mem.mem_read := mem_ctrl.read
   io.hdu_mem.rd_addr  := exe_mem.rd_addr
+  io.hdu_mem.mem_busy := is_mem_transfer && !response.valid
 
 }

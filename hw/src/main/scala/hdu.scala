@@ -1,7 +1,6 @@
 package TurboRav
 
 import Constants._
-import Common._
 import Chisel._
 
 // Purely combinatorial Hazard Detection Unit
@@ -22,15 +21,21 @@ class HazardDetectionUnit() extends Module {
   val load_use = load_use_rs1 || load_use_rs2
 
   val mult_busy = io.hdu_exe.mult_busy
+  val mem_busy  = io.hdu_mem.mem_busy
 
   val fch_instr_valid = io.hdu_fch.instr_valid
 
   // It is the responsebility of the pipeline stage
   // to insert bubbles when it is stalling.
-  io.hdu_fch.stall := load_use || mult_busy || !fch_instr_valid
-  io.hdu_dec.stall := load_use || mult_busy
-  io.hdu_exe.stall := load_use || mult_busy
-  io.hdu_mem.stall := Bool(false)
+  val stall_mem = mem_busy
+  val stall_exe = stall_mem ||  mult_busy || load_use
+  val stall_dec = stall_exe
+  val stall_fch = stall_dec || !fch_instr_valid
+
+  io.hdu_fch.stall := stall_fch
+  io.hdu_dec.stall := stall_dec
+  io.hdu_exe.stall := stall_exe
+  io.hdu_mem.stall := stall_mem
   io.hdu_wrb.stall := Bool(false)
 
 }

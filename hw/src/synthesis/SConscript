@@ -1,0 +1,13 @@
+Command(
+    "slices.txt",
+    "design_routed.par",
+    "awk '/Number of Slices/{ printf \"YVALUE=%s\", $4 }' $SOURCE > $TARGET"
+)
+
+Command(
+    "timing.txt",
+    ["design_routed.par", "period_to_frequency.py"],
+    """echo -n "YVALUE=" > $TARGET && awk -F \"|\" '/NET \"clk_/{ print $4 }' $SOURCE |\
+    python build/synthesis/period_to_frequency.py >> $TARGET
+    """
+)

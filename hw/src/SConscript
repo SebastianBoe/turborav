@@ -1,0 +1,27 @@
+Import('CLASSPATH')
+
+SCALAFLAGS = ("-feature "
+              "-language:reflectiveCalls "
+              "-Xlint "
+              "-Xfatal-warnings"
+)
+
+env = Environment()
+classes = env.Command(
+    '#build/scala/classes/TurboRav/TurboRav.class',
+    Glob('main/scala/*'),
+    "fsc {0} -classpath {1} -d build/scala/classes src/main/scala/*.scala src/test/scala/*.scala".format(
+        SCALAFLAGS,
+        CLASSPATH
+    )
+)
+
+# workaround to make sure classes are cleaned
+# http://stackoverflow.com/a/23815492
+env.Clean(classes, env.Dir("#build/scala/classes"))
+
+turborav_jar = Jar(
+    target = '#build/scala/turborav.jar',
+    source = Glob('#build/scala/classes/TurboRav/*')
+)
+Return('turborav_jar')

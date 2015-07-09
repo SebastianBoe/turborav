@@ -1,7 +1,6 @@
 package TurboRav
 
 import Chisel._
-import Common._
 import Constants._
 
 ////////////////////////////////////////
@@ -236,6 +235,7 @@ class HazardDetectionUnitExecute extends Bundle {
 }
 
 class HazardDetectionUnitMemory extends Bundle {
+  val mem_busy = Bool(INPUT)
   val mem_read = Bool(INPUT)
   val rd_addr  = UInt(INPUT, 5)
 
