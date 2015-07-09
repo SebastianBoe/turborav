@@ -151,7 +151,10 @@ soc_v = env.Command(
 # Synthesis of build/synthesis/turborav.bit and flashing
 VariantDir('build/synthesis', 'src/synthesis', duplicate=1)
 env.Command(
-    "build/synthesis/programming.log",
+    [
+        "build/synthesis/programming.log",
+        "build/synthesis/design_routed.par"
+    ],
     [
         soc_v,
         'build/synthesis/Makefile',
