@@ -1,7 +1,7 @@
 Command(
     "slices.txt",
     "design_routed.par",
-    "awk '/Number of Slices/{ print $4 }' $SOURCE > $TARGET"
+    "awk '/Number of Slices/{ printf \"YVALUE=%s\", $4 }' $SOURCE > $TARGET"
 )
 
 # parse_timing(){
