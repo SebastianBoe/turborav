@@ -1,25 +1,17 @@
 package TurboRav
 
 import Chisel._
-import Common._
-// import Apb._
 import org.apache.commons.io.FilenameUtils;
 
 object TurboRavTestRunner{
   def main(args: Array[String]): Unit = {
     val Array( // Parse argument list
       module,
+      target_dir,
       rom,
       num_pin_inputs,
       num_pin_outputs
     ) = args
-
-    // Only use the basename when determining where the target
-    // directory of the test is. This is needed to ensure all tests
-    // end up in the generated directory.
-    val target_dir = "generated/ctd/%s" format(
-      FilenameUtils.getName(rom)
-    )
 
     val test_args = Array(
       "--genHarness",
@@ -31,50 +23,55 @@ object TurboRavTestRunner{
 	  "--debug"
     )
 
+    // NB: The below list of modules is duplicated in
+    // turborav/hw/SConstruct. Respect if you can remove this
+    // duplication.
+
     // En pils til førstemann som kan fjerne redundansen.
     // Hvis du prøvde og feilet inkrementer følgende:
     // 2
     val res = module match {
-      case "alutest" =>
+      case "Alutest" =>
         chiselMainTest(test_args, () => Module(new Alu())){
           c => new AluTest(c)
         }
-      case "brutest" =>
+      case "BranchUnittest" =>
         chiselMainTest(test_args, () => Module(new BranchUnit())){
           c => new BranchUnitTest(c)
         }
-      case "fwutest" =>
+      case "ForwardingUnittest" =>
         chiselMainTest(test_args, () => Module(new ForwardingUnit())){
           c => new ForwardingUnitTest(c)
         }
-      case "regbanktest" =>
+      case "RegBanktest" =>
         chiselMainTest(test_args, () => Module(new RegBank())){
           c => new RegBankTest(c)
         }
-      case "multtest" =>
+      case "Multtest" =>
         chiselMainTest(test_args, () => Module(new Mult())){
           c => new MultTest(c)
         }
-      case "timertest" =>
+      case "Timertest" =>
         chiselMainTest(test_args, () => Module(new Timer())){
           c => new TimerTest(c)
         }
-      case "decodetest" =>
+      case "Decodetest" =>
         chiselMainTest(test_args, () => Module(new Decode())){
           c => new DecodeTest(c)
         }
-      case "executetest" =>
+      case "Executetest" =>
         chiselMainTest(test_args, () => Module(new Execute())){
           c => new ExecuteTest(c)
         }
-      case "memorytest" =>
+      case "Memorytest" =>
         chiselMainTest(test_args, () => Module(new Memory())){
           c => new MemoryTest(c)
         }
-      case "writebacktest" =>
+      case "Writebacktest" =>
       chiselMainTest(test_args, () => Module(new Writeback())){
         c => new WritebackTest(c)
       }
+<<<<<<< HEAD:hw/src/test/scala/turboravtester.scala
       case "ravvtest" =>
         chiselMainTest(test_args, () => Module(new RavV())){
           c => new RavVTest(c)
@@ -89,13 +86,21 @@ object TurboRavTestRunner{
         )
         {
           c  => new SocTest(c)
+=======
+      case "Soctest" =>
+        chiselMainTest(test_args, () => Module(new Soc(
+          rom,
+          num_pin_inputs.toInt,
+          num_pin_outputs.toInt
+        ))){
+          c => new SocTest(c)
+>>>>>>> master:hw/src/test/scala/Turboravtester.scala
         }
-      case "riscvtest" =>
-        chiselMainTest(
-          test_args,
-          () => Module(new Soc(num_pin_inputs.toInt, num_pin_outputs.toInt))
-        )
-        {
+      case "Riscvtest" =>
+        chiselMainTest(test_args, () => Module(new Soc(
+          rom,
+          num_pin_inputs.toInt, num_pin_outputs.toInt
+        ))){
           c => new RiscvTest(c, target_dir)
         }
     }

@@ -1,7 +1,6 @@
 package TurboRav
 
 import Chisel._
-import Common._
 import Constants._
 
 class Gpio(num_pin_inputs: Int, num_pin_outputs: Int) extends Module {
