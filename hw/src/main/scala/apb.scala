@@ -40,7 +40,7 @@ class ApbController() extends Module {
   val selx     = Reg(init = UInt(0))
   val write    = Reg(init = Bool(false))
 
-  def setup() = {
+  private def setup() = {
     write := io.rr.request.bits.write
     addr  := io.rr.request.bits.addr(15, 0)
     selx  := io.rr.request.bits.addr(27, 16)

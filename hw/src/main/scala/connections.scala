@@ -121,7 +121,7 @@ class MemoryCtrl() extends Bundle {
   val is_halfword = Bool(OUTPUT)
   val is_byte     = Bool(OUTPUT)
 
-  def kill() = {
+  def kill(): Unit = {
     write     := Bool(false)
     read      := Bool(false)
   }
@@ -135,7 +135,7 @@ class MemoryWriteback() extends Bundle {
 
   val wrb_ctrl = new WritebackCtrl()
 
-  def kill() = {
+  def kill(): Unit = {
     wrb_ctrl.kill()
   }
 }
@@ -163,7 +163,7 @@ class WritebackCtrl() extends Bundle {
   val is_byte        = Bool(OUTPUT)
   val sign_extend    = Bool(OUTPUT)
 
-  def kill() = {
+  def kill(): Unit = {
     rd_wen := Bool(false)
   }
 }

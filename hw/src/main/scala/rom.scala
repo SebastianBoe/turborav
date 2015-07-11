@@ -25,7 +25,7 @@ class Rom(elf_path: String) extends Module {
   // Read from rom
   io.instr := rom(word_addr)
 
-  def parseRomContents(elf_path: String): Array[UInt] = {
+  private def parseRomContents(elf_path: String): Array[UInt] = {
     Seq(
       "riscv64-unknown-elf-objcopy",
       "-O",

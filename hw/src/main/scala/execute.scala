@@ -5,7 +5,7 @@ import Constants._
 
 class Execute() extends Module {
 
-  def isMultUpper(mult_func: Bits) = {
+  private def isMultUpper(mult_func: Bits) = {
     mult_func === MULT_MULH   ||
     mult_func === MULT_MULHU  ||
     mult_func === MULT_MULHSU ||
@@ -13,7 +13,7 @@ class Execute() extends Module {
     mult_func === MULT_REMU
   }
 
-  def isMultLower(mult_func: Bits) = {
+  private def isMultLower(mult_func: Bits) = {
     mult_func === MULT_MUL  ||
     mult_func === MULT_DIV  ||
     mult_func === MULT_DIVU
