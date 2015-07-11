@@ -6,14 +6,19 @@ import Constants._
 // This class implements the transmitter seen in figure 3-2 of the DVI
 // V1.0 spec.
 class dvi_tmds_transmitter extends Module {
+  val num_chan = 3
+  val pixel_bits = 8
   val io = new Bundle(){
-    val rgb   = UInt(INPUT, 24)
-    val ctl   = UInt(INPUT, 6) // 2 lower bits are HSYNC and VSYNC
+    val rgb   = Vec.fill(num_chan) { UInt(width = pixel_bits) }.asInput()
+    val ctl   = Vec.fill(num_chan) { UInt(width = 2) }.asInput()
     val de    = Bool(INPUT)
+
+    val chan  = Vec.fill(num_chan) { UInt(width = 1) }.asOutput()
   }
-  for (i <- 1 to 3) {
+  for (i <- 1 to num_chan) {
     val encoder = Module(new dvi_tmds_encoder())
-    encoder.io.c := io.ctl(i * 2 - 1, i * 2 - 2)
-    encoder.io.d := io.rgb(i * 8 - 1, i * 8 - 8)
+    encoder.io.c  := io.ctl(i)
+    encoder.io.d  := io.rgb(i)
+    encoder.io.de := io.de
   }
 }

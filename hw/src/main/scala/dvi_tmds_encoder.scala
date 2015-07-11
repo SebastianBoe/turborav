@@ -75,7 +75,7 @@ class dvi_tmds_encoder() extends Module {
     cnt      := UInt(0)
   }
 
-  def encode_ctrl(c : UInt): UInt = {
+  private def encode_ctrl(c : UInt): UInt = {
     val ctrl_codes = Vec(
       UInt("b0010101011"),
       UInt("b1101010100"),
@@ -85,11 +85,7 @@ class dvi_tmds_encoder() extends Module {
     return ctrl_codes(c)
   }
 
-  def N1(q_m : UInt) : UInt = {
-    PopCount(q_m)
-  }
+  private def N1(q_m : UInt) = PopCount( q_m)
+  private def N0(q_m : UInt) = PopCount(~q_m)
 
-  def N0(q_m : UInt) : UInt = {
-    PopCount(~q_m)
-  }
 }
