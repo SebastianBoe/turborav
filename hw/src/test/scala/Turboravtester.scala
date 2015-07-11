@@ -77,7 +77,7 @@ object TurboRavTestRunner{
         }
       case "dvi_tmds_encodertest" =>
         chiselMainTest(test_args, () => Module(new dvi_tmds_encoder())){
-          c => new DviTmdsEncoderTest(c)
+          c => new dvi_tmds_encoderTest(c)
         }
       case "Soctest" =>
         chiselMainTest(test_args, () => Module(new Soc(

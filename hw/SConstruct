@@ -107,6 +107,7 @@ for test in riscv_tests:
 # Unit tests, or Chisel based testbenches.
 # NB: Duplicated in turboravtester.scala
 test_benches = [
+    "dvi_tmds_encoder",
     "Alu",
     "BranchUnit",
     "ForwardingUnit",
