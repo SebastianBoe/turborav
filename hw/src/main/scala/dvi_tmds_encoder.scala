@@ -18,7 +18,7 @@ class dvi_tmds_encoder() extends Module {
     val q_out = UInt(OUTPUT, 10)
   }
 
-  val cnt      = Reg(init = UInt(0, 3))
+  val cnt      = Reg(init = SInt(0, 4))
 
   val majority = ((N1(io.d)  >  UInt(4))) ||
                   (N1(io.d) === N0(io.d) && (io.d(0) === UInt(0)))
