@@ -13,12 +13,14 @@ class dvi_tmds_transmitter extends Module {
     val ctl   = Vec.fill(num_chan) { UInt(width = 2) }.asInput()
     val de    = Bool(INPUT)
 
-    val chan  = Vec.fill(num_chan) { UInt(width = 1) }.asOutput()
+    val chan  = Vec.fill(num_chan) { Bool() }.asOutput()
   }
   for (i <- 1 to num_chan) {
     val encoder = Module(new dvi_tmds_encoder())
     encoder.io.c  := io.ctl(i)
     encoder.io.d  := io.rgb(i)
     encoder.io.de := io.de
+
+    io.chan(i) := serialize(encoder.io.q_out)
   }
 }

@@ -39,7 +39,5 @@ object rightRotate {
 }
 
 object serialize {
-  def apply(data: UInt): UInt = {
-    UInt(0) // TODO
-  }
+  def apply(data: UInt): Bool = data(Counter(data.getWidth()).value)
 }
