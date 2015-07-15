@@ -29,9 +29,6 @@ black_list = [
 
 test_sources = set(Glob(RV32UI_PATH + "/*.S")) - set(black_list)
 
-env = riscv_program_env.Clone()
-env.Append(CCFLAGS = ["-Tsrc/misc/turborav.ld"])
-
 CPPPATH = [
     'riscv-tools/riscv-tests/isa/macros/scalar/',
     'riscv-tools/riscv-tests/env/p'
@@ -39,8 +36,11 @@ CPPPATH = [
 
 programs = []
 for test in test_sources:
-    program = env.Program([test, startup_file], CPPPATH = CPPPATH)[0]
+    program = riscv_program_env.Program(
+        [test, startup_file],
+        CPPPATH = CPPPATH
+    )[0]
     programs.append(program)
-    Depends(program, "#src/misc/turborav.ld")
+    Depends(program, "#build/misc/turborav.ld")
 
 Return('programs')

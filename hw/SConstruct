@@ -17,6 +17,7 @@ Help("""
 """)
 
 Clean("build", "build") # Force cleaning of entire build dir.
+VariantDir("build", "src", duplicate=1)
 
 COMMON_FLAGS = (" -m32"
                 " -Wa,-march=RVIMAFDXhwacha "
@@ -39,34 +40,29 @@ riscv_program_env = Environment(
     LD = CC,
     CCFLAGS = CCFLAGS,
     ASFLAGS = CCFLAGS,
-    LINKFLAGS = COMMON_FLAGS + " -Tsrc/misc/turborav.ld "
-
+    LINKFLAGS = COMMON_FLAGS + " -Tbuild/misc/turborav.ld "
 )
+riscv_program_env['linker_script'] = "#build/misc/turborav.ld"
 Export('riscv_program_env')
-
 
 CHISEL_JAR     = "/usr/share/scala/chisel/chisel.jar"
 COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
 CLASSPATH = "{0}:{1}".format(CHISEL_JAR, COMMONS_IO_JAR)
 Export('CLASSPATH')
 
-startup_file    = SConscript(
-    'src/misc/SConscript',
-    variant_dir='build/misc',
-    duplicate=0,
+startup_file = SConscript(
+    'build/misc/SConscript',
     exports = 'riscv_program_env'
 )
 Export('startup_file')
 
-riscv_tests     = SConscript(
-    'riscv_tests/SConscript',
-    variant_dir='build/riscv_tests',
-    duplicate=0,
+riscv_tests = SConscript(
+    'build/riscv_tests/SConscript',
     exports = 'startup_file'
 )
 
-turborav_jar    = SConscript('src/SConscript')
-default_program = SConscript('src/programs/SConscript', variant_dir='build/programs'    , duplicate=0)
+turborav_jar    = SConscript('build/SConscript')
+default_program = SConscript('build/programs/SConscript')
 
 env = Environment(ENV = os.environ)
 
@@ -96,7 +92,9 @@ for test in riscv_tests:
     env.Command(
         [target_dir + x for x in chisel_cpp_targets("Soc") + ["jenkins.xml"]],
         [turborav_jar, test],
-        'CXX=clang++ scala -classpath build/scala/classes:{0} TurboRav.TurboRavTestRunner Riscvtest {1} {2} 12 8'
+        """CXX=clang++ scala \
+        -classpath build/scala/classes:{0}\
+        TurboRav.TurboRavTestRunner Riscvtest {1} {2} 12 8"""
         .format(
             CLASSPATH,
             target_dir,
@@ -125,7 +123,9 @@ for module in test_benches:
     env.Command(
         [target_dir + x for x in chisel_cpp_targets(module)],
         [turborav_jar, default_program],
-        'CXX=clang++ scala -classpath build/scala/classes:{0} TurboRav.TurboRavTestRunner {1} {2} {3} 12 8 || true'
+        """CXX=clang++ scala \
+        -classpath build/scala/classes:{0} \
+        TurboRav.TurboRavTestRunner {1} {2} {3} 12 8"""
         .format(
             CLASSPATH,
             module + "test",
@@ -149,7 +149,6 @@ soc_v = env.Command(
     )
 )[0]
 
-VariantDir('build/synthesis', 'src/synthesis', duplicate=1)
 # Synthesis of build/synthesis/turborav.bit
 env.Command(
     "build/synthesis/design_routed.ncd",
@@ -175,5 +174,4 @@ env.Command(
     'make --dir=build/synthesis HDL_FILE={0} program'.format(soc_v.abspath)
 )
 
-VariantDir('build/synthesis', 'src/synthesis')
 SConscript("build/synthesis/SConscript")

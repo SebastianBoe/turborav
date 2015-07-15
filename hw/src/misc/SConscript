@@ -1,4 +1,7 @@
 Import('riscv_program_env')
 
+riscv_program_env.Command("gcc -E -P $SOURCE > $TARGET", "turborav.ld.S", "turborav.ld")
+
 startup_file = riscv_program_env.StaticObject(target = 'crt0.o', source = 'crt0.s')
+
 Return('startup_file')
