@@ -6,10 +6,10 @@ import Chisel._
 // Purely combinatorial Branch Unit
 class BranchUnit() extends Module {
 
-  def equal(func: Bits) = !func(2) && !func(1)
-  def lt   (func: Bits) =  func(2) && !func(1)
-  def ltu  (func: Bits) =  func(2) &&  func(1)
-  def neg  (func: Bits) =  func(0)
+  private def equal(func: Bits) = !func(2) && !func(1)
+  private def lt   (func: Bits) =  func(2) && !func(1)
+  private def ltu  (func: Bits) =  func(2) &&  func(1)
+  private def neg  (func: Bits) =  func(0)
 
   val io = new Bundle(){
     val in_a = UInt(INPUT, width = Config.xlen)

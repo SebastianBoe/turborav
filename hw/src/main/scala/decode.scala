@@ -8,53 +8,53 @@ class Decode() extends Module {
   require(Config.xlen == 32 || Config.xlen == 64 || Config.xlen == 128)
 
   // all shift codes end in 01
-  def isShift(func3: Bits) = (!func3(1) && func3(0))
+  private def isShift(func3: Bits) = (!func3(1) && func3(0))
 
-  def isJump(opcode: Bits) = {
+  private def isJump(opcode: Bits) = {
     opcode === OPCODE_JAL ||
     opcode === OPCODE_JALR
   }
 
-  def isLongJump(opcode: Bits) = {
+  private def isLongJump(opcode: Bits) = {
     opcode === OPCODE_JAL
   }
 
-  def isUpper(opcode: Bits) = {
+  private def isUpper(opcode: Bits) = {
     opcode === OPCODE_AUIPC ||
     opcode === OPCODE_LUI
   }
 
-  def isMemop(opcode: Bits) = {
+  private def isMemop(opcode: Bits) = {
     opcode === OPCODE_LOAD ||
     opcode === OPCODE_STORE
   }
 
-  def isLoad(opcode: Bits) = {
+  private def isLoad(opcode: Bits) = {
     opcode === OPCODE_LOAD
   }
 
-  def isStore(opcode: Bits) = {
+  private def isStore(opcode: Bits) = {
     opcode === OPCODE_STORE
   }
 
-  def isBranch(opcdoe: Bits) = {
+  private def isBranch(opcdoe: Bits) = {
     opcode === OPCODE_BRANCH
   }
 
-  def isMultop(opcode: Bits) = {
+  private def isMultop(opcode: Bits) = {
     opcode === OPCODE_MULT_DIV
   }
 
-  def isRegop(opcode: Bits) = {
+  private def isRegop(opcode: Bits) = {
     opcode === OPCODE_REG_IMM ||
     opcode === OPCODE_REG_REG
   }
 
-  def isRegImm(opcode: Bits) = {
+  private def isRegImm(opcode: Bits) = {
     opcode === OPCODE_REG_IMM
   }
 
-  def isRegReg(opcode: Bits) = {
+  private def isRegReg(opcode: Bits) = {
     opcode === OPCODE_REG_REG
   }
 

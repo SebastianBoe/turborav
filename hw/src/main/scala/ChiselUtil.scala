@@ -35,7 +35,7 @@ object rightRotate {
     else rightRotate(rightRotate(word), shiftAmount - 1)
   }
 
-  def apply(word: UInt) = word(0) ## word(word.getWidth() - 1, 1)
+  def apply(word: UInt): UInt = word(0) ## word(word.getWidth() - 1, 1)
 }
 
 object serialize {

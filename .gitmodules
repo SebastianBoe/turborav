@@ -1,0 +1,3 @@
+[submodule "hw/src/riscv_tests/riscv-tools"]
+	path = hw/src/riscv_tests/riscv-tools
+	url = https://github.com/riscv/riscv-tools

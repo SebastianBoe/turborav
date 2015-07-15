@@ -22,11 +22,13 @@ class Mult() extends Module {
 
   }
 
-  def is_divide(func: UInt) = func(2)
+  private def isDivide(func: UInt) = func(2)
 
-  def is_signed_divide(func: UInt) = !func(0)
+  private def isSignedDivide(func: UInt) = !func(0)
 
-  def is_signed_mult(func: UInt) = (func === MULT_MULH || func === MULT_MULHSU)
+  private def isSignedMult(func: UInt) = (
+    func === MULT_MULH || func === MULT_MULHSU
+  )
 
   val (s_idle :: s_mult :: s_div :: s_negate_input ::
     s_negate_output_div :: s_negate_output_mult :: Nil) = Enum(UInt(), 6)
@@ -63,8 +65,8 @@ class Mult() extends Module {
     holding_shift)
 
   when (state === s_idle && io.enable) {
-    when (is_divide(io.func)) {
-      when(is_signed_divide(io.func)){
+    when (isDivide(io.func)) {
+      when(isSignedDivide(io.func)){
         state := s_negate_input
         should_negate_quotient := io.in_a(xlen-1) != io.in_b(xlen-1)
         dividend_sign := io.in_a(xlen-1)
@@ -74,7 +76,7 @@ class Mult() extends Module {
       argument := io.in_b
       holding := Cat(UInt(0, width = xlen + 1), io.in_a)
     } .otherwise {
-      when(is_signed_mult(io.func)){
+      when(isSignedMult(io.func)){
         state := s_negate_input
       } .otherwise {
         state := s_mult
@@ -92,7 +94,7 @@ class Mult() extends Module {
 
   when (state === s_div) {
     when (count === UInt(xlen-1)) {
-      when(is_signed_divide(exec_func)){
+      when(isSignedDivide(exec_func)){
         state := s_negate_output_div
       } .otherwise {
         state := s_idle
@@ -115,7 +117,7 @@ class Mult() extends Module {
   }
 
   when(state === s_negate_input){
-    when(is_divide(exec_func)){
+    when(isDivide(exec_func)){
       state := s_div
     } .otherwise {
       state := s_mult
