@@ -14,14 +14,20 @@ class Soc(elf_path: String, num_pin_inputs: Int, num_pin_outputs: Int) extends M
   val io = new Bundle {
     val pin_inputs  = UInt(INPUT , width = num_pin_inputs )
     val pin_outputs = UInt(OUTPUT, width = num_pin_outputs)
+
+    val dvi_io      = new DviIo()
   }
 
   val ravv    = Module(new RavV(elf_path))
   val gpio    = Module(new Gpio(num_pin_inputs, num_pin_outputs))
+  val dviPeri = Module(new DviPeri())
+
 
   // Connect the peripherals to the SoC pins
   gpio.io.pin_inputs := io.pin_inputs
   io.pin_outputs := gpio.io.pin_outputs
+
+  io.dvi_io := dviPeri.io.dvi_io
 
   // CONNECT the bus master
   ravv.io <> gpio.io.rr
