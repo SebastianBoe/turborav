@@ -59,7 +59,7 @@ startup_file    = SConscript(
 Export('startup_file')
 
 riscv_tests     = SConscript(
-    'riscv_tests/SConscript',
+    'src/riscv_tests/SConscript',
     variant_dir='build/riscv_tests',
     duplicate=0,
     exports = 'startup_file'
