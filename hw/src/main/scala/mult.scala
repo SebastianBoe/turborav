@@ -57,7 +57,7 @@ class Mult() extends Module {
 
   val holding_shift = holding << UInt(1)
   val difference = UInt(width = xlen + 1)
-  val next_holding_div = UInt(width = 2 * xlen +1)
+  val next_holding_div = UInt(width = 2 * xlen + 1)
 
   difference := holding_shift(xlen*2, xlen) - argument
   next_holding_div := Mux(difference(xlen) === UInt(0),

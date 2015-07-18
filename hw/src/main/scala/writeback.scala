@@ -3,7 +3,7 @@ package TurboRav
 import Chisel._
 import Constants._
 
-class Writeback() extends Module {
+class Writeback extends Module {
 
   val io = new WritebackIO()
 
@@ -15,12 +15,17 @@ class Writeback() extends Module {
 
   val ctrl = mem_wrb.wrb_ctrl
 
-  val word = Mux(ctrl.has_wait_state,
-                 io.mem_wrb.mem_read_data,
-                 mem_wrb.mem_read_data)
+  val word = Mux(
+    ctrl.has_wait_state,
+    io.mem_wrb.mem_read_data,
+       mem_wrb.mem_read_data
+  )
 
-  val sign_ext_halfword = Cat(Fill(word(15), Config.xlen-16), word(15, 0))
-  val sign_ext_byte     = Cat(Fill(word( 7), Config.xlen- 8), word( 7, 0))
+  val half_of_word = UInt(word(15, 0), width = 16)
+  val byte_of_word = UInt(word(7 , 0), width = 8 )
+
+  val sign_ext_halfword = signExtend(half_of_word, 32)
+  val sign_ext_byte     = signExtend(byte_of_word, 32)
 
   val zero_ext_halfword = Cat(Fill(UInt(0), Config.xlen-16), word(15, 0))
   val zero_ext_byte     = Cat(Fill(UInt(0), Config.xlen- 8), word( 7, 0))

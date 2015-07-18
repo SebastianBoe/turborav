@@ -37,3 +37,37 @@ object rightRotate {
 
   def apply(word: UInt): UInt = word(0) ## word(word.getWidth() - 1, 1)
 }
+
+object signExtend {
+  @tailrec
+  def apply(word: UInt, new_length: int) : UInt = {
+    if (word.getWidth() == 1) {
+      if (new_length == 1) {
+        word(0)
+      }
+      else {
+        word(0) ## signExtend(
+          word,
+          new_length - 1
+        )
+      }
+    }
+    else {
+      signExtend(
+        word(word.getWidth() - 1, 1),
+        new_length - 1
+      ) ## word(0)
+    }
+  }
+}
+
+
+// object signExtend {
+//   def apply(word: UInt, new_length: int) : UInt = {
+//     val w = word.getWidth()
+//     Cat(
+//       Fill(word(w - 1), new_length - w),
+//       word
+//     )
+//   }
+// }
