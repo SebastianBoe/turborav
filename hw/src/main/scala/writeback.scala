@@ -24,17 +24,11 @@ class Writeback extends Module {
   val half_of_word = UInt(word(15, 0), width = 16)
   val byte_of_word = UInt(word(7 , 0), width = 8 )
 
-  val sign_ext_halfword = signExtend(half_of_word, 32)
-  val sign_ext_byte     = signExtend(byte_of_word, 32)
-
-  val zero_ext_halfword = Cat(Fill(UInt(0), Config.xlen-16), word(15, 0))
-  val zero_ext_byte     = Cat(Fill(UInt(0), Config.xlen- 8), word( 7, 0))
-
   val mem_read = MuxCase( word, Array(
-    ( ctrl.sign_extend && ctrl.is_halfword ) -> sign_ext_halfword,
-    (!ctrl.sign_extend && ctrl.is_halfword ) -> zero_ext_halfword,
-    ( ctrl.sign_extend && ctrl.is_byte     ) -> sign_ext_byte,
-    (!ctrl.sign_extend && ctrl.is_byte     ) -> zero_ext_byte
+    ( ctrl.sign_extend && ctrl.is_halfword ) -> SignExtend(half_of_word, 32),
+    (!ctrl.sign_extend && ctrl.is_halfword ) -> ZeroExtend(half_of_word, 32),
+    ( ctrl.sign_extend && ctrl.is_byte     ) -> SignExtend(byte_of_word, 32),
+    (!ctrl.sign_extend && ctrl.is_byte     ) -> ZeroExtend(byte_of_word, 32)
   ))
 
   val rd_data = Mux(ctrl.rd_sel === RD_PC,  mem_wrb.pc + UInt(4),
