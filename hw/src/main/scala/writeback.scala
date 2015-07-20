@@ -21,8 +21,8 @@ class Writeback extends Module {
        mem_wrb.mem_read_data
   )
 
-  val half_of_word = UInt(word(15, 0), width = 16)
-  val byte_of_word = UInt(word(7 , 0), width = 8 )
+  val half_of_word = UInt(word(16 - 1, 0), width = 16)
+  val byte_of_word = UInt(word(8  - 1, 0), width = 8 )
 
   val mem_read = MuxCase( word, Array(
     ( ctrl.sign_extend && ctrl.is_halfword ) -> SignExtend(half_of_word, 32),

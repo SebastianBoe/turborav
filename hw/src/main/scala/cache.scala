@@ -53,7 +53,7 @@ class Cache() extends Module {
     val bank = Mem(Bits(width = cache_line_width),
                   entries_per_bank,
                   seqRead = true)
-    val tag = tag_array(read_index)((i+1)*tag_size - 1, i*tag_size)
+    val tag = tag_array(read_index)((i + 1)*tag_size - 1, i*tag_size)
     // TODO: check valid bit
     tag_hits(i) := tag === read_tag
 
