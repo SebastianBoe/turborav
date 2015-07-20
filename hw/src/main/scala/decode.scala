@@ -3,7 +3,7 @@ package TurboRav
 import Chisel._
 import Constants._
 
-class Decode() extends Module {
+class Decode extends Module {
 
   require(Config.xlen == 32 || Config.xlen == 64 || Config.xlen == 128)
 
@@ -101,9 +101,8 @@ class Decode() extends Module {
 
   val imm_u32 = Cat(fch_dec.instr(31, 12),
                     UInt(0, width = Config.xlen - 20))
-  val imm_u = if(Config.xlen != 32)
-              Cat(Fill(imm_u32(31), Config.xlen - 32), imm_u32)
-              else imm_u32
+  val imm_u = if (Config.xlen == 32) imm_u32
+              else SignExtend(imm_u32, Config.xlen)
 
   val shamt = Cat(UInt(0, width = Config.xlen - 5),
                   fch_dec.instr(24, 20))

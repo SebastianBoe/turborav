@@ -9,7 +9,7 @@ import scala.annotation.tailrec
 // This seems to be a common pattern, but I need a better name for
 // it I think. Surely a name for something this generic should
 // already exist.
-object clearIfDisabled {
+object ClearIfDisabled {
   def apply(data: UInt, enabled: Bool):UInt = {
     data & Fill(enabled, data.getWidth())
   }
@@ -22,7 +22,7 @@ object Any {
   def apply[T <: Data](mods: Seq[T]):     Bool = orR(Cat(mods))
 }
 
-object rightRotate {
+object RightRotate {
   /**
    * Returns the circular right shift of "shiftAmount" bits of the UInt "word".
    * @param word The UInt to be right rotated.
@@ -32,7 +32,7 @@ object rightRotate {
   @tailrec
   def apply(word: UInt, shiftAmount: Int): UInt = {
     if (shiftAmount == 0) word
-    else rightRotate(rightRotate(word), shiftAmount - 1)
+    else RightRotate(RightRotate(word), shiftAmount - 1)
   }
 
   def apply(word: UInt): UInt = word(0) ## word(word.getWidth() - 1, 1)
@@ -40,4 +40,22 @@ object rightRotate {
 
 object serialize {
   def apply(data: UInt): Bool = data(Counter(data.getWidth()).value)
+}
+
+object Extend {
+  def apply(word: UInt, extention_val: Bool, new_length: Int): UInt =
+    Cat(
+      Fill(extention_val, new_length - word.getWidth()),
+      word
+    )
+}
+
+object SignExtend {
+  def apply(word: UInt, new_length: Int): UInt =
+    Extend(word, extention_val = word(word.getWidth() - 1), new_length)
+}
+
+object ZeroExtend {
+  def apply(word: UInt, new_length: Int): UInt =
+    Extend(word, extention_val = Bool(false), new_length)
 }

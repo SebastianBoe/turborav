@@ -21,11 +21,11 @@ how to get started with hw-development.
 ### Install packaged dependencies
 
 ```
-yaourt -S java-commons-io scala clang scons chisel jdk python-pint
+yaourt -S java-commons-io scala clang scons chisel jdk python-pint scalastyle
 ```
 Or for Debian based distro's (NB: Might be out-of-date, Arch is the only officially supported distro)
 ```
-apt-get install sbt autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils gperf scons
+apt-get install sbt autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils gperf scons scalastyle
 ```
 
 ### Install (yet) un-packaged dependencies

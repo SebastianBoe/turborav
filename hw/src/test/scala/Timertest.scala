@@ -14,7 +14,7 @@ class TimerTest(timer: Timer) extends Tester(timer) {
   poke(timer.io.in_start, BigInt(1))
   step(1000)
   expect(timer.io.out_val, BigInt(1000))
-   
+
   // Set in_reset and expect timer value to be 0
   poke(timer.io.in_reset, BigInt(1))
   step(1)
@@ -33,7 +33,4 @@ class TimerTest(timer: Timer) extends Tester(timer) {
   poke(timer.io.in_start, BigInt(0))
   step(1)
   expect(timer.io.out_val, BigInt(2))
-
-
-
 }

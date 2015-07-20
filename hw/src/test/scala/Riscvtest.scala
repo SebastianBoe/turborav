@@ -14,22 +14,21 @@ import java.io.File
   failure has been detected.
   */
 class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
-  while(get_test_status() == Running)
+  while(getTestStatus() == Running)
   {
     step(1)
   }
-  expect(get_test_status() == Passed, "")
+  expect(getTestStatus() == Passed, "")
 
   val error_msg = "Failed test #%d".format( peekAt(c.ravv.dec.regbank.regs, 28 ) )
-  generate_xml_for_jenkins(error_msg)
+  generateXmlForJenkins(error_msg)
 
-  print("\n")
-  print_regs()
-  if(!ok) print("%s\n".format(error_msg))
-  print("\n")
+  println("")
+  printRegs()
+  if(!ok) println(error_msg)
+  println("")
 
-
-  def get_test_status() : TestStatus = {
+  private def getTestStatus() : TestStatus = {
     val TestPassInstr = ScalaUtil.hex2dec("51e0d073")
     val TestFailInstr = ScalaUtil.hex2dec("51ee1073")
     peek(c.ravv.dec.fch_dec.instr) match {
@@ -39,7 +38,7 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
     }
   }
 
-  def print_regs() = {
+  private def printRegs() {
     // Names used by the toolchain, not the RISC V ISA spec.
     val regs_canonical = Array(
       "zero",
@@ -59,18 +58,18 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
       regs(i) = peekAt(c.ravv.dec.regbank.regs, i)
     }
 
-    print("Register bank:\n")
+    println("Register bank:")
     for(i <- 0 until 32 / 4){
       for(j <- 0 until 4){
-        val x= i+(32/4)*j
+        val x = i + (32/4)*j
         print("\t%5s (x%02d): %08x".format(regs_canonical(x), x, regs(x)))
       }
-      print("\n")
+      println("")
     }
-    print("\n")
+    println("")
   }
 
-  def generate_xml_for_jenkins(error_msg: String) {
+  private def generateXmlForJenkins(error_msg: String) {
     val file_name = "%s/jenkins.xml" format(test_name)
     val file_contents = new PrettyPrinter(80, 2).format(
       <testsuite>
