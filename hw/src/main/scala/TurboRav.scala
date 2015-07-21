@@ -17,6 +17,7 @@ object TurboRav {
     val res = chiselMain(
       Array(
         "--genHarness",
+        "--Wall",
         "--backend", "v",
         "--targetDir", target_dir
       ),
