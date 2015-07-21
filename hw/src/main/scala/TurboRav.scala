@@ -18,6 +18,7 @@ object TurboRav {
       Array(
         "--genHarness",
         "--Wall",
+        "--vcdMem", //TODO: Understand how to view this.
         "--backend", "v",
         "--targetDir", target_dir
       ),
