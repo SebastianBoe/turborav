@@ -16,5 +16,7 @@ trait ScalaUtil {
       .map(BigInt(_))
       .reduceLeft( _ * 16 + _)
   }
+
+  def b(digits: String) = Integer.parseInt(digits, 2)
 }
 object ScalaUtil extends ScalaUtil
