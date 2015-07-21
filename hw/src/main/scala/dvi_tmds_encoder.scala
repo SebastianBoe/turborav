@@ -81,7 +81,7 @@ class dvi_tmds_encoder() extends Module {
       UInt("b1101010100"),
       UInt("b0010101010"),
       UInt("b1101010101")
-    ) { UInt(width=3) }
+    )
     return ctrl_codes(c)
   }
 
