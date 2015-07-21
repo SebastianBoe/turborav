@@ -126,7 +126,7 @@ for module in test_benches:
     env.Command(
         [target_dir + x for x in chisel_cpp_targets(module)],
         [turborav_jar, default_program],
-        'CXX=clang++ scala -classpath build/scala/classes:{0} TurboRav.TurboRavTestRunner {1} {2} {3} 12 8 || true'
+        'CXX=clang++ scala -classpath build/scala/classes:{0} TurboRav.TurboRavTestRunner {1} {2} {3} 12 8'
         .format(
             CLASSPATH,
             module + "test",
@@ -145,7 +145,7 @@ soc_v = env.Command(
     'scala -classpath build/scala/classes:{0} TurboRav.TurboRav Soc {1} {2} 12 8'
     .format(
         CLASSPATH,
-        "build/verilog/".format(default_program),
+        "build/verilog/",
         default_program
     )
 )[0]
