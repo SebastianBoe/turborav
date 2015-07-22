@@ -5,7 +5,7 @@ import Constants._
 
 // This class implements the transmitter seen in figure 3-2 of the DVI
 // V1.0 spec.
-class dvi_tmds_transmitter() extends Module {
+class dvi_tmds_transmitter extends Module {
   val num_chan = 3
   val pixel_bits = 8
   val io = new Bundle(){
@@ -15,6 +15,9 @@ class dvi_tmds_transmitter() extends Module {
 
     val dvi_io  = new DviIo()
   }
+  // Create three combinatorial (Apart from 1 internal register they
+  // act combinatorial) encoders and serialize their output with a
+  // sequential serializer.
   for (i <- 0 to num_chan - 1) {
     val encoder = Module(new dvi_tmds_encoder())
     encoder.io.c  := io.ctl(i)
