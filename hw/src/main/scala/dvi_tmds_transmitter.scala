@@ -15,6 +15,14 @@ class dvi_tmds_transmitter extends Module {
 
     val dvi_io  = new DviIo()
   }
+
+  // The system clock is assumed to be 50MHz (Although it would be
+  // possible to connect a 100MHz Oscillator). The minimum DVI clock
+  // frequency is conveniently 50MHz / 2 = 25MHz.
+  val clk_25MHz = Reg(init = Bool(false))
+  clk_25MHz := ! clk_25MHz
+  io.dvi_io.chan_clk := clk_25MHz
+
   // Create three combinatorial (Apart from 1 internal register they
   // act combinatorial) encoders and serialize their output with a
   // sequential serializer.
