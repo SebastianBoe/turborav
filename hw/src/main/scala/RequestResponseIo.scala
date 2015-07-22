@@ -14,6 +14,5 @@ class RequestResponseIo extends Bundle {
 
   val response = new ValidIO(new Bundle {
     val word  = UInt(width = Config.xlen)
-    val has_wait_state = Bool()
   }).flip()
 }

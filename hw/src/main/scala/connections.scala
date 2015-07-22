@@ -112,6 +112,7 @@ class MemoryIO() extends Bundle {
   val hdu_mem = new HazardDetectionUnitMemory().flip()
 
   val rr_io = new RequestResponseIo()
+  val has_wait_state = Bool(INPUT)
 }
 
 class MemoryCtrl() extends Bundle {

@@ -27,7 +27,6 @@ class ApbControllerTest(c: ApbController) extends Tester(c) {
   def expectRr(data: Int, valid: Boolean) {
     expect(c.io.rr.response.valid, if(valid) 1 else 0)
     expect(c.io.rr.response.bits.word, data)
-    expect(c.io.rr.response.bits.has_wait_state, 0)
   }
 
   def clearRr() {

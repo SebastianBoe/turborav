@@ -88,5 +88,4 @@ class ApbController() extends Module {
 
   io.rr.response.valid := valid
   io.rr.response.bits.word  := Mux(read_valid, io.apb_rdata, UInt(0))
-  io.rr.response.bits.has_wait_state := Bool(false)
 }

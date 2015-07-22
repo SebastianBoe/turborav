@@ -165,6 +165,7 @@ class Decode extends Module {
   dec_exe.wrb_ctrl.is_halfword := is_halfword
   dec_exe.wrb_ctrl.is_byte     := is_byte
   dec_exe.wrb_ctrl.sign_extend := sign_extend
+  dec_exe.wrb_ctrl.has_wait_state := Bool(false)
 
   dec_exe.mem_ctrl.write := isStore(opcode)
   dec_exe.mem_ctrl.read  := isLoad(opcode)

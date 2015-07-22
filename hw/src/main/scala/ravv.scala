@@ -37,7 +37,9 @@ class RavV(elf_path: String) extends Module {
   wrb.io.hdu_wrb <> hdu.io.hdu_wrb
 
   // Roam
-  mem.io.rr_io <> roam.io.mem
+  mem.io.rr_io <> roam.io.mem.rr
+  mem.io.has_wait_state := roam.io.mem.has_wait_state
+  
   fch.io.rr_io <> roam.io.fch
   io <> roam.io.rr_mmio
 }
