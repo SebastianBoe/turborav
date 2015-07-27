@@ -38,8 +38,29 @@ object RightRotate {
   def apply(word: UInt): UInt = word(0) ## word(word.getWidth() - 1, 1)
 }
 
-object Serialize {
-  def apply(data: UInt): Bool = data(Counter(data.getWidth()).value)
+/**
+  A serializer is used when you have a bus of values, but need to
+  output each value in the bus bit by bit, AKA serially.
+
+  Usage:
+
+  val s = Module(new Serializer(bus.getWidth))
+  s.io.in := bus
+  s.io.cond := enable // Internal counter in Serializer ticks on this signal
+  serial_output := s.io.out
+
+  Future features:
+
+  Ability to clock out a bus instead of just Bool's.
+  */
+class Serializer(w: Int) extends Module {
+  val io = new Bundle {
+    val in = UInt(INPUT, w)
+    val cond = Bool(INPUT)
+    val out = Bool(OUTPUT)
+  }
+  val cnt = Counter(cond = io.cond, n = w)
+  io.out := io.in(cnt._1)
 }
 
 object Extend {

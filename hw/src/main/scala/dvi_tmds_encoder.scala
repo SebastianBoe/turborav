@@ -14,11 +14,11 @@ class dvi_tmds_encoder extends Module {
     val d     = UInt(INPUT, 8)
     val c     = UInt(INPUT, 2)
     val de    = Bool(INPUT)
+    val cnt   = SInt(INPUT, 4)
 
-    val q_out = UInt(OUTPUT, 10)
+    val q_out    = UInt(OUTPUT, 10)
+    val cnt_next = SInt(OUTPUT, 4)
   }
-
-  val cnt      = Reg(init = SInt(0, 4))
 
   val majority = ((N1(io.d)  >  UInt(4))) ||
                   (N1(io.d) === N0(io.d) && (io.d(0) === UInt(0)))
@@ -36,29 +36,29 @@ class dvi_tmds_encoder extends Module {
   val q_m = q_m_vec.toBits
   val q_m_0_7 = q_m(7,0)
   when(io.de) {
-    when(cnt === UInt(0) || N1(q_m_0_7) === N0(q_m_0_7)) {
+    when(io.cnt === UInt(0) || N1(q_m_0_7) === N0(q_m_0_7)) {
       io.q_out := Cat(
         ~q_m(8),
          q_m(8),
         Mux(q_m(8), q_m_0_7, ~q_m_0_7)
       )
       when(q_m(8) === UInt(0)) {
-        cnt := cnt + (N0(q_m_0_7) - N1(q_m_0_7))
+        io.cnt_next := io.cnt + (N0(q_m_0_7) - N1(q_m_0_7))
       }.otherwise {
-        cnt := cnt + (N1(q_m_0_7) - N0(q_m_0_7))
+        io.cnt_next := io.cnt + (N1(q_m_0_7) - N0(q_m_0_7))
       }
     }.otherwise {
       when(
-        cnt > UInt(0) && N1(q_m_0_7) > N0(q_m_0_7)
+        io.cnt > UInt(0) && N1(q_m_0_7) > N0(q_m_0_7)
           ||
-        cnt < UInt(0) && N0(q_m_0_7) > N1(q_m_0_7)
+        io.cnt < UInt(0) && N0(q_m_0_7) > N1(q_m_0_7)
       ) {
         io.q_out := Cat(
           UInt(1),
           q_m(8),
           ~q_m_0_7
         )
-        cnt := cnt + (q_m(8) << UInt(1)) +
+        io.cnt_next := io.cnt + (q_m(8) << UInt(1)) +
           (N0(q_m_0_7) - N1(q_m_0_7))
       }.otherwise {
         io.q_out := Cat(
@@ -66,13 +66,13 @@ class dvi_tmds_encoder extends Module {
           q_m(8),
           q_m_0_7
         )
-        cnt := cnt - (~q_m(8) << UInt(1)) +
+        io.cnt_next := io.cnt - (~q_m(8) << UInt(1)) +
           (N1(q_m_0_7) - N0(q_m_0_7))
       }
     }
   }.otherwise {
-    io.q_out := encode_ctrl(io.c)
-    cnt      := UInt(0)
+    io.q_out    := encode_ctrl(io.c)
+    io.cnt_next := UInt(0)
   }
 
   private def encode_ctrl(c : UInt): UInt = {

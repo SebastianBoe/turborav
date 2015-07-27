@@ -9,9 +9,10 @@ class dvi_tmds_transmitter extends Module {
   val num_chan = 3
   val pixel_bits = 8
   val io = new Bundle(){
-    val rgb   = Vec.fill(num_chan) { UInt(width = pixel_bits) }.asInput()
-    val ctl   = Vec.fill(num_chan) { UInt(width = 2) }.asInput()
-    val de    = Bool(INPUT)
+    val enable = Bool(INPUT)
+    val rgb    = Vec.fill(num_chan) { UInt(width = pixel_bits) }.asInput()
+    val ctl    = Vec.fill(num_chan) { UInt(width = 2) }.asInput()
+    val de     = Bool(INPUT)
 
     val dvi_io  = new DviIo()
   }
@@ -23,15 +24,23 @@ class dvi_tmds_transmitter extends Module {
   clk_25MHz := ! clk_25MHz
   io.dvi_io.chan_clk := clk_25MHz
 
-  // Create three combinatorial (Apart from 1 internal register they
-  // act combinatorial) encoders and serialize their output with a
-  // sequential serializer.
+  // Create three combinatorial encoders and serialize their output
+  // with a sequential serializer.
   for (i <- 0 to num_chan - 1) {
     val encoder = Module(new dvi_tmds_encoder())
     encoder.io.c  := io.ctl(i)
     encoder.io.d  := io.rgb(i)
     encoder.io.de := io.de
+    encoder.io.cnt := UInt(0) //TODO
+    val cnt_next = encoder.io.cnt_next //TODO
 
-    io.dvi_io.chan(i) := Serialize(encoder.io.q_out)
+    val s = Module(new Serializer(encoder.io.q_out.getWidth))
+    s.io.in := encoder.io.q_out
+
+    // Simply wiring it like this introduces the requirement that the
+    // enable signal must be held high until the transmission is over.
+    s.io.cond := io.enable
+
+    io.dvi_io.chan(i) := s.io.out
   }
 }
