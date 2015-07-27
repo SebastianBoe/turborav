@@ -32,6 +32,6 @@ class dvi_tmds_transmitter extends Module {
     encoder.io.d  := io.rgb(i)
     encoder.io.de := io.de
 
-    io.dvi_io.chan(i) := serialize(encoder.io.q_out)
+    io.dvi_io.chan(i) := Serialize(encoder.io.q_out)
   }
 }

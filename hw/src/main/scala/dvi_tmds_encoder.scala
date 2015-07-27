@@ -9,8 +9,8 @@ import Constants._
 
 // The code is optimized to be obviously matching the spec. on page
 // 29, not to be obviously correct by itself.
-class dvi_tmds_encoder() extends Module {
-  val io = new Bundle(){
+class dvi_tmds_encoder extends Module {
+  val io = new Bundle {
     val d     = UInt(INPUT, 8)
     val c     = UInt(INPUT, 2)
     val de    = Bool(INPUT)
