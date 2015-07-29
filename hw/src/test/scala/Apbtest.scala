@@ -12,16 +12,16 @@ class ApbControllerTest(c: ApbController) extends Tester(c) {
   }
 
   def pokeApb(data: Int, ready: Boolean) {
-    poke(c.io.apb_rdata, data)
-    poke(c.io.apb_ready, if (ready) 1 else 0)
+    poke(c.io.out.rdata, data)
+    poke(c.io.out.ready, if (ready) 1 else 0)
   }
 
   def expectApb(addr: Int, data: Int, write: Boolean, enable: Boolean, selx: Int) {
-    expect(c.io.apb_wdata, data)
-    expect(c.io.apb_addr, addr)
-    expect(c.io.apb_write,  if (write ) 1 else 0)
-    expect(c.io.apb_enable, if (enable) 1 else 0)
-    expect(c.io.apb_selx, selx)
+    expect(c.io.in.wdata, data)
+    expect(c.io.in.addr, addr)
+    expect(c.io.in.write,  if (write ) 1 else 0)
+    expect(c.io.in.enable, if (enable) 1 else 0)
+    expect(c.io.selx, selx)
   }
 
   def expectRr(data: Int, valid: Boolean) {
@@ -37,8 +37,8 @@ class ApbControllerTest(c: ApbController) extends Tester(c) {
   }
 
   def clearApb() {
-    poke(c.io.apb_rdata, 0)
-    poke(c.io.apb_ready, 0)
+    poke(c.io.out.rdata, 0)
+    poke(c.io.out.ready, 0)
   }
 
   // Test start in idle state

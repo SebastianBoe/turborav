@@ -12,7 +12,7 @@ class SpiIo() extends Bundle {
 
 class Spi extends Module {
   val io = new Bundle {
-    val apb = new SlaveToApbIo()
+    val apb_slave = new ApbSlaveIo()
     val spi = new SpiIo()
   }
 
@@ -26,14 +26,14 @@ class Spi extends Module {
   }
   io.spi.clk := spi_clk
 
-  val peripheral_address = io.apb.addr(27, 0)
+  val peripheral_address = io.apb_slave.in.addr(27, 0)
   // TODO: Use log2up
   val bits_sent = Reg(init=UInt(1, width=4))
 
   val tx_reg = Reg(UInt(width=8))
 
-  when (io.apb.sel && io.apb.write) {
-    tx_reg := io.apb.wdata
+  when (io.apb_slave.sel && io.apb_slave.in.write) {
+    tx_reg := io.apb_slave.in.wdata
     state := s_tx
   } .elsewhen (bits_sent === UInt(8)) {
     state := s_idle
