@@ -19,7 +19,7 @@ class dvi_tmds_transmitterTest(c: dvi_tmds_transmitter) extends Tester(c) {
   poke(c.io.de, 1)
 
   for (bin <- expected_output_str_lsb_first) {
-    expect(c.io.dvi_io.chan(0), bin.toString.toInt)
+    expect(c.io.dvi.chan(0), bin.toString.toInt)
     step(1)
   }
 }

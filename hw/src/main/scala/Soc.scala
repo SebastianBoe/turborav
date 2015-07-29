@@ -20,7 +20,7 @@ class Soc(
     val pin_inputs  = UInt(INPUT , width = num_pin_inputs )
     val pin_outputs = UInt(OUTPUT, width = num_pin_outputs)
 
-    val dvi_io      = new DviIo()
+    val dvi      = new DviIo()
   }
 
   val apbController = Module(new ApbController())
@@ -40,7 +40,7 @@ class Soc(
   // Connect the peripherals to the SoC pins
   gpio.io.pin_inputs := io.pin_inputs
   io.pin_outputs := gpio.io.pin_outputs
-  io.dvi_io := dviPeri.io.dvi_io
+  io.dvi := dviPeri.io.dvi
 
   // Connect the APB master to it's APB controller
   apbController.io.rr <> ravv.io

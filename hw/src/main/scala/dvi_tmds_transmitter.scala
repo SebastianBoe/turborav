@@ -14,7 +14,7 @@ class dvi_tmds_transmitter extends Module {
     val ctl    = Vec.fill(num_chan) { UInt(width = 2) }.asInput()
     val de     = Bool(INPUT)
 
-    val dvi_io  = new DviIo()
+    val dvi  = new DviIo()
   }
 
   // Keeps track of which of the 10 bits we are currently
@@ -38,6 +38,6 @@ class dvi_tmds_transmitter extends Module {
     when(bit_counter_wrap) { encoder_cnt := encoder.io.cnt_next }
     encoder.io.cnt := encoder_cnt
 
-    io.dvi_io.chan(i) := encoder.io.q_out(bit_counter_value)
+    io.dvi.chan(i) := encoder.io.q_out(bit_counter_value)
   }
 }
