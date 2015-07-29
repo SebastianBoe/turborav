@@ -80,3 +80,12 @@ object ZeroExtend {
   def apply(word: UInt, new_length: Int): UInt =
     Extend(word, extention_val = Bool(false), new_length)
 }
+
+object splitBitsIntoVec {
+  def apply(bits: UInt, vec_length: Int): Vec[UInt] = {
+    val vec_element_width = bits.getWidth / vec_length
+    assert(bits.getWidth % vec_length == 0)
+    val indices = 0 to (bits.getWidth - vec_element_width) by vec_element_width
+    Vec(for (i <- indices) yield bits(i + vec_element_width - 1, i))
+  }
+}
