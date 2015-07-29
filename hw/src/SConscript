@@ -28,7 +28,6 @@ turborav_jar = Jar(
     source = Glob('#build/scala/classes/TurboRav/*')
 )
 
-# java -jar scalastyle-batch_2.10.jar --config lib/scalastyle_config.xml src/main/scala
 lint_env = Environment()
 lint_env['config_file'] = "src/scalastyle_config.xml"
 lint_env.Command(
