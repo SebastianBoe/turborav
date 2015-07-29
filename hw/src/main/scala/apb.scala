@@ -94,3 +94,7 @@ class ApbController extends Module {
     enabled = !write && valid
   )
 }
+
+trait ApbSlave {
+  def getApbSlaveIo(): ApbSlaveIo
+}

@@ -30,12 +30,12 @@ class Soc(
   val gpio    = Module(new Gpio(num_pin_inputs, num_pin_outputs))
   val dviPeri = Module(new DviPeri())
 
-  val apb_slaves = List(
-    gpio
-    //dviPeri, //TODO
-    //timer, //TODO
+  val apb_slaves = (for (i <- 1 to 6) yield Module(new TimerPeri())) ++ List(
+    gpio,
+    dviPeri
     //spi, //TODO
   )
+  // 6 timers, 1 more than nrf52 has! :D
 
   // Connect the peripherals to the SoC pins
   gpio.io.pin_inputs := io.pin_inputs
@@ -47,17 +47,17 @@ class Soc(
 
   // Connect the APB slaves to the APB bus.
   for ((slave, i) <- apb_slaves.zipWithIndex) {
-    slave.io.apb_slave.sel := apbController.io.selx(i)
-    slave.io.apb_slave.in  := apbController.io.in
+    slave.getApbSlaveIo.sel := apbController.io.selx(i)
+    slave.getApbSlaveIo.in  := apbController.io.in
   }
 
   apbController.io.out.rdata := PriorityMux(
     sel = apbController.io.selx,
-    in  = apb_slaves map (_.io.apb_slave.out.rdata)
+    in  = apb_slaves map (_.getApbSlaveIo.out.rdata)
   )
   apbController.io.out.ready := PriorityMux(
     sel = apbController.io.selx,
-    in  = apb_slaves map (_.io.apb_slave.out.ready)
+    in  = apb_slaves map (_.getApbSlaveIo.out.ready)
   )
 
   // TODO: Remove the above redundancy by figuring out how to do this
