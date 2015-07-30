@@ -1,7 +1,28 @@
+
+# Riscv-tests
+for test in riscv_tests:
+    test_path = str(test)
+    test_name = test_path.split('/')[-1]
+    target_dir = "build/test/riscv/{0}/".format(test_name)
+    env.Command(
+        [target_dir + x for x in chisel_cpp_targets("Soc") + ["jenkins.xml"]],
+        [turborav_jar, test],
+        """CXX=clang++ scala \
+        -classpath build/scala/classes/TurboRav.jar:{0}\
+        TurboRav.TurboRavTestRunner Riscvtest {1} {2} 12 8"""
+        .format(
+            CLASSPATH,
+            target_dir,
+            test
+        )
+    )
+
 from subprocess import check_output
 
 Import('riscv_program_env startup_file')
 
+# Directory of riscv tests. (Just the Riscv ISA version we are
+# supporting.)
 RV32UI_PATH = "riscv-tools/riscv-tests/isa/rv32ui/"
 
 black_list_names = [
