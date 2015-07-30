@@ -6,6 +6,7 @@ Help("""
              'scons build/test/riscv/add'            to run the riscv add test,
              'scons build/test/unit/'                to run all unit tests,
              'scons build/test/unit/alu'             to run the alu unit test,
+             'scons build/test/lint'                 to lint the scala code,
              'scons build/synthesis/turborav.bit'    to generate a netlist,
              'scons build/synthesis/programming.log' to program a netlist,
              'scons build'                           to build everything.
@@ -31,8 +32,7 @@ CCFLAGS = COMMON_FLAGS + \
            " -c"
 )
 
-TOOLCHAIN = '/opt/riscv/bin/riscv64-unknown-elf-'
-CC = TOOLCHAIN + 'gcc'
+CC = '/opt/riscv/bin/riscv64-unknown-elf-gcc'
 
 riscv_program_env = Environment(
     CC = CC,
@@ -50,15 +50,10 @@ COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
 CLASSPATH = "{0}:{1}".format(CHISEL_JAR, COMMONS_IO_JAR)
 Export('CLASSPATH')
 
-startup_file = SConscript(
-    'build/misc/SConscript',
-    exports = 'riscv_program_env'
-)
-Export('startup_file')
+startup_file = SConscript('build/misc/SConscript')
 
 riscv_tests = SConscript(
     'build/riscv_tests/SConscript',
-    duplicate=0,
     exports = 'startup_file'
 )
 
@@ -181,3 +176,4 @@ env.Command(
 )
 
 SConscript("build/synthesis/SConscript")
+SConscript("build/test/lint/SConscript")

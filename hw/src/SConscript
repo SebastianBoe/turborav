@@ -1,41 +1,23 @@
 Import('CLASSPATH')
 
-SCALAFLAGS = (
-    "-feature "
-    "-language:reflectiveCalls "
-    "-Xlint "
-    "-Xfatal-warnings"
-)
-
-scala_sources = Glob('main/scala/*') + Glob('test/scala/*')
-
-env = Environment()
-turborav_jar = env.Command(
+turborav_jar = Command(
     ['#build/scala/classes/TurboRav.jar','#build/scala/classes/TurboRav.class'],
-    scala_sources,
+    Glob('main/scala/*') + Glob('test/scala/*'),
     """fsc\
-    {0}\
-    -classpath {1}\
+    -feature\
+    -language:reflectiveCalls\
+    -Xlint\
+    -Xfatal-warnings\
+    -classpath {0}\
     -d build/scala/classes\
     build/main/scala/*.scala\
     build/test/scala/*.scala\
+    \
     &&\
+    \
     jar cf \
     build/scala/classes/TurboRav.jar \
-    -C build/scala/classes TurboRav""".format(
-        SCALAFLAGS,
-        CLASSPATH
-    )
-)
-
-lint_env = Environment()
-lint_env['config_file'] = "src/scalastyle_config.xml"
-lint_env.Command(
-    '#build/test/lint/main.txt',
-    scala_sources,
-    """scalastyle --config $config_file src/main/scala > $TARGET && \
-       scalastyle --config $config_file src/test/scala >> $TARGET
-    """
+    -C build/scala/classes TurboRav""".format(CLASSPATH)
 )
 
 Return('turborav_jar')
