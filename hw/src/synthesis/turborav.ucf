@@ -39,3 +39,7 @@ NET "io_pin_outputs<5>" LOC = "N4" ; # LD5
 NET "io_pin_outputs<6>" LOC = "P4" ; # LD6
 NET "io_pin_outputs<7>" LOC = "G1" ; # LD7
 
+# DVI
+NET "io_dvi_chan_0"  LOC = "C6" ; # JA
+NET "io_dvi_chan_1"  LOC = "B6" ; # JA
+NET "io_dvi_chan_2"  LOC = "C5" ; # JA

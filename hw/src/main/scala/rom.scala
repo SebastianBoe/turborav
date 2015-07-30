@@ -26,22 +26,26 @@ class Rom(elf_path: String) extends Module {
   io.instr := rom(word_addr)
 
   private def parseRomContents(elf_path: String): Array[UInt] = {
+    val elf_path_bin = s"$elf_path.bin"
     Seq(
       "riscv64-unknown-elf-objcopy",
       "-O",
       "binary",
       elf_path,
-      s"$elf_path.bin"
+      elf_path_bin
     ).!
+
     val dump = Seq(
       "hexdump",
       "-v",
       "-e",
       "1/4 \"%08X\" \"\\n\"",
-      s"$elf_path.bin"
+      elf_path_bin
     ).lineStream
-    Seq("rm", s"$elf_path.bin").! // Delete the temp file.
-    return dump
+
+    Seq("rm", elf_path_bin).! // Delete the temp file.
+
+    dump
       .toArray
       .map(new BigInteger(_, 16))
       .map(UInt(_))

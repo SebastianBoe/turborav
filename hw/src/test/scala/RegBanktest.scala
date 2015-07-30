@@ -4,17 +4,17 @@ import Chisel._
 
 class RegBankTest(c: RegBank) extends Tester(c) {
   val xlen = Config.xlen
-  def read1(rx: Int, data: BigInt) = {
+  private def read1(rx: Int, data: BigInt) = {
     poke(c.io.rs1_addr, rx)
     expect(c.io.rs1_data, data)
   }
 
-  def read2(rx: Int, data: BigInt) = {
+  private def read2(rx: Int, data: BigInt) = {
     poke(c.io.rs2_addr, rx)
     expect(c.io.rs2_data, data)
   }
 
-  def write(rx: Int, data: BigInt)  = {
+  private def write(rx: Int, data: BigInt)  = {
     poke(c.io.rd_wen,  1)
     poke(c.io.rd_addr, rx)
     poke(c.io.rd_data,  data)

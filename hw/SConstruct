@@ -58,6 +58,7 @@ Export('startup_file')
 
 riscv_tests = SConscript(
     'build/riscv_tests/SConscript',
+    duplicate=0,
     exports = 'startup_file'
 )
 
@@ -105,6 +106,9 @@ for test in riscv_tests:
 # Unit tests, or Chisel based testbenches.
 # NB: Duplicated in turboravtester.scala
 test_benches = [
+    "dvi_tmds_transmitter",
+    "dvi_tmds_encoder",
+    "Serializer",
     "Alu",
     "BranchUnit",
     "ForwardingUnit",
@@ -144,7 +148,7 @@ soc_v = env.Command(
     'scala -classpath build/scala/classes:{0} TurboRav.TurboRav Soc {1} {2} 12 8'
     .format(
         CLASSPATH,
-        "build/verilog/".format(default_program),
+        "build/verilog/",
         default_program
     )
 )[0]

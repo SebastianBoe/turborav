@@ -17,6 +17,8 @@ object TurboRav {
     val res = chiselMain(
       Array(
         "--genHarness",
+        "--Wall",
+        "--vcdMem", //TODO: Understand how to view this.
         "--backend", "v",
         "--targetDir", target_dir
       ),
@@ -38,6 +40,7 @@ object TurboRav {
         case "Spi"          => () => Module(new Spi())
         case "Writeback"    => () => Module(new Writeback())
         case "apb"          => () => Module(new ApbController())
+        case "dvi_tmds_encoder"    => () => Module(new dvi_tmds_encoder())
         case _              => () => throw new Exception(
           "You forgot to add the module to turborav.scala"
         )

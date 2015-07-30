@@ -9,7 +9,7 @@ import scala.annotation.tailrec
 // This seems to be a common pattern, but I need a better name for
 // it I think. Surely a name for something this generic should
 // already exist.
-object clearIfDisabled {
+object ClearIfDisabled {
   def apply(data: UInt, enabled: Bool):UInt = {
     data & Fill(enabled, data.getWidth())
   }
@@ -22,7 +22,7 @@ object Any {
   def apply[T <: Data](mods: Seq[T]):     Bool = orR(Cat(mods))
 }
 
-object rightRotate {
+object RightRotate {
   /**
    * Returns the circular right shift of "shiftAmount" bits of the UInt "word".
    * @param word The UInt to be right rotated.
@@ -32,8 +32,60 @@ object rightRotate {
   @tailrec
   def apply(word: UInt, shiftAmount: Int): UInt = {
     if (shiftAmount == 0) word
-    else rightRotate(rightRotate(word), shiftAmount - 1)
+    else RightRotate(RightRotate(word), shiftAmount - 1)
   }
 
   def apply(word: UInt): UInt = word(0) ## word(word.getWidth() - 1, 1)
+}
+
+/**
+  A serializer is used when you have a bus of values, but need to
+  output each value in the bus bit by bit, AKA serially.
+
+  Usage:
+
+  val s = Module(new Serializer(bus.getWidth))
+  s.io.in := bus
+  s.io.cond := enable // Internal counter in Serializer ticks on this signal
+  serial_output := s.io.out
+
+  Future features:
+
+  Ability to clock out a bus instead of just Bool's.
+  */
+class Serializer(w: Int) extends Module {
+  val io = new Bundle {
+    val in = UInt(INPUT, w)
+    val cond = Bool(INPUT)
+    val out = Bool(OUTPUT)
+  }
+  val cnt = Counter(cond = io.cond, n = w)
+  io.out := io.in(cnt._1)
+}
+
+object Extend {
+  def apply(word: UInt, extention_val: Bool, new_length: Int): UInt =
+    Cat(
+      Fill(extention_val, new_length - word.getWidth()),
+      word
+    )
+}
+
+object SignExtend {
+  def apply(word: UInt, new_length: Int): UInt =
+    Extend(word, extention_val = word(word.getWidth() - 1), new_length)
+}
+
+object ZeroExtend {
+  def apply(word: UInt, new_length: Int): UInt =
+    Extend(word, extention_val = Bool(false), new_length)
+}
+
+object splitBitsIntoVec {
+  def apply(bits: UInt, vec_length: Int): Vec[UInt] = {
+    val vec_element_width = bits.getWidth / vec_length
+    assert(bits.getWidth % vec_length == 0)
+    val indices = 0 to (bits.getWidth - vec_element_width) by vec_element_width
+    Vec(for (i <- indices) yield bits(i + vec_element_width - 1, i))
+  }
 }

@@ -6,30 +6,34 @@ package TurboRav
 
 import Chisel._
 
-class SlaveToApbIo() extends Bundle {
+class ApbSlaveIo extends Bundle {
+  // Sel is not in InputIo because that simplifies Soc.
+  val sel =  Bool(INPUT)
+  val in  = new ApbSlaveInputIo()
+  val out = new ApbSlaveOutputIo()
+}
+
+class ApbSlaveInputIo extends Bundle {
   val addr  =  UInt(INPUT, Config.apb_addr_len)
   val wdata =  UInt(INPUT, Config.apb_data_len)
   val write =  Bool(INPUT)
-  val sel   =  Bool(INPUT)
-
   val enable = Bool(INPUT)
+}
+
+class ApbSlaveOutputIo extends Bundle {
   val rdata  = UInt(OUTPUT, Config.apb_data_len)
   val ready  = Bool(OUTPUT)
 }
 
-class ApbController() extends Module {
-
-  val io = new Bundle(){
+/**
+  APB master controller.
+*/
+class ApbController extends Module {
+  val io = new Bundle {
     val rr = new RequestResponseIo().flip()
-
-    val apb_addr   = UInt(OUTPUT, Config.apb_addr_len)
-    val apb_wdata  = UInt(OUTPUT, Config.apb_data_len)
-    val apb_write  = Bool(OUTPUT)
-    val apb_selx   = Bits(OUTPUT, 16) // 16 peripherals
-
-    val apb_enable = Bool(OUTPUT)
-    val apb_rdata  = UInt(INPUT,  Config.apb_data_len)
-    val apb_ready  = Bool(INPUT)
+    val selx = Bits(OUTPUT, 16) // 16 peripherals
+    val in  = new ApbSlaveInputIo().flip()
+    val out = new ApbSlaveOutputIo().flip()
   }
 
   val s_idle :: s_setup :: s_transfer :: Nil = Enum(UInt(), 3)
@@ -48,7 +52,7 @@ class ApbController() extends Module {
   }
 
   val initiate = io.rr.request.valid
-  val terminate = io.apb_ready
+  val terminate = io.out.ready
 
   when(state === s_idle && initiate){
     state := s_setup
@@ -70,23 +74,27 @@ class ApbController() extends Module {
 
   /* Output APB controller signals on clock edge */
   when(state === s_idle){
-    io.apb_addr   := UInt(0)
-    io.apb_wdata  := UInt(0)
-    io.apb_enable := Bool(false)
-    io.apb_write  := Bool(false)
-    io.apb_selx   := Bits(0)
+    io.in.addr   := UInt(0)
+    io.in.wdata  := UInt(0)
+    io.in.enable := Bool(false)
+    io.in.write  := Bool(false)
+    io.selx      := Bits(0)
   } .otherwise {
-    io.apb_addr   := addr
-    io.apb_wdata  := Mux(write, wdata, UInt(0))
-    io.apb_write  := write
-    io.apb_enable := state === s_transfer
-    io.apb_selx   := UIntToOH(selx)
+    io.in.addr   := addr
+    io.in.wdata  := Mux(write, wdata, UInt(0))
+    io.in.write  := write
+    io.in.enable := state === s_transfer
+    io.selx      := UIntToOH(selx)
   }
 
   val valid = state === s_transfer && terminate
-  val read_valid = !write && valid
-
   io.rr.response.valid := valid
-  io.rr.response.bits.word  := Mux(read_valid, io.apb_rdata, UInt(0))
-  io.rr.response.bits.has_wait_state := Bool(false)
+  io.rr.response.bits.word := ClearIfDisabled(
+    data    = io.out.rdata,
+    enabled = !write && valid
+  )
+}
+
+trait ApbSlave {
+  def getApbSlaveIo(): ApbSlaveIo
 }

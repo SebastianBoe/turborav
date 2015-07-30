@@ -75,6 +75,18 @@ object TurboRavTestRunner{
         chiselMainTest(test_args, () => Module(new ApbController())){
           c => new ApbControllerTest(c)
         }
+      case "dvi_tmds_encodertest" =>
+        chiselMainTest(test_args, () => Module(new dvi_tmds_encoder())){
+          c => new dvi_tmds_encoderTest(c)
+        }
+      case "dvi_tmds_transmittertest" =>
+        chiselMainTest(test_args, () => Module(new dvi_tmds_transmitter())){
+          c => new dvi_tmds_transmitterTest(c)
+        }
+      case "Serializertest" =>
+        chiselMainTest(test_args, () => Module(new Serializer(3))) {
+          c => new SerializerTest(c)
+        }
       case "Soctest" =>
         chiselMainTest(test_args, () => Module(new Soc(
           rom,

@@ -74,6 +74,7 @@ class Execute() extends Module {
   mult.io.in_b   := rs2
   mult.io.func   := mult_func
   mult.io.enable := (mult_enable && state === s_normal)
+  mult.io.abort  := Bool(false)
 
   when(state === s_normal && mult_enable){
     state := s_mult
