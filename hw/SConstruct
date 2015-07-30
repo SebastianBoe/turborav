@@ -94,7 +94,7 @@ for test in riscv_tests:
         [target_dir + x for x in chisel_cpp_targets("Soc") + ["jenkins.xml"]],
         [turborav_jar, test],
         """CXX=clang++ scala \
-        -classpath build/scala/classes:{0}\
+        -classpath build/scala/classes/TurboRav.jar:{0}\
         TurboRav.TurboRavTestRunner Riscvtest {1} {2} 12 8"""
         .format(
             CLASSPATH,
@@ -128,7 +128,7 @@ for module in test_benches:
         [target_dir + x for x in chisel_cpp_targets(module)],
         [turborav_jar, default_program],
         """CXX=clang++ scala \
-        -classpath build/scala/classes:{0} \
+        -classpath build/scala/classes/TurboRav.jar:{0} \
         TurboRav.TurboRavTestRunner {1} {2} {3} 12 8"""
         .format(
             CLASSPATH,
@@ -145,7 +145,9 @@ soc_v = env.Command(
         "build/verilog/Soc-harness.v"
     ],
     [turborav_jar, default_program],
-    'scala -classpath build/scala/classes:{0} TurboRav.TurboRav Soc {1} {2} 12 8'
+    """scala \
+    -classpath build/scala/classes/TurboRav.jar:{0}\
+    TurboRav.TurboRav Soc {1} {2} 12 8"""
     .format(
         CLASSPATH,
         "build/verilog/",
