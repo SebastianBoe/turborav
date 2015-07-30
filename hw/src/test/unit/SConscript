@@ -1,0 +1,38 @@
+Import('scala_env turborav_jar default_program CLASSPATH')
+
+# Unit tests, or Chisel based testbenches.
+# NB: Duplicated in turboravtester.scala
+test_benches = [
+    "dvi_tmds_transmitter",
+    "dvi_tmds_encoder",
+    "Serializer",
+    "Alu",
+    "BranchUnit",
+    "ForwardingUnit",
+    "RegBank",
+    "Mult",
+    "Timer",
+    "Decode",
+    "Execute",
+    "Memory",
+    "Writeback",
+    "Apb",
+    "Soc"
+]
+
+for module in test_benches:
+    target_dir = Dir(module)
+    scala_env.Command(
+        target_dir.path + "/" + module + ".vcd",
+        [turborav_jar, default_program],
+        """CXX=clang++ scala \
+        -classpath {4}:{0} \
+        TurboRav.TurboRavTestRunner {1} {2} {3} 12 8"""
+        .format(
+            CLASSPATH,
+            module + "test",
+            target_dir.path,
+            default_program,
+            turborav_jar
+        )
+    )

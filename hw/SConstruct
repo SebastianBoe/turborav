@@ -57,58 +57,10 @@ default_program = SConscript('build/programs/SConscript')
 
 scala_env = Environment(ENV = os.environ)
 
-def chisel_cpp_targets(module):
-    """Returns the files that Chisel generates when a Chisel cpp
-    simulation is run on a module.
-
-    """
-    return [
-            module + "-emulator.cpp",
-            module + "-emulator.o",
-            "emulator_mod.h",
-            "emulator_api.h",
-            "emulator.h",
-            module + ".cpp",
-            module + ".h",
-            module + ".o",
-            module,
-            module + ".vcd"
-        ]
-
-# Unit tests, or Chisel based testbenches.
-# NB: Duplicated in turboravtester.scala
-test_benches = [
-    "dvi_tmds_transmitter",
-    "dvi_tmds_encoder",
-    "Serializer",
-    "Alu",
-    "BranchUnit",
-    "ForwardingUnit",
-    "RegBank",
-    "Mult",
-    "Timer",
-    "Decode",
-    "Execute",
-    "Memory",
-    "Writeback",
-    "Apb",
-    "Soc"
-]
-for module in test_benches:
-    target_dir = "build/test/unit/{0}/".format(module)
-    scala_env.Command(
-        [target_dir + x for x in chisel_cpp_targets(module)],
-        [turborav_jar, default_program],
-        """CXX=clang++ scala \
-        -classpath build/scala/classes/TurboRav.jar:{0} \
-        TurboRav.TurboRavTestRunner {1} {2} {3} 12 8"""
-        .format(
-            CLASSPATH,
-            module + "test",
-            target_dir,
-            default_program
-        )
-    )
+SConscript(
+    "build/test/unit/SConscript",
+    exports = 'scala_env turborav_jar CLASSPATH default_program'
+)
 
 SConscript(
     'build/test/riscv/SConscript',
