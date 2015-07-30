@@ -1,3 +1,44 @@
+Import('scala_env turborav_jar CLASSPATH default_program')
+
+# Verilog code generation of build/synthesis/Soc.v
+soc_v = scala_env.Command(
+    "Soc.v",
+    [turborav_jar, default_program],
+    """scala \
+    -classpath {2}:{0}\
+    TurboRav.TurboRav Soc build/synthesis {1} 12 8"""
+    .format(
+        CLASSPATH,
+        default_program,
+        turborav_jar
+    )
+)[0]
+
+# Synthesis of build/synthesis/turborav.bit
+scala_env.Command(
+    "design_routed.ncd",
+    [
+        soc_v,
+        'Makefile',
+        'turborav.ucf',
+        'turborav.ut'
+    ],
+    'make --dir=build/synthesis HDL_FILE=Soc.v design_routed.ncd'
+)
+SideEffect("design_routed.par", "design_routed.ncd")
+
+scala_env.Command(
+    "turborav.bit",
+    "design_routed.ncd",
+    'make --dir=build/synthesis HDL_FILE=Soc.v turborav.bit'
+)
+
+scala_env.Command(
+    "programming.log",
+    "turborav.bit",
+    'make --dir=build/synthesis HDL_FILE=Soc.v program'
+)
+
 Command(
     "slices.txt",
     "design_routed.par",

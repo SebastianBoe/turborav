@@ -7,6 +7,7 @@ Help("""
              'scons build/test/unit/'                to run all unit tests,
              'scons build/test/unit/alu'             to run the alu unit test,
              'scons build/test/lint'                 to lint the scala code,
+             'scons build/synthesis/Soc.v'           to generate verilog code,
              'scons build/synthesis/turborav.bit'    to generate a netlist,
              'scons build/synthesis/programming.log' to program a netlist,
              'scons build'                           to build everything.
@@ -17,7 +18,11 @@ Help("""
        text file.
 """)
 
-Clean("build", "build") # Force cleaning of entire build dir.
+# This ensures the entire build directory is cleaned, even files in
+# there that SCons didn't know that it generated.
+Clean("build", "build")
+
+# out-of-source build
 VariantDir("build", "src", duplicate=1)
 
 COMMON_FLAGS = (" -m32"
@@ -67,47 +72,9 @@ SConscript(
     exports = 'scala_env turborav_jar CLASSPATH riscv_program_env startup_file'
 )
 
-# Verilog code generation of build/verilog/Soc.v
-soc_v = scala_env.Command(
-    [
-        "build/verilog/Soc.v",
-        "build/verilog/Soc-harness.v"
-    ],
-    [turborav_jar, default_program],
-    """scala \
-    -classpath build/scala/classes/TurboRav.jar:{0}\
-    TurboRav.TurboRav Soc {1} {2} 12 8"""
-    .format(
-        CLASSPATH,
-        "build/verilog/",
-        default_program
-    )
-)[0]
-
-# Synthesis of build/synthesis/turborav.bit
-scala_env.Command(
-    "build/synthesis/design_routed.ncd",
-    [
-        soc_v,
-        'build/synthesis/Makefile',
-        'build/synthesis/turborav.ucf',
-        'build/synthesis/turborav.ut'
-    ],
-    'make --dir=build/synthesis HDL_FILE={0} design_routed.ncd'.format(soc_v.abspath)
-)
-SideEffect("build/synthesis/design_routed.par", "build/synthesis/design_routed.ncd")
-
-scala_env.Command(
-    "build/synthesis/turborav.bit",
-    "build/synthesis/design_routed.ncd",
-    'make --dir=build/synthesis HDL_FILE={0} turborav.bit'.format(soc_v.abspath)
+SConscript(
+    "build/synthesis/SConscript",
+    exports = 'scala_env turborav_jar default_program'
 )
 
-scala_env.Command(
-    "build/synthesis/programming.log",
-    "build/synthesis/turborav.bit",
-    'make --dir=build/synthesis HDL_FILE={0} program'.format(soc_v.abspath)
-)
-
-SConscript("build/synthesis/SConscript")
 SConscript("build/test/lint/SConscript")
