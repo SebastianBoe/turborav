@@ -1,25 +1,9 @@
-
-# Riscv-tests
-for test in riscv_tests:
-    test_path = str(test)
-    test_name = test_path.split('/')[-1]
-    target_dir = "build/test/riscv/{0}/".format(test_name)
-    env.Command(
-        [target_dir + x for x in chisel_cpp_targets("Soc") + ["jenkins.xml"]],
-        [turborav_jar, test],
-        """CXX=clang++ scala \
-        -classpath build/scala/classes/TurboRav.jar:{0}\
-        TurboRav.TurboRavTestRunner Riscvtest {1} {2} 12 8"""
-        .format(
-            CLASSPATH,
-            target_dir,
-            test
-        )
-    )
-
 from subprocess import check_output
 
-Import('riscv_program_env startup_file')
+Import('scala_env turborav_jar CLASSPATH riscv_program_env startup_file')
+
+# Here we build the riscv tests and also run the tests to generate
+# jenkins.xml reports.
 
 # Directory of riscv tests. (Just the Riscv ISA version we are
 # supporting.)
@@ -55,13 +39,25 @@ CPPPATH = [
     'riscv-tools/riscv-tests/env/p'
 ]
 
-programs = []
 for test in test_sources:
     program = riscv_program_env.Program(
         [test, startup_file],
         CPPPATH = CPPPATH
     )[0]
-    programs.append(program)
     Depends(program, "#build/misc/turborav.ld")
+    test_name = str(program).split('/')[-1]
 
-Return('programs')
+    target_dir = Dir(test_name).path
+    scala_env.Command(
+        test_name + "/jenkins.xml",
+        [turborav_jar, program],
+        """CXX=clang++ scala \
+        -classpath {3}:{0}\
+        TurboRav.TurboRavTestRunner Riscvtest {1} {2} 12 8"""
+        .format(
+            CLASSPATH,
+            target_dir,
+            program.path,
+            turborav_jar
+        )
+    )

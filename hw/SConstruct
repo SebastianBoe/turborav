@@ -52,15 +52,10 @@ Export('CLASSPATH')
 
 startup_file = SConscript('build/misc/SConscript')
 
-riscv_tests = SConscript(
-    'build/riscv_tests/SConscript',
-    exports = 'startup_file'
-)
-
 turborav_jar    = SConscript('build/SConscript')
 default_program = SConscript('build/programs/SConscript')
 
-env = Environment(ENV = os.environ)
+scala_env = Environment(ENV = os.environ)
 
 def chisel_cpp_targets(module):
     """Returns the files that Chisel generates when a Chisel cpp
@@ -101,7 +96,7 @@ test_benches = [
 ]
 for module in test_benches:
     target_dir = "build/test/unit/{0}/".format(module)
-    env.Command(
+    scala_env.Command(
         [target_dir + x for x in chisel_cpp_targets(module)],
         [turborav_jar, default_program],
         """CXX=clang++ scala \
@@ -115,8 +110,13 @@ for module in test_benches:
         )
     )
 
+SConscript(
+    'build/test/riscv/SConscript',
+    exports = 'scala_env turborav_jar CLASSPATH riscv_program_env startup_file'
+)
+
 # Verilog code generation of build/verilog/Soc.v
-soc_v = env.Command(
+soc_v = scala_env.Command(
     [
         "build/verilog/Soc.v",
         "build/verilog/Soc-harness.v"
@@ -133,7 +133,7 @@ soc_v = env.Command(
 )[0]
 
 # Synthesis of build/synthesis/turborav.bit
-env.Command(
+scala_env.Command(
     "build/synthesis/design_routed.ncd",
     [
         soc_v,
@@ -145,13 +145,13 @@ env.Command(
 )
 SideEffect("build/synthesis/design_routed.par", "build/synthesis/design_routed.ncd")
 
-env.Command(
+scala_env.Command(
     "build/synthesis/turborav.bit",
     "build/synthesis/design_routed.ncd",
     'make --dir=build/synthesis HDL_FILE={0} turborav.bit'.format(soc_v.abspath)
 )
 
-env.Command(
+scala_env.Command(
     "build/synthesis/programming.log",
     "build/synthesis/turborav.bit",
     'make --dir=build/synthesis HDL_FILE={0} program'.format(soc_v.abspath)

@@ -18,6 +18,6 @@ turborav_jar = Command(
     jar cf \
     build/scala/classes/TurboRav.jar \
     -C build/scala/classes TurboRav""".format(CLASSPATH)
-)
+)[0]
 
 Return('turborav_jar')
