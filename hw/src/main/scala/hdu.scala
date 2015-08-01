@@ -25,7 +25,7 @@ class HazardDetectionUnit() extends Module {
 
   val fch_instr_valid = io.hdu_fch.instr_valid
 
-  // It is the responsebility of the pipeline stage
+  // It is the responsibility of the pipeline stage
   // to insert bubbles when it is stalling.
   val stall_mem = mem_busy
   val stall_exe = stall_mem ||  mult_busy || load_use

@@ -39,7 +39,7 @@ class RavV(elf_path: String) extends Module {
   // Roam
   mem.io.rr_io <> roam.io.mem.rr
   mem.io.has_wait_state := roam.io.mem.has_wait_state
-  
+
   fch.io.rr_io <> roam.io.fch
   io <> roam.io.rr_mmio
 }

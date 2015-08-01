@@ -3,7 +3,7 @@ package TurboRav
 import Chisel._
 import Constants._
 
-class Execute() extends Module {
+class Execute extends Module {
 
   private def isMultUpper(mult_func: Bits) = {
     mult_func === MULT_MULH   ||

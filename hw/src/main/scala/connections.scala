@@ -90,10 +90,9 @@ class ExecuteMemory() extends Bundle {
 
   def kill()
   {
-    wrb_ctrl.kill()
     mem_ctrl.kill()
+    wrb_ctrl.kill()
   }
-
 }
 
 class ExecuteFetch() extends Bundle {
@@ -125,6 +124,8 @@ class MemoryCtrl() extends Bundle {
   def kill(): Unit = {
     write     := Bool(false)
     read      := Bool(false)
+    is_halfword := Bool(false)
+    is_byte := Bool(false)
   }
 }
 
