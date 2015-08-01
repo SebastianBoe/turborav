@@ -23,13 +23,15 @@ class Execute extends Module {
 
   val dec_exe = Reg(init = new DecodeExecute())
 
+  // Default to pipelining decode's values.
+  io.exe_mem := dec_exe
+
+  // But if we stall then insert a bubble by killing exe_mem.
   when(io.hdu_exe.stall){
     io.exe_mem.kill()
   } .otherwise {
     dec_exe := io.dec_exe
   }
-  // Default to pipelining decodes values.
-  io.exe_mem := dec_exe
 
   val ctrl = dec_exe.exe_ctrl
   val zero = UInt(0, width = Config.xlen)
