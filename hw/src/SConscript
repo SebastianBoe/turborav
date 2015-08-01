@@ -1,7 +1,7 @@
 Import('CLASSPATH')
 
 turborav_jar = Command(
-    ['#build/scala/classes/TurboRav.jar','#build/scala/classes/TurboRav.class'],
+    ['scala/classes/TurboRav.jar'],
     Glob('main/scala/*') + Glob('test/scala/*'),
     """fsc\
     -feature\
