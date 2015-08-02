@@ -20,6 +20,7 @@ object TurboRavTestRunner{
 	  "--compile",
 	  "--test",
 	  "--vcd",
+	  "--vcdMem",
 	  "--debug"
     )
 
