@@ -53,7 +53,7 @@ for test in test_sources:
         [turborav_jar, program],
         """CXX=clang++ scala \
         -classpath {3}:{0}\
-        TurboRav.TurboRavTestRunner Riscvtest {1} {2} 12 8"""
+        TurboRav.TurboRavTestRunner Riscvtest {1} {2} 12 8 False"""
         .format(
             CLASSPATH,
             target_dir,

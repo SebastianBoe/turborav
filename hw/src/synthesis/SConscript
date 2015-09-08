@@ -6,7 +6,7 @@ soc_v = scala_env.Command(
     [turborav_jar, default_program],
     """scala \
     -classpath {2}:{0}\
-    TurboRav.TurboRav Soc build/synthesis {1} 12 8"""
+    TurboRav.TurboRav Soc build/synthesis {1} 12 8 True"""
     .format(
         CLASSPATH,
         default_program,

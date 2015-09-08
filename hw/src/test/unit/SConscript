@@ -27,7 +27,7 @@ for module in test_benches:
         [turborav_jar, default_program],
         """CXX=clang++ scala \
         -classpath {4}:{0} \
-        TurboRav.TurboRavTestRunner {1} {2} {3} 12 8"""
+        TurboRav.TurboRavTestRunner {1} {2} {3} 12 8 False"""
         .format(
             CLASSPATH,
             module + "test",

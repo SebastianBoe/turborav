@@ -12,7 +12,7 @@ import Constants._
 
   The fetch stage can only read from ROM.
   */
-class Roam(elf_path: String) extends Module {
+class Roam(elf_path: String, fpga: Boolean) extends Module {
   val io = new Bundle {
     val fch     = new RequestResponseIo().flip
     val mem     = new Bundle {
@@ -24,7 +24,7 @@ class Roam(elf_path: String) extends Module {
   // TODO: change the rom and ram modules to support the RR interface
   // instead. That would kill a lot of code here.
   val rom = Module(new Rom(elf_path))
-  val ram = Module(new Ram())
+  val ram = Module(if (fpga) new FpgaRam() else new Ram())
 
   val mem_reading_rom =
     io.mem.rr.request.valid && isRomAddress(io.mem.rr.request.bits.addr)

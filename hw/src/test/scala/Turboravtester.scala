@@ -10,7 +10,8 @@ object TurboRavTestRunner{
       target_dir,
       rom,
       num_pin_inputs,
-      num_pin_outputs
+      num_pin_outputs,
+      fpga
     ) = args
 
     val test_args = Array(
@@ -92,14 +93,17 @@ object TurboRavTestRunner{
         chiselMainTest(test_args, () => Module(new Soc(
           rom,
           num_pin_inputs.toInt,
-          num_pin_outputs.toInt
+          num_pin_outputs.toInt,
+          fpga.toBoolean
         ))){
           c => new SocTest(c)
         }
       case "Riscvtest" =>
         chiselMainTest(test_args, () => Module(new Soc(
           rom,
-          num_pin_inputs.toInt, num_pin_outputs.toInt
+          num_pin_inputs.toInt,
+          num_pin_outputs.toInt,
+          fpga.toBoolean
         ))){
           c => new RiscvTest(c, target_dir)
         }
