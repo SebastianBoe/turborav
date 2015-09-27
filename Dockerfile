@@ -22,7 +22,12 @@ ENV TOOLCHAIN_REVISION f0addb7
 
 # Install the RISC-V toolchain from github and build from source
 RUN git clone https://github.com/riscv/riscv-gnu-toolchain.git
-RUN cd riscv-gnu-toolchain && git checkout $TOOLCHAIN_REVISION && ./configure --prefix=/opt/riscv && sudo make -j8
+RUN pushd riscv-gnu-toolchain \
+	&& git checkout $TOOLCHAIN_REVISION \
+	&& ./configure --prefix=/opt/riscv \
+	&& sudo make -j8 \
+	&& popd \
+	&& sudo rm -rf riscv-gnu-toolchain/
 ENV PATH $PATH:/opt/riscv/bin
 
 CMD ["/bin/bash"]
