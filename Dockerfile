@@ -15,9 +15,14 @@ RUN yaourt --noconfirm -Syua \
     python-pint \
     scalastyle
 
+# Using the latest RISC-V toolchain causes a compilation error when
+# building the RISC-V tests, but this revision is known to work. TODO:
+# debug compilation error.
+ENV TOOLCHAIN_REVISION f0addb7
+
 # Install the RISC-V toolchain from github and build from source
 RUN git clone https://github.com/riscv/riscv-gnu-toolchain.git
-RUN cd riscv-gnu-toolchain && git checkout f0addb7 && ./configure --prefix=/opt/riscv && sudo make -j8
+RUN cd riscv-gnu-toolchain && git checkout $TOOLCHAIN_REVISION && ./configure --prefix=/opt/riscv && sudo make -j8
 ENV PATH $PATH:/opt/riscv/bin
 
 CMD riscv64-unknown-elf-gcc --help
