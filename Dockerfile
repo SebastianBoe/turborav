@@ -25,4 +25,4 @@ RUN git clone https://github.com/riscv/riscv-gnu-toolchain.git
 RUN cd riscv-gnu-toolchain && git checkout $TOOLCHAIN_REVISION && ./configure --prefix=/opt/riscv && sudo make -j8
 ENV PATH $PATH:/opt/riscv/bin
 
-CMD riscv64-unknown-elf-gcc --help
+CMD ["/bin/bash"]
