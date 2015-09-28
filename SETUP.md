@@ -24,7 +24,7 @@ docker pull 192.168.1.7:5000/turborav
 ```
 Run the turborav Docker image
 ```
-docker run turborav
+docker run -it -v path_to_repository:/mnt/turborav turborav
 ```
 
 # Docker registry server setup reference
