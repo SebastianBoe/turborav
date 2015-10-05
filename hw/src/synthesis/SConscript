@@ -14,7 +14,7 @@ soc_v = scala_env.Command(
     )
 )[0]
 
-# Synthesis of build/synthesis/turborav.bit
+# Synthesis
 scala_env.Command(
     "design_routed.ncd",
     [
@@ -51,4 +51,12 @@ Command(
     """echo -n "YVALUE=" > $TARGET && awk -F \"|\" '/NET \"clk_/{ print $4 }' $SOURCE |\
     python build/synthesis/period_to_frequency.py >> $TARGET
     """
+)
+
+log = File("yosys.log")
+scala_env['YOSYS_LOG'] = log
+scala_env.Command(
+    ["Soc.blif", log],
+    soc_v,
+    'yosys -p "synth_ice40 -noflatten" $SOURCE > $YOSYS_LOG'
 )
