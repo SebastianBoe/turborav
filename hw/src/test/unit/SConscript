@@ -16,14 +16,15 @@ test_benches = [
     "Execute",
     "Memory",
     "Writeback",
-    "Apb",
-    "Soc"
+    "Soc",
+    "ApbController"
 ]
 
 for module in test_benches:
     target_dir = Dir(module)
+    target = target_dir.File(module + ".vcd")
     scala_env.Command(
-        target_dir.path + "/" + module + ".vcd",
+        target,
         [turborav_jar, default_program],
         """CXX=clang++ scala \
         -classpath {4}:{0} \
