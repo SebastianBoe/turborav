@@ -18,54 +18,14 @@ As of november 2014 we are still building the hw infrastructure
 necessary to run a software stack on top of. So here we present only
 how to get started with hw-development.
 
-### Install packaged dependencies
+### Install dependencies
 
+Install docker.
 ```
-yaourt -S java-commons-io scala clang scons chisel jdk python-pint scalastyle
-```
-Or for Debian based distro's (NB: Might be out-of-date, Arch is the only officially supported distro)
-```
-apt-get install sbt autoconf automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo patchutils gperf scons scalastyle
-```
-
-### Install (yet) un-packaged dependencies
-
-Arch has packaged chisel, but on other systems you need to install it
-manually. (It might be simplest to just get it from a friend.)
-
-NB: The jar in maven is not compatible with our codebase, because we
-use scala 2.11 features, whilst the jar in maven is a scala 2.10 jar.
-
-Install the GNU toolchain for RISC-V from our git submodule
-
-```
-cd hw/riscv_tests/riscv-tools
-git submodule init
-git submodule update
-
-cd hw/riscv_tests/riscv-tools/riscv-gnu-toolchain
-git submodule init
-git submodule update
-
-cd hw/riscv_tests/riscv-tools/riscv-tests/env
-git submodule init
-git submodule update
-
-cd hw/riscv_tests/riscv-tools/riscv-gnu-toolchain
-./configure --prefix=/opt/riscv # make sure you have access rights
-make
-```
-
-Add the newly compiled toolchain to path.
-```
-export PATH=$PATH:/opt/riscv/bin
-```
-
-### Test your environment
-
-
-```
-cd hw && make alu.test
+Assuming your current directory is . and your repo is one level below you at turborav.
+docker build -t turboimage - < turborav/Dockerfile
+docker run -it turboimage -v turborav:/mnt/turborav
+cd /mnt/turborav/hw && scons build/test && scons --help
 ```
 
 Peruse the issue-tracker to see if there is anything that interests
@@ -79,7 +39,6 @@ like when debugging TurboRav. On the top right hand side there is an assembly
 program that is assembled to the machine code seen below. This machine code is
 synthesized into the ROM and when simulated generates the waveform. The waveform
 is used to find out where things are going wrong and then the Chisel code is
-edited with the powerful IntelliJ IDE. Sbt continuously regenerates a new
-waveform and we start all over again! Pretty neat huh?
+edited with the powerful IntelliJ IDE. Pretty neat huh?
 
 ![](/hw/doc/development_environment.jpg?raw=true)
