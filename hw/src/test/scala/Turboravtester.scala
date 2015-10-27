@@ -107,6 +107,10 @@ object TurboRavTestRunner{
         ))){
           c => new RiscvTest(c, target_dir)
         }
+      case "FpgaRamtest" =>
+        chiselMainTest(test_args, () => Module(new FpgaRam())) {
+          c => new FpgaRamTest(c)
+        }
     }
   }
 }

@@ -3,6 +3,7 @@ Import('scala_env turborav_jar default_program CLASSPATH')
 # Unit tests, or Chisel based testbenches.
 # NB: Duplicated in turboravtester.scala
 test_benches = [
+    "FpgaRam",
     "dvi_tmds_transmitter",
     "dvi_tmds_encoder",
     "Serializer",
