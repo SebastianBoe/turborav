@@ -66,10 +66,14 @@ class FpgaRam extends Module {
     val enable_mask = mask_shifted(byte_addr)
     val write_word  = word_shifted(byte_addr)
 
-    when( io.wen & enable_mask(i) ) {
-      ram_stripe(ram_addr) := write_word(i * 8 + 7, i * 8)
-    } .elsewhen( io.ren ) {
-      bytes_out(i) := ram_stripe(ram_addr)
+    when(enable_mask(i)) {
+      when(io.wen) {
+        ram_stripe(ram_addr) := write_word(i * 8 + 7, i * 8)
+      } .elsewhen(io.ren) {
+        bytes_out(i) := ram_stripe(ram_addr)
+      }
+    } .otherwise {
+      bytes_out(i) := UInt(0)
     }
   }
 
