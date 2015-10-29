@@ -42,10 +42,14 @@ class FpgaRam extends Module {
        reasons. There is one ram module per byte in a word */
     val ram_stripe = Mem(UInt(width = 8), num_words)
     val ram_addr = base_addr + UInt(byte_addr > UInt(i))
-    when( io.wen && enable_mask(i) ) {
-      ram_stripe(ram_addr) := write_word(i * 8 + 7, i * 8)
-    } .elsewhen( io.ren ) {
-      bytes_out(i) := ram_stripe(ram_addr)
+    when(enable_mask(i)) {
+      when(io.wen) {
+        ram_stripe(ram_addr) := write_word(i * 8 + 7, i * 8)
+      } .elsewhen( io.ren ) {
+        bytes_out(i) := ram_stripe(ram_addr)
+      }
+    } .otherwise {
+      bytes_out(i) := UInt(0)
     }
   }
   io.word_r := LeftRotate(bytes_out.toBits(), Reg(byte_addr))

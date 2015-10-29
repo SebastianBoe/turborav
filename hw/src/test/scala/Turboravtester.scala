@@ -73,7 +73,7 @@ object TurboRavTestRunner{
       chiselMainTest(test_args, () => Module(new Writeback())){
         c => new WritebackTest(c)
       }
-      case "Apbtest" =>
+      case "ApbControllertest" =>
         chiselMainTest(test_args, () => Module(new ApbController())){
           c => new ApbControllerTest(c)
         }
@@ -106,6 +106,10 @@ object TurboRavTestRunner{
           fpga.toBoolean
         ))){
           c => new RiscvTest(c, target_dir)
+        }
+      case "FpgaRamtest" =>
+        chiselMainTest(test_args, () => Module(new FpgaRam())) {
+          c => new FpgaRamTest(c)
         }
     }
   }
