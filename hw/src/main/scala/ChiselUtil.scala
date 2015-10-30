@@ -22,6 +22,23 @@ object Any {
   def apply[T <: Data](mods: Seq[T]):     Bool = orR(Cat(mods))
 }
 
+/*
+ * If you have a simple scala function with the type (Node => Node)
+   and you want to verify that your function only creates a
+   permutation of the input (it does not change width) then you can
+   use this partially applied function to add error checking to your
+   function.
+ * */
+object permutation {
+  def apply[T <: Node](arg: T)(f: T => T): T = {
+    val width_before = arg.getWidth()
+    val result = f(arg)
+    val width_after = result.getWidth()
+    require(width_before == width_after)
+    result
+  }
+}
+
 object RightRotate {
   /**
    * Returns the circular right shift of "shiftAmount" bits of the UInt "word".
