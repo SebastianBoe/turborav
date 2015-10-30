@@ -70,8 +70,8 @@ object RightRotate {
     shifts(shiftAmount)
   }
 
-  def apply(word: UInt): UInt = {
-    word(0) ## word(word.getWidth() - 1, 1)
+  def apply(word: UInt): UInt = permutation(word) {
+    (w: UInt) => Cat(w(0), w(w.getWidth() - 1, 1))
   }
 }
 
