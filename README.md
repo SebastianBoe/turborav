@@ -1,6 +1,6 @@
 This is the TurboRav full computer stack hobby project.
 
-![](https://docs.google.com/drawings/d/1ULG8MfWGiZmn_45winMJ4qbs6qOa7lMet6E6i03F7Mk/pub?w=1875&h=1077 "")
+![](https://docs.google.com/drawings/d/1yiRfiubTfP55u9E995-KuAjrXQi68SzCdmgo3fDCfAA/pub?w=1934&h=1368 "")
 
 The end goal is a self-contained system consisting of a RISC-V
 processor core, assembler, compiler, and some graphical demo apps
