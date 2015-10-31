@@ -1,0 +1,42 @@
+# This file contains a mapping from verilog wire names to icestick
+# pin names.
+
+# TODO: Auto-generate this file to have a configurable number of pins
+# in the design. Perhaps a chisel backend should generate it?
+
+set_io clk 21
+
+# Clock shall not be slower than 50MHz = 20ns due to the motherboard
+# crystal being 50MHz. How to ensure this with the open source flow?
+
+# Reset is connected to some floating pin at Jumper group JA.
+set_io reset 120
+
+# Expansion I/O Connections (See iCEstick User Guide)
+set_io io_pin_inputs[0]  112
+set_io io_pin_inputs[1]  113
+set_io io_pin_inputs[2]  114
+set_io io_pin_inputs[3]  115
+set_io io_pin_inputs[4]  116
+set_io io_pin_inputs[5]  117
+set_io io_pin_inputs[6]  118
+set_io io_pin_inputs[7]  119
+set_io io_pin_inputs[8]  62
+set_io io_pin_inputs[9]  61
+set_io io_pin_inputs[10] 60
+set_io io_pin_inputs[11] 56
+
+# LEDs
+set_io io_pin_outputs[0] 99
+set_io io_pin_outputs[1] 98
+set_io io_pin_outputs[2] 97
+set_io io_pin_outputs[3] 96
+set_io io_pin_outputs[4] 95
+set_io io_pin_outputs[5] 48
+set_io io_pin_outputs[6] 47
+set_io io_pin_outputs[7] 45
+
+# DVI
+set_io io_dvi_chan_0 44
+set_io io_dvi_chan_1 105
+set_io io_dvi_chan_2 106
