@@ -33,7 +33,7 @@ class FpgaRam extends Module {
                                 UInt("b1111")
              ))
 
-  val bytes_out = Vec.fill(word_size_in_bytes) { Reg(init = UInt(0))}
+  val bytes_out = Vec.fill(word_size_in_bytes) { UInt() }
 
   val word_shifted = Vec.fill(word_size_in_bytes) { UInt()}
   val mask_shifted = Vec.fill(word_size_in_bytes) { UInt()}
@@ -55,7 +55,7 @@ class FpgaRam extends Module {
       when(io.wen) {
         ram_stripe(ram_addr) := write_word(i * 8 + 7, i * 8)
       } .elsewhen( io.ren ) {
-        bytes_out(i) := ram_stripe(ram_addr)
+        bytes_out(i) := ram_stripe(Reg(init = UInt(0), next = ram_addr))
       }
     } .otherwise {
       bytes_out(i) := UInt(0)
