@@ -48,26 +48,11 @@ object RightRotate {
    */
   @tailrec
   def apply(word: UInt, shiftAmount: Int): UInt = {
-    println("RightRotate(UInt, Int) called with a word of size %d, and asked to shift %d".format(word.getWidth(), shiftAmount))
-    if (word.getWidth() > 32)
-      throw new Exception()
     if (shiftAmount == 0) word
-    else RightRotate(RightRotate(word), shiftAmount - 1)
-  }
-
-  // I wonder what an efficient implementation of this would look
-  // like. TODO: Have fun and experiment.
-  def apply(word: UInt, shiftAmount: UInt): UInt = {
-    println("RightRotate(UInt, UInt) called with a word of size %d, and asked to shift %d".format(word.getWidth(), shiftAmount.getWidth()))
-    // Create a shifter for each possible amount that can be
-    // shifted. Then look up in a table of shifters with shiftAmount
-    // to find the rotate we are looking for.
-    val num_shifts = word.getWidth()
-    val shifts = Vec.fill(num_shifts) { UInt()}
-    for(i <- 0 until num_shifts){
-      shifts(i) := RightRotate(word, i)
-    }
-    shifts(shiftAmount)
+    else RightRotate(
+      RightRotate(word),
+      shiftAmount - 1
+    )
   }
 
   def apply(word: UInt): UInt = permutation(word) {
@@ -85,11 +70,6 @@ object LeftRotate {
   def apply(word: UInt, shiftAmount: Int): UInt = {
     // A left shift rotate is just a "negative" right shift rotate.
     RightRotate(word, word.getWidth() - shiftAmount)
-  }
-
-  def apply(word: UInt, shiftAmount: UInt): UInt = {
-    println("LeftRotate called with widths, %d, %d".format(word.getWidth(), shiftAmount.getWidth()))
-    RightRotate(word, UInt(word.getWidth()) - shiftAmount)
   }
 
   def apply(word: UInt): UInt = LeftRotate(word, 1)
