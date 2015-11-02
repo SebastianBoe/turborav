@@ -2,9 +2,6 @@ package TurboRav
 
 import Chisel._
 import scala.math.BigInt
-import scala.xml.PrettyPrinter
-import org.apache.commons.io.FileUtils
-import java.io.File
 
 /**
   A testbench for simulating tests in the riscv-tests repo.
@@ -13,7 +10,8 @@ import java.io.File
   failure and is able to stop the test execution once a test pass or
   failure has been detected.
   */
-class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
+class RiscvTest(c: Soc, test_name: String)
+extends JUnitTester(c, isTrace = false) {
   while(getTestStatus() == Running)
   {
     step(1)
@@ -21,7 +19,6 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
   expect(getTestStatus() == Passed, "")
 
   val error_msg = "Failed test #%d".format( peekAt(c.ravv.dec.regbank.regs, 28 ) )
-  generateXmlForJenkins(error_msg)
 
   println("")
   printRegs()
@@ -69,20 +66,8 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
     println("")
   }
 
-  private def generateXmlForJenkins(error_msg: String) {
-    val file_name = "%s/jenkins.xml" format(test_name)
-    val file_contents = new PrettyPrinter(80, 2).format(
-      <testsuite>
-        <testcase classname={test_name}>
-        {if (ok) "" else <failure type="a_type">{error_msg}</failure>}
-        </testcase>
-      </testsuite>
-    ) + "\n"
-
-    FileUtils.writeStringToFile(
-      new File(file_name),
-      file_contents
-    )
+  override def getTestName: String = {
+    test_name
   }
 }
 
