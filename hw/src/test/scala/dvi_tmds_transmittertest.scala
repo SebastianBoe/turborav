@@ -2,7 +2,7 @@ package TurboRav
 
 import Chisel._
 
-class dvi_tmds_transmitterTest(c: dvi_tmds_transmitter) extends Tester(c) {
+class dvi_tmds_transmitterTest(c: dvi_tmds_transmitter) extends JUnitTester(c) {
   step(1)
 
   val scale_str = "10101010"

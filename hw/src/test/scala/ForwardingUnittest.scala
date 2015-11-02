@@ -3,7 +3,7 @@ package TurboRav
 import Constants._
 import Chisel._
 
-class ForwardingUnitTest(c: ForwardingUnit) extends Tester(c) {
+class ForwardingUnitTest(c: ForwardingUnit) extends JUnitTester(c) {
 
   def test(rs1: Int, rs2: Int, mem_rd: Int, wrb_rd: Int,
            expect_rs1: Int, expect_rs2: Int) {

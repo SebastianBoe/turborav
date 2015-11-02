@@ -2,7 +2,7 @@ package TurboRav
 
 import Chisel._
 
-class FpgaRamTest(c: FpgaRam) extends Tester(c) {
+class FpgaRamTest(c: FpgaRam) extends JUnitTester(c) {
   def write_and_then_read_back(addr: Long, word: Long, word_length_bytes: Int) = {
     println("write_and_then_read_back(%x, %x, %x)".format(addr, word, word_length_bytes))
 

@@ -3,7 +3,7 @@ package TurboRav
 import Chisel._
 import Constants._
 
-class AluTest(c: Alu) extends Tester(c) {
+class AluTest(c: Alu) extends JUnitTester(c) {
   val xlen = Config.xlen
   /* Testing with bigint because of possible use of 64bit
    * values would couse problems with long types

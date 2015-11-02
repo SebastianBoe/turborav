@@ -2,7 +2,7 @@ package TurboRav
 
 import Chisel._
 
-class RegBankTest(c: RegBank) extends Tester(c) {
+class RegBankTest(c: RegBank) extends JUnitTester(c) {
   val xlen = Config.xlen
   private def read1(rx: Int, data: BigInt) = {
     poke(c.io.rs1_addr, rx)

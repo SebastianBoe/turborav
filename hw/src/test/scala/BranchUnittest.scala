@@ -3,7 +3,7 @@ package TurboRav
 import Constants._
 import Chisel._
 
-class BranchUnitTest(c: BranchUnit) extends Tester(c) {
+class BranchUnitTest(c: BranchUnit) extends JUnitTester(c) {
 
   def test(a: BigInt, b: BigInt, op: Int, result: Int){
     poke(c.io.in_a, a)

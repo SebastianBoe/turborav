@@ -2,7 +2,7 @@ package TurboRav
 
 import Chisel._
 
-class ApbControllerTest(c: ApbController) extends Tester(c) {
+class ApbControllerTest(c: ApbController) extends JUnitTester(c) {
 
   def pokeRr(addr: Int, data: Int, write: Boolean) {
     poke(c.io.rr.request.bits.addr, addr)

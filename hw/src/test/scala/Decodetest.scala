@@ -3,7 +3,7 @@ package TurboRav
 import Chisel._
 import Constants._
 
-class DecodeTest(c: Decode) extends Tester(c) {
+class DecodeTest(c: Decode) extends JUnitTester(c) {
 
   private def signed(a: Long) = { a & 0x00000000ffffffffL }
 

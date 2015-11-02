@@ -2,7 +2,7 @@ package TurboRav
 
 import Chisel._
 
-class SerializerTest(c: Serializer) extends Tester(c) {
+class SerializerTest(c: Serializer) extends JUnitTester(c) {
 
   poke(c.io.cond, 0)
   step(3) // Waiting a couple of cycles will test that the

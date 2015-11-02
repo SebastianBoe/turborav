@@ -3,7 +3,7 @@ package TurboRav
 import Chisel._
 import Constants._
 
-class TimerTest(timer: Timer) extends Tester(timer) {
+class TimerTest(timer: Timer) extends JUnitTester(timer) {
 
   // Running timer without setting in_start to '1' results in no update
   expect(timer.io.out_val, BigInt(0))

@@ -3,7 +3,7 @@ package TurboRav
 import Chisel._
 import Constants._
 
-class SocTest(c: Soc) extends Tester(c) {
+class SocTest(c: Soc) extends JUnitTester(c) {
   poke(c.io.pin_inputs, 2)
   step(1000)
   printRegs()

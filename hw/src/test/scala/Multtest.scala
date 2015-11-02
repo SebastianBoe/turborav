@@ -3,7 +3,7 @@ package TurboRav
 import Chisel._
 import Constants._
 
-class MultTest(c: Mult) extends Tester(c) {
+class MultTest(c: Mult) extends JUnitTester(c) {
 
   def test(a: BigInt, b: BigInt, func: Int, resL: BigInt, resH: BigInt) {
     poke(c.io.enable, 1)
