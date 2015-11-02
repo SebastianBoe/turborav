@@ -7,6 +7,7 @@ turborav_jar = Command(
     -feature\
     -language:reflectiveCalls\
     -Xlint\
+    -Xlint:-nullary-unit\
     -Xfatal-warnings\
     -classpath {0}\
     -d build/scala/classes\
