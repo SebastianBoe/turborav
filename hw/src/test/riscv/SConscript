@@ -5,10 +5,6 @@ Import('scala_env turborav_jar CLASSPATH riscv_program_env startup_file')
 # Here we build the riscv tests and also run the tests to generate
 # jenkins.xml reports.
 
-# Directory of riscv tests. (Just the Riscv ISA version we are
-# supporting.)
-RV32UI_PATH = "riscv-tools/riscv-tests/isa/rv32ui/"
-
 black_list_names = [
     'amoswap_w',
     'amomaxu_w',
@@ -28,21 +24,16 @@ black_list_names = [
 ]
 
 black_list = [
-    File("{0}{1}.S".format(RV32UI_PATH, name))
+    File("rv32ui/{0}.S".format(name))
     for name in black_list_names
 ]
 
-test_sources = set(Glob(RV32UI_PATH + "/*.S")) - set(black_list)
-
-CPPPATH = [
-    'riscv-tools/riscv-tests/isa/macros/scalar/',
-    'riscv-tools/riscv-tests/env/p'
-]
+test_sources = set(Glob("rv32ui/*.S")) - set(black_list)
 
 for test in test_sources:
     program = riscv_program_env.Program(
         [test, startup_file],
-        CPPPATH = CPPPATH
+        CPPPATH = [Dir("p"), Dir(".")]
     )[0]
     Depends(program, "#build/misc/turborav.ld")
     test_name = str(program).split('/')[-1]
