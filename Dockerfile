@@ -1,4 +1,15 @@
-FROM l3iggs/archlinux-aur
+FROM pritunl/archlinux
+
+RUN pacman --noconfirm -S \
+    git \
+    scala \
+    scons \
+    java-commons-io \
+    clang \
+    python-pint \
+    && \
+    pacman -Scc # Clean pacman cache before committing
+RUN pacman -S --noconfirm --needed base-devel
 
 # Install the RISC-V toolchain from github and build from source
 
@@ -9,27 +20,23 @@ ENV TOOLCHAIN_REVISION f0addb7
 RUN git clone https://github.com/riscv/riscv-gnu-toolchain.git
 RUN pushd riscv-gnu-toolchain \
 	&& git checkout $TOOLCHAIN_REVISION \
-	&& ./configure --prefix=/opt/riscv \
-	&& sudo make -j8 \
+	&& ./configure --prefix=/home/docker/riscv \
+	&& make -j8 \
 	&& popd \
-	&& sudo rm -rf riscv-gnu-toolchain/
-ENV PATH $PATH:/opt/riscv/bin
+	&& rm -rf riscv-gnu-toolchain/
+ENV PATH $PATH:/home/docker/riscv/bin
 
-# Prefer to use the server at Samfundet, Trondheim.
-RUN sudo sed -i '1s/^/Server = http:\/\/mirror.archlinux.no\/$repo\/os\/$arch /' /etc/pacman.d/mirrorlist
+# Install scalastyle from the AUR
+RUN git clone https://aur.archlinux.org/scalastyle.git \
+    && pushd scalastyle \
+    && makepkg -sri \
+    && popd \
+    && rm -rf scalastyle
 
-# Arch does not support "partial upgrades" so we must install every
-# Arch package in the same docker RUN command.
-RUN yaourt --noconfirm -Syua \
-    scala \
-    scons \
-    chisel \
-    jdk \
-    java-commons-io \
-    clang \
-    python-pint \
-    scalastyle \
-    && \
-    pacman -Scc # Clean pacman cache before committing
+ENV CHISEL_VERSION 2.2.30
+ENV CHISEL_JAR chisel_2.11-$CHISEL_VERSION.jar
+RUN curl http://central.maven.org/maven2/edu/berkeley/cs/chisel_2.11/$CHISEL_VERSION/$CHISEL_JAR \
+    && install -Dm644 $CHISEL_JAR /usr/share/scala/chisel/chisel.jar \
+    && rm $CHISEL_JAR
 
 CMD ["/bin/bash"]
