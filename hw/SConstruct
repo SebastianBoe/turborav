@@ -1,4 +1,5 @@
 import os
+import multiprocessing
 
 Help("""Type:
 'scons build/test'                      to run all tests,
@@ -24,6 +25,9 @@ Clean("build", "build")
 
 # out-of-source build
 VariantDir("build", "src", duplicate=1)
+
+# Use as many threads as there are cores
+SetOption("num_jobs", multiprocessing.cpu_count())
 
 COMMON_FLAGS = (" -m32"
                 " -Wa,-march=RVIMAFDXhwacha "
