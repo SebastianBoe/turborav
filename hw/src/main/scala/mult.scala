@@ -68,7 +68,7 @@ class Mult() extends Module {
     when (isDivide(io.func)) {
       when(isSignedDivide(io.func)){
         state := s_negate_input
-        should_negate_quotient := io.in_a(xlen-1) != io.in_b(xlen-1)
+        should_negate_quotient := io.in_a(xlen-1) =/= io.in_b(xlen-1)
         dividend_sign := io.in_a(xlen-1)
       }.otherwise{
         state := s_div
@@ -85,7 +85,7 @@ class Mult() extends Module {
       holding := Cat(UInt(0, width = xlen + 1), io.in_b)
       should_negate_product := ((io.in_a(xlen-1)
                                 && io.func === MULT_MULHSU)
-                            || ((io.in_a(xlen-1) != io.in_b(xlen-1))
+                            || ((io.in_a(xlen-1) =/= io.in_b(xlen-1))
                                 && io.func === MULT_MULH))
     }
     exec_func := io.func
@@ -125,14 +125,14 @@ class Mult() extends Module {
     when(argument(xlen-1)){
       argument := -argument
     }
-    when(holding(xlen-1) && exec_func != MULT_MULHSU){
+    when(holding(xlen-1) && exec_func =/= MULT_MULHSU){
       holding(xlen-1, 0) := -holding(xlen-1, 0)
     }
   }
 
   when(state === s_negate_output_div){
     state := s_idle
-    when(dividend_sign != holding((xlen * 2) - 1)){
+    when(dividend_sign =/= holding((xlen * 2) - 1)){
       holding((xlen * 2) - 1, xlen) := -holding((xlen * 2) - 1, xlen)
     }
     when(should_negate_quotient){
