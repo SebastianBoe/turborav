@@ -18,12 +18,13 @@ As of november 2014 we are still building the hw infrastructure
 necessary to run a software stack on top of. So here we present only
 how to get started with hw-development.
 
-### Install dependencies
-
-Install docker.
+Install Docker.
 ```
+// Download a container with all the tools from Docker hub
 docker pull sebomux/turborav
+// Start the container with your local repository mounted from the container.
 docker run -v /absolute/path/to/turborav/repo/on/your/machine:/mnt/turborav -it sebomux/turborav
+// Run a RISC-V test for addition, and see build system usage.
 scons build/test/riscv/add && scons --help
 ```
 
