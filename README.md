@@ -1,3 +1,6 @@
+Copyright (C) 2015 Sebastian Bøe, Joakim Andersson
+License: BSD 2-Clause (see LICENSE for details)
+
 This is the TurboRav full computer stack hobby project.
 
 ![](https://docs.google.com/drawings/d/1yiRfiubTfP55u9E995-KuAjrXQi68SzCdmgo3fDCfAA/pub?w=1934&h=1368 "")

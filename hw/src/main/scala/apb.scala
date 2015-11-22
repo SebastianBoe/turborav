@@ -1,3 +1,6 @@
+// Copyright (C) 2015 Sebastian Bøe, Joakim Andersson
+// License: BSD 2-Clause (see LICENSE for details)
+
 package TurboRav
 
 // This package contains the constructs needed to connect to an APB
