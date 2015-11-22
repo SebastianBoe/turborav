@@ -1,15 +1,17 @@
 FROM pritunl/archlinux
 
 RUN pacman --noconfirm -S \
+    base-devel \
     git \
+    java-environment \
     scala \
     scons \
     java-commons-io \
-    clang \
     python-pint \
+    clang \
+    sbt \
     && \
     pacman -Scc # Clean pacman cache before committing
-RUN pacman -S --noconfirm --needed base-devel
 
 # Install the RISC-V toolchain from github and build from source
 
@@ -26,17 +28,30 @@ RUN pushd riscv-gnu-toolchain \
 	&& rm -rf riscv-gnu-toolchain/
 ENV PATH $PATH:/home/docker/riscv/bin
 
-# Install scalastyle from the AUR
-RUN git clone https://aur.archlinux.org/scalastyle.git \
-    && pushd scalastyle \
-    && makepkg -sri \
-    && popd \
-    && rm -rf scalastyle
+RUN useradd -m -G wheel turbo
+WORKDIR /home/turbo
+USER turbo
 
-ENV CHISEL_VERSION 2.2.30
-ENV CHISEL_JAR chisel_2.11-$CHISEL_VERSION.jar
-RUN curl http://central.maven.org/maven2/edu/berkeley/cs/chisel_2.11/$CHISEL_VERSION/$CHISEL_JAR \
-    && install -Dm644 $CHISEL_JAR /usr/share/scala/chisel/chisel.jar \
-    && rm $CHISEL_JAR
+# Install scalastyle from the AUR
+RUN git clone https://aur.archlinux.org/scalastyle.git
+WORKDIR scalastyle
+USER turbo
+RUN makepkg
+USER root
+RUN pacman -U --noconfirm scalastyle*pkg*
+USER turbo
+
+# Install chisel from the AUR
+WORKDIR /home/turbo
+RUN git clone https://aur.archlinux.org/chisel.git
+WORKDIR /home/turbo/chisel
+RUN makepkg
+USER root
+RUN pacman -U --noconfirm chisel*pkg*
+
+# Assume user is going to be mounting his local repo at /mnt/turborav
+WORKDIR /mnt/turborav/hw
+
+USER root
 
 CMD ["/bin/bash"]
