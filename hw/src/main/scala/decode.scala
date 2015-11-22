@@ -171,7 +171,7 @@ class Decode extends Module {
   dec_exe.mem_ctrl.read  := isLoad(opcode)
 
   dec_exe.wrb_ctrl.rd_wen :=
-    rd_addr =/= UInt(0) && Any(
+    rd_addr != UInt(0) && Any(
       isLoad(opcode),
       isRegop(opcode),
       isUpper(opcode),

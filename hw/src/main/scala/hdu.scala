@@ -10,12 +10,12 @@ class HazardDetectionUnit() extends Module {
 
   val load_use_rs1 = (
             ( io.hdu_mem.mem_read           &&
-              io.hdu_mem.rd_addr =/= UInt(0) &&
+              io.hdu_mem.rd_addr != UInt(0) &&
               io.hdu_mem.rd_addr === io.hdu_exe.rs1_addr))
 
   val load_use_rs2 = (
             ( io.hdu_mem.mem_read           &&
-              io.hdu_mem.rd_addr =/= UInt(0) &&
+              io.hdu_mem.rd_addr != UInt(0) &&
               io.hdu_mem.rd_addr === io.hdu_exe.rs2_addr))
 
   val load_use = load_use_rs1 || load_use_rs2
