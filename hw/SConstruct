@@ -3,7 +3,7 @@ import multiprocessing
 
 Help("""Type:
 'scons build/test'                      to run all tests,
-'scons build/test/riscv/'               to run all riscv tests, 
+'scons build/test/riscv/'               to run all riscv tests,
 'scons build/test/riscv/add'            to run the riscv add test,
 'scons build/test/unit/'                to run all unit tests,
 'scons build/test/unit/Alu'             to run the Alu test from src/test/scala,
