@@ -5,6 +5,7 @@ turborav_jar = Command(
     Glob('main/scala/*') + Glob('test/scala/*'),
     """fsc\
     -feature\
+    -deprecation\
     -language:reflectiveCalls\
     -Xlint\
     -Xlint:-nullary-unit\
