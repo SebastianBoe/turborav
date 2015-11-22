@@ -31,6 +31,10 @@ Peruse the issue-tracker to see if there is anything that interests
 you or create your own issue based on what you want to contribute
 with. But most importantly; have fun!
 
+## Tool flow
+The tool flow is quite involved, luckily how to use the tools is encoded into the build system, and all the tools are found pre-installed in a docker container.
+![](https://docs.google.com/drawings/d/1R1S3EaMNbQhiivbtGhVuwwE5PzFvSRuUj1LCNBwp3wo/pub?w=1884&h=1553)
+
 ## Development
 
 The below screenshot demonstrates what the development environment might look
