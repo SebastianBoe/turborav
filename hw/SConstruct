@@ -61,9 +61,8 @@ COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
 CLASSPATH = "{0}:{1}".format(CHISEL_JAR, COMMONS_IO_JAR)
 Export('CLASSPATH')
 
-startup_file = SConscript('build/misc/SConscript')
-
 turborav_jar    = SConscript('build/SConscript')
+startup_file    = SConscript('build/misc/SConscript')
 default_program = SConscript('build/programs/SConscript')
 
 scala_env = Environment(ENV = os.environ)
