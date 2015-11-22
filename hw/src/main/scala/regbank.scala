@@ -20,7 +20,7 @@ class RegBank() extends Module {
   /* Chisel does not support initializing memory */
   val regs = Mem(UInt(width = Config.xlen), 32)
 
-  when (io.rd_wen && io.rd_addr != UInt(0)) {
+  when (io.rd_wen && io.rd_addr =/= UInt(0)) {
     regs(io.rd_addr) := io.rd_data
   }
 
