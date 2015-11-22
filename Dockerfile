@@ -9,7 +9,6 @@ RUN pacman --noconfirm -S \
     java-commons-io \
     python-pint \
     clang \
-    sbt \
     && \
     pacman -Scc # Clean pacman cache before committing
 
