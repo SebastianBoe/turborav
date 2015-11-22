@@ -10,7 +10,7 @@ RUN pacman --noconfirm -S \
     python-pint \
     clang \
     && \
-    pacman -Scc # Clean pacman cache before committing
+    pacman --noconfirm -Scc # Clean pacman cache before committing
 
 # Install the RISC-V toolchain from github and build from source
 
