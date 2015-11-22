@@ -42,7 +42,7 @@ CCFLAGS = COMMON_FLAGS + \
            " -c"
 )
 
-CC = '/opt/riscv/bin/riscv64-unknown-elf-gcc'
+CC = 'riscv64-unknown-elf-gcc'
 
 riscv_program_env = Environment(
     ENV = os.environ,
