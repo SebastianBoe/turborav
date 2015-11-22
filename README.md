@@ -22,10 +22,9 @@ how to get started with hw-development.
 
 Install docker.
 ```
-Assuming your current directory is . and your repo is one level below you at turborav.
-docker build -t turboimage - < turborav/Dockerfile
-docker run -it turboimage -v turborav:/mnt/turborav
-cd /mnt/turborav/hw && scons build/test && scons --help
+docker pull sebomux/turborav
+docker run -v /absolute/path/to/turborav/repo/on/your/machine:/mnt/turborav -it sebomux/turborav
+scons build/test/riscv/add && scons --help
 ```
 
 Peruse the issue-tracker to see if there is anything that interests
