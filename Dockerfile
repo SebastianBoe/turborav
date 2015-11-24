@@ -21,11 +21,11 @@ ENV TOOLCHAIN_REVISION f0addb7
 RUN git clone https://github.com/riscv/riscv-gnu-toolchain.git
 RUN pushd riscv-gnu-toolchain \
 	&& git checkout $TOOLCHAIN_REVISION \
-	&& ./configure --prefix=/home/docker/riscv \
+	&& ./configure --prefix=/opt/riscv \
 	&& make -j8 \
 	&& popd \
 	&& rm -rf riscv-gnu-toolchain/
-ENV PATH $PATH:/home/docker/riscv/bin
+ENV PATH $PATH:/opt/riscv/bin
 
 RUN useradd -m -G wheel turbo
 WORKDIR /home/turbo
