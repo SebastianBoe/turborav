@@ -4,6 +4,7 @@ RUN pacman --noconfirm -S \
     base-devel \
     git \
     java-environment \
+    sbt \
     scala \
     scons \
     java-commons-io \
@@ -38,16 +39,16 @@ USER turbo
 RUN makepkg
 USER root
 RUN pacman -U --noconfirm scalastyle*pkg*
-USER turbo
 
-# Install chisel from Maven
+# Install chisel from the AUR
+USER turbo
+WORKDIR /home/turbo
+RUN git clone https://aur.archlinux.org/chisel-git.git \
+    && cd chisel-git \
+    && sed -i "s chisel\.git chisel\.git#commit=d30d444 " PKGBUILD \
+    && makepkg
 USER root
-ENV CHISEL_VERSION 2.2.28
-ENV SCALA_VERSION 2.11
-ENV CHISEL_JAR chisel_$SCALA_VERSION-$CHISEL_VERSION.jar
-RUN curl http://central.maven.org/maven2/edu/berkeley/cs/chisel_$SCALA_VERSION/$CHISEL_VERSION/$CHISEL_JAR > \
-    $CHISEL_JAR \
-    && install -Dm644 $CHISEL_JAR /usr/share/scala/chisel/chisel.jar
+RUN pacman -U --noconfirm chisel-git/chisel-git*pkg*
 
 # Assume user is going to be mounting his local repo at /mnt/turborav
 WORKDIR /mnt/turborav/hw
