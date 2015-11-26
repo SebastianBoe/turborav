@@ -2,14 +2,14 @@ FROM pritunl/archlinux
 
 RUN pacman --noconfirm -S \
     base-devel \
+    clang \
     git \
+    java-commons-io \
     java-environment \
+    python-pint \
     sbt \
     scala \
     scons \
-    java-commons-io \
-    python-pint \
-    clang \
     && \
     pacman --noconfirm -Scc # Clean pacman cache before committing
 
@@ -29,16 +29,15 @@ RUN pushd riscv-gnu-toolchain \
 ENV PATH $PATH:/opt/riscv/bin
 
 RUN useradd -m -G wheel turbo
-WORKDIR /home/turbo
-USER turbo
 
 # Install scalastyle from the AUR
-RUN git clone https://aur.archlinux.org/scalastyle.git
-WORKDIR scalastyle
 USER turbo
-RUN makepkg
+WORKDIR /home/turbo
+RUN git clone https://aur.archlinux.org/scalastyle.git \
+    && cd scalastyle \
+    && makepkg
 USER root
-RUN pacman -U --noconfirm scalastyle*pkg*
+RUN pacman -U --noconfirm scalastyle/scalastyle*pkg*
 
 # Install chisel from the AUR
 USER turbo
@@ -52,7 +51,5 @@ RUN pacman -U --noconfirm chisel-git/chisel-git*pkg*
 
 # Assume user is going to be mounting his local repo at /mnt/turborav
 WORKDIR /mnt/turborav/hw
-
 USER root
-
 CMD ["/bin/bash"]
