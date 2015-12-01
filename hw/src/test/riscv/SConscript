@@ -39,16 +39,23 @@ for test in test_sources:
     test_name = str(program).split('/')[-1]
 
     target_dir = Dir(test_name).path
+    vcd_file     = File("#" + target_dir + "/Soc.vcd").path,
+    fst_file     = File("#" + target_dir + "/Soc.fst").path,
+
     scala_env.Command(
         test_name + "/jenkins.xml",
         [turborav_jar, program],
         """CXX=clang++ scala \
         -classpath {3}:{0}\
-        TurboRav.TurboRavTestRunner Riscvtest {1} {2} 12 8 False"""
+        TurboRav.TurboRavTestRunner Riscvtest {1} {2} 12 8 False;\
+        vcd2fst {4} {5};\
+        rm {4}"""
         .format(
             CLASSPATH,
             target_dir,
             program.path,
-            turborav_jar
+            turborav_jar,
+            vcd_file[0],
+            fst_file[0]
         )
     )

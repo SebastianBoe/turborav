@@ -3,6 +3,7 @@ FROM pritunl/archlinux
 RUN pacman --noconfirm -S \
     base-devel \
     git \
+    gtkwave \
     java-environment \
     scala \
     scons \
