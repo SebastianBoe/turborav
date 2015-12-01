@@ -1,61 +1,62 @@
 from subprocess import check_output
 
 Import('scala_env turborav_jar CLASSPATH riscv_program_env startup_file')
-
 # Here we build the riscv tests and also run the tests to generate
 # jenkins.xml reports.
 
-black_list_names = [
-    'amoswap_w',
-    'amomaxu_w',
-    'amominu_w',
-    'amoadd_w',
-    'amoand_w',
-    'amomax_w',
-    'amomin_w',
-    'amoor_w',
-    'fence_i',
-    'divuw',
-    'lrsc',
-    'divw',
-    'mulw',
-    'lwu',
-    'ld'
-]
-
-black_list = [
-    File("rv32ui/{0}.S".format(name))
-    for name in black_list_names
-]
-
-test_sources = set(Glob("rv32ui/*.S")) - set(black_list)
-
-for test in test_sources:
-    program = riscv_program_env.Program(
-        [test, startup_file],
-        CPPPATH = [Dir("p"), Dir(".")]
-    )[0]
-    Depends(program, "#build/misc/turborav.ld")
-    test_name = str(program).split('/')[-1]
-
-    target_dir = Dir(test_name).path
-    vcd_file     = File("#" + target_dir + "/Soc.vcd").path,
-    fst_file     = File("#" + target_dir + "/Soc.fst").path,
-
-    scala_env.Command(
-        test_name + "/jenkins.xml",
-        [turborav_jar, program],
-        """CXX=clang++ scala \
-        -classpath {3}:{0}\
-        TurboRav.TurboRavTestRunner Riscvtest {1} {2} 12 8 False;\
-        vcd2fst {4} {5};\
-        rm {4}"""
-        .format(
-            CLASSPATH,
-            target_dir,
-            program.path,
-            turborav_jar,
-            vcd_file[0],
-            fst_file[0]
-        )
+def main():
+    riscv_sim_env = scala_env.Clone(
+        CLASSPATH = "{}:{}".format(turborav_jar, CLASSPATH),
+        BUILDERS = {"Simulate" : sim_builder}
     )
+    riscv_sim_env.Append(
+        ENV = {"CXX" : "clang++"}
+    )
+
+    riscv_program_env.Append(
+        CPPPATH = [Dir("p"), Dir(".")]
+    )
+
+    for test in get_test_sources():
+        # RISC-V firmware
+        program = riscv_program_env.Program(
+            [test, startup_file]
+        )[0]
+        Depends(program, "#build/misc/turborav.ld")
+
+        # Simulation target
+        target = str(program).split('/')[-1]
+        riscv_sim_env.Simulate(
+            target + "/jenkins.xml",
+            [turborav_jar, program],
+            TARGET_DIR = Dir(target).path,
+            ROM = program.path
+        )
+
+def get_test_sources():
+    black_list_names = [
+        'amoswap_w',
+        'amomaxu_w',
+        'amominu_w',
+        'amoadd_w',
+        'amoand_w',
+        'amomax_w',
+        'amomin_w',
+        'amoor_w',
+        'fence_i',
+        'divuw',
+        'lrsc',
+        'divw',
+        'mulw',
+        'lwu',
+        'ld'
+    ]
+
+    black_list = [
+        File("rv32ui/{0}.S".format(name))
+        for name in black_list_names
+    ]
+
+    return set(Glob("rv32ui/*.S")) - set(black_list)
+
+main()
