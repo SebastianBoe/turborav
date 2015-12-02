@@ -1,0 +1,6 @@
+linker_script = Command(
+    "turborav.ld",
+    "turborav.ld.S",
+    "gcc -E -P $SOURCE > $TARGET"
+)
+Return('linker_script')

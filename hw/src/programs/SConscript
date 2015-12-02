@@ -1,4 +1,4 @@
 Import('riscv_program_env')
 default_program = riscv_program_env.Program("input2output", "input2output.c")[0]
-Depends(default_program, riscv_program_env['linker_script'])
+Depends(default_program, riscv_program_env['LINKER_SCRIPT'])
 Return('default_program')

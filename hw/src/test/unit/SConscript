@@ -1,40 +1,18 @@
-Import('scala_env turborav_jar default_program CLASSPATH')
+from os.path import basename
 
-# Unit tests, or Chisel based testbenches.
-# NB: Duplicated in turboravtester.scala
-test_benches = [
-    "FpgaRam",
-    "dvi_tmds_transmitter",
-    "dvi_tmds_encoder",
-    "Serializer",
-    "Alu",
-    "BranchUnit",
-    "ForwardingUnit",
-    "RegBank",
-    "Mult",
-    "Timer",
-    "Decode",
-    "Execute",
-    "Memory",
-    "Writeback",
-    "Soc",
-    "ApbController"
-]
+Import('sim_env turborav_jar default_program CLASSPATH')
 
-for module in test_benches:
-    target_dir = Dir(module)
-    target = target_dir.File(module + ".vcd")
-    scala_env.Command(
-        target,
+sim_env['ROM'] = default_program
+
+for scala_tb_source_path in Glob("#build/test/scala/tb/*"):
+    base = basename(str(scala_tb_source_path))
+    top_module = base.replace("test.scala", "")
+    target_dir = Dir(top_module)
+
+    sim_env.Simulate(
+        target_dir.File("jenkins.xml"),
         [turborav_jar, default_program],
-        """CXX=clang++ scala \
-        -classpath {4}:{0} \
-        TurboRav.TurboRavTestRunner {1} {2} {3} 12 8 False &> {2}/log.txt || cat {2}/log.txt"""
-        .format(
-            CLASSPATH,
-            module + "test",
-            target_dir.path,
-            default_program,
-            turborav_jar
-        )
+        TARGET_DIR = target_dir,
+        MODULE     = base.replace(".scala", ""),
+        TOP_MODULE = top_module
     )

@@ -1,7 +1,7 @@
-Import('scala_env turborav_jar CLASSPATH default_program')
+Import('turborav_jar CLASSPATH default_program')
 
 # Verilog code generation of build/synthesis/Soc.v
-soc_v = scala_env.Command(
+soc_v = Command(
     "Soc.v",
     [turborav_jar, default_program],
     """scala \
@@ -15,7 +15,7 @@ soc_v = scala_env.Command(
 )[0]
 
 # Synthesis
-scala_env.Command(
+Command(
     "design_routed.ncd",
     [
         soc_v,
@@ -27,13 +27,13 @@ scala_env.Command(
 )
 SideEffect("design_routed.par", "design_routed.ncd")
 
-scala_env.Command(
+Command(
     "turborav.bit",
     "design_routed.ncd",
     'make --dir=build/synthesis HDL_FILE=Soc.v turborav.bit'
 )
 
-scala_env.Command(
+Command(
     "programming.log",
     "turborav.bit",
     'make --dir=build/synthesis HDL_FILE=Soc.v program'
@@ -54,8 +54,8 @@ Command(
 )
 
 log = File("yosys.log")
-scala_env['YOSYS_LOG'] = log
-scala_env.Command(
+yosys_env = Environment(YOSYS_LOG = log)
+Command(
     ["Soc.blif", log],
     soc_v,
     'yosys -p "synth_ice40 -noflatten" $SOURCE > $YOSYS_LOG'

@@ -22,64 +22,11 @@ text file.
 # Multi-threaded builds
 SetOption("num_jobs", multiprocessing.cpu_count() + 1)
 
+# Use host environment by default.
+DefaultEnvironment(ENV = os.environ)
+
 # This ensures the entire build directory is cleaned, even files in
 # there that SCons didn't know that it generated.
 Clean("build", "build")
 
-# out-of-source build
-VariantDir("build", "src", duplicate=1)
-
-COMMON_FLAGS = (" -m32"
-                " -Wa,-march=RVIMAFDXhwacha "
-                " -nostdlib "
-                " --std=gnu11"
-)
-
-CCFLAGS = COMMON_FLAGS + \
-          (" -static"
-           " -nostartfiles"
-           " -ffreestanding"
-           " -c"
-)
-
-CC = 'riscv64-unknown-elf-gcc'
-
-riscv_program_env = Environment(
-    ENV = os.environ,
-    CC = CC,
-    AS = CC,
-    LD = CC,
-    CCFLAGS = CCFLAGS,
-    ASFLAGS = CCFLAGS,
-    LINKFLAGS = COMMON_FLAGS + " -Tbuild/misc/turborav.ld "
-)
-riscv_program_env['linker_script'] = "#build/misc/turborav.ld"
-Export('riscv_program_env')
-
-CHISEL_JAR     = "/usr/share/scala/chisel/chisel.jar"
-COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
-CLASSPATH = "{0}:{1}".format(CHISEL_JAR, COMMONS_IO_JAR)
-Export('CLASSPATH')
-
-turborav_jar    = SConscript('build/SConscript')
-startup_file    = SConscript('build/misc/SConscript')
-default_program = SConscript('build/programs/SConscript')
-
-scala_env = Environment(ENV = os.environ)
-
-SConscript(
-    "build/test/unit/SConscript",
-    exports = 'scala_env turborav_jar CLASSPATH default_program'
-)
-
-SConscript(
-    'build/test/riscv/SConscript',
-    exports = 'scala_env turborav_jar CLASSPATH riscv_program_env startup_file'
-)
-
-SConscript(
-    "build/synthesis/SConscript",
-    exports = 'scala_env turborav_jar default_program'
-)
-
-SConscript("build/test/lint/SConscript")
+SConscript("src/SConscript", variant_dir = "build")

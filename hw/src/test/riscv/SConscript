@@ -1,18 +1,15 @@
 from subprocess import check_output
 
-Import('scala_env turborav_jar CLASSPATH riscv_program_env startup_file')
+Import('turborav_jar riscv_program_env startup_file sim_env')
 # Here we build the riscv tests and also run the tests to generate
 # jenkins.xml reports.
 
-def main():
-    riscv_sim_env = scala_env.Clone(
-        CLASSPATH = "{}:{}".format(turborav_jar, CLASSPATH),
-        BUILDERS = {"Simulate" : sim_builder}
-    )
-    riscv_sim_env.Append(
-        ENV = {"CXX" : "clang++"}
-    )
+riscv_sim_env = sim_env.Clone(
+    MODULE = "Riscvtest",
+    TOP_MODULE = "Soc"
+)
 
+def main():
     riscv_program_env.Append(
         CPPPATH = [Dir("p"), Dir(".")]
     )
@@ -22,7 +19,7 @@ def main():
         program = riscv_program_env.Program(
             [test, startup_file]
         )[0]
-        Depends(program, "#build/misc/turborav.ld")
+        Depends(program, riscv_program_env['LINKER_SCRIPT'])
 
         # Simulation target
         target = str(program).split('/')[-1]

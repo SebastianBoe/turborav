@@ -1,8 +1,14 @@
-Import('CLASSPATH')
+import os
+
+CHISEL_JAR     = "/usr/share/scala/chisel/chisel.jar"
+COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
+CLASSPATH = "{0}:{1}".format(CHISEL_JAR, COMMONS_IO_JAR)
 
 turborav_jar = Command(
     ['scala/classes/TurboRav.jar'],
-    Glob('main/scala/*') + Glob('test/scala/*'),
+    Glob('main/scala/*') +
+    Glob('test/scala/*') +
+    Glob('test/scala/tb/*'),
     """fsc\
     -feature\
     -deprecation\
@@ -14,6 +20,7 @@ turborav_jar = Command(
     -d build/scala/classes\
     build/main/scala/*.scala\
     build/test/scala/*.scala\
+    build/test/scala/tb/*.scala\
     \
     &&\
     \
@@ -22,4 +29,50 @@ turborav_jar = Command(
     -C build/scala/classes TurboRav""".format(CLASSPATH)
 )[0]
 
-Return('turborav_jar')
+COMMON_FLAGS = (" -m32"
+                " -Wa,-march=RVIMAFDXhwacha "
+                " -nostdlib "
+                " --std=gnu11"
+)
+
+CCFLAGS = COMMON_FLAGS + \
+          (" -static"
+           " -nostartfiles"
+           " -ffreestanding"
+           " -c"
+)
+
+CC = 'riscv64-unknown-elf-gcc'
+
+linker_script = SConscript("linker_script/SConscript")
+
+riscv_program_env = Environment(
+)
+riscv_program_env['ENV'] = os.environ
+riscv_program_env['CC'] = CC
+riscv_program_env['AS'] = CC
+riscv_program_env['LD'] = CC
+riscv_program_env['CCFLAGS'] = CCFLAGS
+riscv_program_env['ASFLAGS'] = CCFLAGS
+riscv_program_env['LINKFLAGS'] = COMMON_FLAGS + " -T$LINKER_SCRIPT "
+riscv_program_env['LINKER_SCRIPT'] = File("linker_script/turborav.ld")
+
+startup_file = SConscript(
+    "misc/SConscript",
+    exports = "riscv_program_env"
+)
+
+default_program = SConscript(
+    'programs/SConscript',
+    exports = "riscv_program_env"
+)
+
+SConscript(
+    "test/SConscript",
+    exports = "turborav_jar riscv_program_env startup_file default_program CLASSPATH"
+)
+
+SConscript(
+    "synthesis/SConscript",
+    exports = 'turborav_jar CLASSPATH default_program'
+)
