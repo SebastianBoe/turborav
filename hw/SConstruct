@@ -19,15 +19,15 @@ considered just a build target that generates a programming.log
 text file.
 """)
 
+# Multi-threaded builds
+SetOption("num_jobs", multiprocessing.cpu_count() + 1)
+
 # This ensures the entire build directory is cleaned, even files in
 # there that SCons didn't know that it generated.
 Clean("build", "build")
 
 # out-of-source build
 VariantDir("build", "src", duplicate=1)
-
-# Use as many threads as there are cores
-SetOption("num_jobs", multiprocessing.cpu_count())
 
 COMMON_FLAGS = (" -m32"
                 " -Wa,-march=RVIMAFDXhwacha "
