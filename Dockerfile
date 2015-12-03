@@ -29,7 +29,6 @@ RUN pushd riscv-gnu-toolchain \
 ENV PATH $PATH:/opt/riscv/bin
 
 RUN useradd -m -G wheel turbo
-
 # Install scalastyle from the AUR
 USER turbo
 WORKDIR /home/turbo
@@ -39,15 +38,26 @@ RUN git clone https://aur.archlinux.org/scalastyle.git \
 USER root
 RUN pacman -U --noconfirm scalastyle/scalastyle*pkg*
 
+# Install chisel from Maven
+# USER root
+# ENV CHISEL_VERSION 2.2.31
+# ENV SCALA_VERSION 2.11
+# ENV CHISEL_JAR chisel_$SCALA_VERSION-$CHISEL_VERSION.jar
+# RUN curl http://central.maven.org/maven2/edu/berkeley/cs/chisel_$SCALA_VERSION/$CHISEL_VERSION/$CHISEL_JAR > \
+#     $CHISEL_JAR \
+#     && install -Dm644 $CHISEL_JAR /usr/share/scala/chisel/chisel.jar
+
 # Install chisel from the AUR
 USER turbo
+ENV CHISEL_REVISION 560d5f37ca60e629def7fc3cae7b3d343893b561
 WORKDIR /home/turbo
 RUN git clone https://aur.archlinux.org/chisel-git.git \
     && cd chisel-git \
-    && sed -i "s chisel\.git chisel\.git#commit=d30d444 " PKGBUILD \
+    && sed -i "s chisel\.git chisel\.git#commit=$CHISEL_REVISION " PKGBUILD \
     && makepkg
 USER root
 RUN pacman -U --noconfirm chisel-git/chisel-git*pkg*
+
 
 # Assume user is going to be mounting his local repo at /mnt/turborav
 WORKDIR /mnt/turborav/hw
