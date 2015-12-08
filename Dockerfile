@@ -13,7 +13,20 @@ RUN pacman --noconfirm -S \
     && \
     pacman --noconfirm -Scc # Clean pacman cache before committing
 
-# Install the RISC-V toolchain from github and build from source
+# Tool usage
+
+# base-devel        # Builds the RISC-V toolchain
+# clang             # Speeds up the simulator compilation
+# git               # Retrieves external dependencies
+# java-commons-io   # Makes it easier to manipulate files from Scala
+# java-environment  # Creates jars
+# python-pint       # Does unit conversion for statistics like slice usage
+# sbt               # Builds Chisel
+# scala             # Runs Chisel programs
+# scons             # Builds turborav
+
+
+# Download the RISC-V toolchain from github and build from source
 
 # Using the latest RISC-V toolchain causes a compilation error when
 # building the RISC-V tests, but this revision is known to work. TODO:
