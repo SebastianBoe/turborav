@@ -1,5 +1,16 @@
-source /opt/Xilinx/14.7/ISE_DS/settings64.sh
-scons -j4\
-    build/test/ \
-    build/synthesis/slices.txt \
-    build/synthesis/timing.txt
+#!/bin/bash
+
+# http://redsymbol.net/articles/unofficial-bash-strict-mode/
+set -euo pipefail
+IFS=$'\n\t'
+
+IMAGE=jenkins_$BUILD_NUMBER
+docker build \
+       --tag=$IMAGE \
+       - < ../Dockerfile
+
+docker run \
+       -v $WORKSPACE:/mnt/turborav \
+       --rm=true \
+       $IMAGE \
+       scons build/test
