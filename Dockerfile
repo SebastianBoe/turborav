@@ -37,7 +37,7 @@ RUN git clone https://github.com/riscv/riscv-gnu-toolchain.git
 RUN pushd riscv-gnu-toolchain \
 	&& git checkout $TOOLCHAIN_REVISION \
 	&& ./configure --prefix=/opt/riscv \
-	&& make -j8 \
+	&& make -j8 > /home/gcc_build.log \
 	&& popd \
 	&& rm -rf riscv-gnu-toolchain/
 ENV PATH $PATH:/opt/riscv/bin
