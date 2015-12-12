@@ -1,8 +1,8 @@
-Copyright (C) 2015 Sebastian Bøe, Joakim Andersson
-
-License: BSD 2-Clause (see LICENSE for details)
-
 This is the TurboRav full computer stack hobby project.
+
+Status master branch ![](https://travis-ci.org/SebastianBoe/turborav.svg?branch=master "")
+
+Status dev branch ![](https://travis-ci.org/SebastianBoe/turborav.svg?branch=dev "")
 
 ![](https://docs.google.com/drawings/d/1yiRfiubTfP55u9E995-KuAjrXQi68SzCdmgo3fDCfAA/pub?w=1934&h=1368 "")
 
@@ -50,3 +50,7 @@ is used to find out where things are going wrong and then the Chisel code is
 edited with the powerful IntelliJ IDE. Pretty neat huh?
 
 ![](/hw/doc/development_environment.jpg?raw=true)
+
+Copyright (C) 2015 Sebastian Bøe, Joakim Andersson
+
+License: BSD 2-Clause (see LICENSE for details)
