@@ -4,9 +4,7 @@
 package TurboRav
 
 import Chisel._
-import Constants._
 
-// See RRApbAdapter for documentation about this bundle.
 class RequestResponseIo extends Bundle {
   val request = new ValidIO( new Bundle {
     val addr    = UInt(width = Config.xlen)
