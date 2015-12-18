@@ -21,6 +21,15 @@ def main():
         )[0]
         Depends(program, riscv_program_env['LINKER_SCRIPT'])
 
+        # Generate disassembly for debugging
+        riscv_program_env.Command(
+            str(program) + ".dis",
+            program,
+            """riscv64-unknown-elf-objdump \
+            -DS -M no-aliases -M numeric \
+            $SOURCE > $TARGET"""
+        )
+
         # Simulation target
         target = str(program).split('/')[-1]
         riscv_sim_env.Simulate(
