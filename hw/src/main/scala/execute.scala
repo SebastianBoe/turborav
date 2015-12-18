@@ -91,9 +91,11 @@ class Execute extends Module {
     ((state === s_mult)   && !mult.io.done)
 
   io.exe_mem.alu_result :=
-     Mux(isMultUpper(mult_func) && state === s_mult, mult.io.out_hi,
-     Mux(isMultLower(mult_func) && state === s_mult, mult.io.out_lo,
-                                                     alu.io.out))
+    Mux(
+      state === s_mult,
+      Mux(isMultUpper(mult_func), mult.io.out_hi, mult.io.out_lo),
+      alu.io.out
+    )
 
   io.exe_fch.pc_alu := alu.io.out
   io.exe_fch.pc_sel := pc_sel
