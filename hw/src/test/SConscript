@@ -15,7 +15,7 @@ SConscript(
 
 SConscript(
     "unit/SConscript",
-    exports = 'sim_env turborav_jar default_program CLASSPATH '
+    exports = 'sim_env turborav_jar default_program'
 )
 
 SConscript(
