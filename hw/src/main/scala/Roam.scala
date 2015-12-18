@@ -43,6 +43,12 @@ class Roam(elf_path: String, fpga: Boolean) extends Module {
     io.fch.request.bits.addr
   )
 
+  rom.io.byte_en := Mux(
+    mem_reading_rom,
+    request.bits.byte_en,
+    UInt(0)
+  )
+
   ram.io.addr    := request.bits.addr
   ram.io.word_w  := request.bits.wdata
   ram.io.byte_en := request.bits.byte_en
