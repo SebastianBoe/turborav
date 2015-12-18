@@ -47,8 +47,7 @@ class DecodeExecute() extends Bundle {
   val mem_ctrl = new MemoryCtrl()
   val wrb_ctrl = new WritebackCtrl()
 
-  def kill()
-  {
+  def kill() {
     exe_ctrl.kill()
     wrb_ctrl.kill()
     mem_ctrl.kill()
@@ -76,7 +75,7 @@ class ExecuteCtrl() extends Bundle {
   val mult_func    = Bits(OUTPUT, MULT_FUNC_WIDTH)
   val mult_enable  = Bool(OUTPUT)
 
-  def kill(){
+  def kill() {
     bru_func := BNOT
     mult_enable := Bool(false)
   }
@@ -200,7 +199,7 @@ class ForwardingExecute() extends Bundle {
   val rs2_sel  = UInt(OUTPUT, RS_SEL_WIDTH)
 }
 
-class ForwardingMemory()extends Bundle {
+class ForwardingMemory() extends Bundle {
   val rd_addr = UInt(INPUT, 5)
   val rd_wen  = Bool(INPUT)
 }
