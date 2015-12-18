@@ -178,12 +178,16 @@ class Decode extends Module {
       isJump(opcode)
   )
 
-  dec_exe.wrb_ctrl.rd_sel := Mux(isJump(opcode), RD_PC,
-                             Mux(isLoad(opcode), RD_MEM,
-                                                 RD_ALU))
-
   when(!fch_dec.instr_valid || io.dec_exe.pc_sel === PC_SEL_BRJMP) {
     io.dec_exe.kill()
   }
 
+  dec_exe.wrb_ctrl.rd_sel :=
+    MuxCase(
+      RD_ALU,
+      Array(
+        isJump(opcode) -> RD_PC,
+        isLoad(opcode) -> RD_MEM
+      )
+    )
 }
