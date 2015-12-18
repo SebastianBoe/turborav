@@ -1,4 +1,5 @@
 import os
+import subprocess
 import multiprocessing
 
 Help("""Type:
@@ -28,5 +29,10 @@ DefaultEnvironment(ENV = os.environ)
 # This ensures the entire build directory is cleaned, even files in
 # there that SCons didn't know that it generated.
 Clean("build", "build")
+if GetOption("clean"):
+    # If you change a library like chisel.jar you need to also
+    # invalidate the fsc cache. This can be hard to remember so we
+    # invalidate the fsc cache on every clean command.
+    subprocess.call(["fsc", "-reset"])
 
 SConscript("src/SConscript", variant_dir = "build")
