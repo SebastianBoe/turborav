@@ -6,7 +6,7 @@ package TurboRav
 import Chisel._
 import Constants._
 
-class Fetch() extends Module {
+class Fetch extends Module {
   val io = new FetchIO()
 
   val pc = Reg(init = UInt(0, width = Config.xlen))
