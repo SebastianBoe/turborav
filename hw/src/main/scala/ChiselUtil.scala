@@ -25,6 +25,13 @@ object Any {
   def apply[T <: Data](mods: Seq[T]):     Bool = orR(Cat(mods))
 }
 
+// Has the same signature as Cat, except that it returns a
+// Bool. Returns true iff all bits given as an argument are high.
+object All {
+  def apply[T <: Data](mod: T, mods: T*): Bool = apply(mod :: mods.toList)
+  def apply[T <: Data](mods: Seq[T]):     Bool = andR(Cat(mods))
+}
+
 /*
  * If you have a simple scala function with the type (Node => Node)
    and you want to verify that your function only creates a
