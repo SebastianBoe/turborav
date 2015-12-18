@@ -75,5 +75,5 @@ RUN pacman -U --noconfirm chisel-git/chisel-git*pkg*
 
 # Assume user is going to be mounting his local repo at /mnt/turborav
 WORKDIR /mnt/turborav/hw
-USER root
+USER turbo
 CMD ["/bin/bash"]
