@@ -28,12 +28,14 @@ extends JUnitTester(c, isTrace = false) {
   private def getTestStatus() : TestStatus = {
     val TestPassInstr = ScalaUtil.hex2dec("51e0d073")
     val TestFailInstr = ScalaUtil.hex2dec("51ee1073")
-    peek(c.ravv.dec.fch_dec.instr) match {
+    getCurrentInstruction() match {
       case TestPassInstr => Passed
       case TestFailInstr => Failed
       case _ => Running
     }
   }
+
+  private def getCurrentInstruction() : BigInt = { peek(c.ravv.dec.fch_dec.instr) }
 
   private def printRegs() {
     // Names used by the toolchain, not the RISC V ISA spec.
