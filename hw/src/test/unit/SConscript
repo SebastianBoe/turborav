@@ -1,6 +1,6 @@
 from os.path import basename
 
-Import('sim_env turborav_jar default_program CLASSPATH')
+Import('sim_env turborav_jar default_program')
 
 sim_env['ROM'] = default_program
 
