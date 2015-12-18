@@ -16,4 +16,12 @@ class RequestResponseIo extends Bundle {
   val response = new ValidIO(new Bundle {
     val word  = UInt(width = Config.xlen)
   }).flip()
+
+  def kill() {
+    request.bits.addr    := UInt(0)
+    request.bits.wdata   := UInt(0)
+    request.bits.byte_en := UInt(0)
+    request.bits.write   := Bool(false)
+    request.valid        := Bool(false)
+  }
 }
