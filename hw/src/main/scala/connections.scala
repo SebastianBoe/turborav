@@ -90,8 +90,7 @@ class ExecuteMemory() extends Bundle {
   val mem_ctrl = new MemoryCtrl()
   val wrb_ctrl = new WritebackCtrl()
 
-  def kill()
-  {
+  def kill() {
     mem_ctrl.kill()
     wrb_ctrl.kill()
   }
