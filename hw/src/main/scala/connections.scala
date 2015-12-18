@@ -230,11 +230,11 @@ class HazardDetectionUnitDecode() extends Bundle {
 }
 
 class HazardDetectionUnitExecute extends Bundle {
-  val mult_busy = Bool(INPUT)
-  val rs1_addr  = UInt(INPUT, 5)
-  val rs2_addr  = UInt(INPUT, 5)
+  val mult_busy    = Bool(INPUT)
+  val rs1_addr     = UInt(INPUT, 5)
+  val rs2_addr     = UInt(INPUT, 5)
 
-  val stall     = Bool(OUTPUT)
+  val stall = Bool(OUTPUT)
 }
 
 class HazardDetectionUnitMemory extends Bundle {
