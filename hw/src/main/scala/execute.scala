@@ -76,7 +76,7 @@ class Execute extends Module {
   mult.io.in_b   := rs2
   mult.io.func   := mult_func
   mult.io.enable := (mult_enable && state === s_normal)
-  mult.io.abort  := Bool(false)
+  mult.io.abort  := Bool(false) //TODO: What happens if the mult instr is flushed?
 
   when(state === s_normal && mult_enable){
     state := s_mult
