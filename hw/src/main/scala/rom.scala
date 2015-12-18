@@ -15,15 +15,15 @@ class Rom(elf_path: String) extends Module {
     val instr = UInt(OUTPUT, Config.xlen)
   }
 
+  // Create ROM
+  val rom_array = parseRomContents(elf_path)
+  val rom = Vec(rom_array)
+
   // The pc addresses individual bytes, but the ROM stores 4-byte
   // words and assumes that all addresses are word-aligned. To go from
   // a byte-addressable address to a word addressable address we
   // right-shift twice.
   val word_addr = io.pc >> UInt(2)
-
-  // Create ROM
-  val rom_array = parseRomContents(elf_path)
-  val rom = Vec(rom_array)
 
   // Read from rom
   io.instr := rom(word_addr)
