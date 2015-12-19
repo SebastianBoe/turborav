@@ -14,6 +14,7 @@ class RiscvTest(c: Soc, test_name: String)
 extends JUnitTester(c, isTrace = false) {
   while(getTestStatus() == Running)
   {
+    possiblySimulatePutchar()
     step(1)
   }
   expect(getTestStatus() == Passed, "")
@@ -35,7 +36,25 @@ extends JUnitTester(c, isTrace = false) {
     }
   }
 
+  private def possiblySimulatePutchar() {
+    if(magicPutcharInstructionFound()) {
+      print(getPutcharFunctionArgument().toChar)
+    }
+  }
+
+  private def magicPutcharInstructionFound() = {
+    getCurrentInstruction() == ScalaUtil.hex2dec("51ee9073")
+  }
+
   private def getCurrentInstruction() : BigInt = { peek(c.ravv.dec.fch_dec.instr) }
+
+  private def getPutcharFunctionArgument() : BigInt = {
+    // The register is 10 because x10 maps to a0, and a0 is where the
+    // first argument of a function is stored. See "RISC-V calling
+    // convention".
+    val register = 10
+    peekAt(c.ravv.dec.regbank.regs, register)
+  }
 
   private def printRegs() {
     // Names used by the toolchain, not the RISC V ISA spec.
