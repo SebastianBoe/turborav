@@ -15,12 +15,23 @@ class FetchIO() extends Bundle {
   val hdu_fch = new HazardDetectionUnitFetch().flip()
 
   val rr_io = new RequestResponseIo()
+
+  def kill(){
+    fch_dec.kill()
+    rr_io.kill()
+  }
 }
 
 class FetchDecode() extends Bundle {
   val instr_valid = Bool(OUTPUT)
   val instr       = UInt(OUTPUT, INSTRUCTION_WIDTH)
   val pc          = UInt(OUTPUT, Config.xlen)
+
+  def kill(){
+    instr_valid := Bool(false)
+    instr       := UInt(0)
+    pc          := UInt(0)
+  }
 }
 
 ////////////////////////////////////////
@@ -65,6 +76,11 @@ class ExecuteIO() extends Bundle {
   val mem_exe = new MemoryExecute().flip()
   val wrb_exe = new WritebackExecute().flip()
   val hdu_exe = new HazardDetectionUnitExecute().flip()
+
+  def kill() {
+    exe_mem.kill()
+    exe_fch.kill()
+  }
 }
 
 class ExecuteCtrl() extends Bundle {
@@ -99,6 +115,10 @@ class ExecuteMemory() extends Bundle {
 class ExecuteFetch() extends Bundle {
   val pc_sel = Bits(OUTPUT, PC_SEL_WIDTH)
   val pc_alu = UInt(OUTPUT, Config.xlen)
+
+  def kill() {
+    pc_alu := UInt(0)
+  }
 }
 
 ////////////////////////////////////////
