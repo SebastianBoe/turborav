@@ -1,5 +1,9 @@
 This is the TurboRav full computer stack hobby project.
 
+Status master branch ![](https://travis-ci.org/SebastianBoe/turborav.svg?branch=master "")
+
+Status dev branch ![](https://travis-ci.org/SebastianBoe/turborav.svg?branch=dev "")
+
 ![](https://docs.google.com/drawings/d/1yiRfiubTfP55u9E995-KuAjrXQi68SzCdmgo3fDCfAA/pub?w=1934&h=1368 "")
 
 The end goal is a self-contained system consisting of a RISC-V
@@ -18,19 +22,23 @@ As of november 2014 we are still building the hw infrastructure
 necessary to run a software stack on top of. So here we present only
 how to get started with hw-development.
 
-### Install dependencies
-
-Install docker.
+Install Docker.
 ```
-Assuming your current directory is . and your repo is one level below you at turborav.
-docker build -t turboimage - < turborav/Dockerfile
-docker run -it turboimage -v turborav:/mnt/turborav
-cd /mnt/turborav/hw && scons build/test && scons --help
+// Download a container with all the tools from Docker hub
+docker pull sebomux/turborav
+// Start the container with your local repository mounted from the container.
+docker run -v /absolute/path/to/turborav/repo/on/your/machine:/mnt/turborav -it sebomux/turborav
+// Run a RISC-V test for addition, and see build system usage.
+scons build/test/riscv/add && scons --help
 ```
 
 Peruse the issue-tracker to see if there is anything that interests
 you or create your own issue based on what you want to contribute
 with. But most importantly; have fun!
+
+## Tool flow
+The tool flow is quite involved, luckily how to use the tools is encoded into the build system, and all the tools are found pre-installed in a docker container.
+![](https://docs.google.com/drawings/d/1R1S3EaMNbQhiivbtGhVuwwE5PzFvSRuUj1LCNBwp3wo/pub?w=1884&h=1553)
 
 ## Development
 
@@ -42,3 +50,7 @@ is used to find out where things are going wrong and then the Chisel code is
 edited with the powerful IntelliJ IDE. Pretty neat huh?
 
 ![](/hw/doc/development_environment.jpg?raw=true)
+
+Copyright (C) 2015 Sebastian Bøe, Joakim Andersson
+
+License: BSD 2-Clause (see LICENSE for details)

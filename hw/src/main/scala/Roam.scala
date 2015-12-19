@@ -1,3 +1,6 @@
+// Copyright (C) 2015 Sebastian Bøe, Joakim Andersson
+// License: BSD 2-Clause (see LICENSE for details)
+
 package TurboRav
 
 import Chisel._
@@ -26,34 +29,39 @@ class Roam(elf_path: String, fpga: Boolean) extends Module {
   val rom = Module(new Rom(elf_path))
   val ram = Module(if (fpga) new FpgaRam() else new Ram())
 
-  val mem_reading_rom =
-    io.mem.rr.request.valid && isRomAddress(io.mem.rr.request.bits.addr)
+  // Alias for the memory request and response
+  val request  = io.mem.rr.request
+  val response = io.mem.rr.response
 
-  val mem_reading_ram =
-    io.mem.rr.request.valid && isRamAddress(io.mem.rr.request.bits.addr)
-
-  val mem_requesting_mmio =
-    io.mem.rr.request.valid && isApbAddress(io.mem.rr.request.bits.addr)
+  val mem_reading_rom     = request.valid && isRomAddress(request.bits.addr)
+  val mem_reading_ram     = request.valid && isRamAddress(request.bits.addr)
+  val mem_requesting_mmio = request.valid && isApbAddress(request.bits.addr)
 
   rom.io.pc := Mux(
     mem_reading_rom,
-    io.mem.rr.request.bits.addr,
+    request.bits.addr,
     io.fch.request.bits.addr
   )
 
-  ram.io.addr    := io.mem.rr.request.bits.addr
-  ram.io.word_w  := io.mem.rr.request.bits.wdata
-  ram.io.byte_en := io.mem.rr.request.bits.byte_en
-  ram.io.wen     := io.mem.rr.request.valid &&  io.mem.rr.request.bits.write
-  ram.io.ren     := io.mem.rr.request.valid && !io.mem.rr.request.bits.write
+  rom.io.byte_en := Mux(
+    mem_reading_rom,
+    request.bits.byte_en,
+    UInt(0)
+  )
+
+  ram.io.addr    := request.bits.addr
+  ram.io.word_w  := request.bits.wdata
+  ram.io.byte_en := request.bits.byte_en
+  ram.io.wen     := request.valid &&  request.bits.write
+  ram.io.ren     := request.valid && !request.bits.write
 
   // Since the memory stage has priority over the fetch stage and both
   // the ROM and the RAM have single-cycle access the response valid
   // signal becomes equivalent to the request valid signal.
-  io.mem.rr.response.valid     := Mux(mem_requesting_mmio,
+  response.valid     := Mux(mem_requesting_mmio,
                                    io.rr_mmio.response.valid,
-                                   io.mem.rr.request.valid)
-  io.mem.rr.response.bits.word := MuxCase(ram.io.word_r, Array(
+                                   request.valid)
+  response.bits.word := MuxCase(ram.io.word_r, Array(
     mem_reading_rom     -> (rom.io.instr),
     mem_requesting_mmio -> (io.rr_mmio.response.bits.word)
   ))
@@ -62,6 +70,6 @@ class Roam(elf_path: String, fpga: Boolean) extends Module {
   io.fch.response.bits.word  := rom.io.instr
   io.fch.response.valid      := ! mem_reading_rom && io.fch.request.valid
 
-  io.rr_mmio.request.bits  := io.mem.rr.request.bits
+  io.rr_mmio.request.bits  := request.bits
   io.rr_mmio.request.valid := mem_requesting_mmio
 }

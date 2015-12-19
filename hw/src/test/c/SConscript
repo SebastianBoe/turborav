@@ -1,0 +1,49 @@
+import os
+
+Import('startup_file riscv_program_env turborav_jar sim_env')
+
+c_sim_env = sim_env.Clone(
+    MODULE     = "Riscvtest",
+    TOP_MODULE = "Soc"
+)
+
+modules = [
+    "timer",
+    "sanity",
+    "syscalls"
+]
+
+c_test_env = riscv_program_env.Clone()
+c_test_env.Append(CPPPATH = ["modules"])
+for test_suite in [Dir("modules/" + d) for d in modules]:
+    test_suite_lib_dir = test_suite.Dir(".lib")
+    c_test_env.Append(CPPPATH = test_suite_lib_dir)
+    for test in test_suite.glob("*.c"):
+        program = c_test_env.Program(
+            [
+                test,
+                "modules/tr.c",
+                "modules/unit.c",
+                test_suite_lib_dir.glob("*.c"),
+                "syscalls.c",
+                startup_file
+            ]
+        )[0]
+        Depends(program, c_test_env["LINKER_SCRIPT"])
+
+        # Generate disassembly for debugging
+        riscv_program_env.Command(
+            str(program) + ".dis",
+            program,
+            """riscv64-unknown-elf-objdump \
+            -DS -M no-aliases -M numeric \
+            $SOURCE > $TARGET"""
+        )
+
+        target_dir = str(program.path) + "_dir"
+        c_sim_env.Simulate(
+            "#" + target_dir + "/jenkins.xml",
+            [turborav_jar, program],
+            TARGET_DIR = target_dir,
+            ROM = program.path
+        )

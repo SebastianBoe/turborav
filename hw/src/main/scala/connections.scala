@@ -1,3 +1,6 @@
+// Copyright (C) 2015 Sebastian Bøe, Joakim Andersson
+// License: BSD 2-Clause (see LICENSE for details)
+
 package TurboRav
 
 import Chisel._
@@ -12,12 +15,23 @@ class FetchIO() extends Bundle {
   val hdu_fch = new HazardDetectionUnitFetch().flip()
 
   val rr_io = new RequestResponseIo()
+
+  def kill(){
+    fch_dec.kill()
+    rr_io.kill()
+  }
 }
 
 class FetchDecode() extends Bundle {
   val instr_valid = Bool(OUTPUT)
   val instr       = UInt(OUTPUT, INSTRUCTION_WIDTH)
   val pc          = UInt(OUTPUT, Config.xlen)
+
+  def kill(){
+    instr_valid := Bool(false)
+    instr       := UInt(0)
+    pc          := UInt(0)
+  }
 }
 
 ////////////////////////////////////////
@@ -38,14 +52,12 @@ class DecodeExecute() extends Bundle {
   val imm     = UInt(OUTPUT, Config.xlen)
   val rd_addr = UInt(OUTPUT, 5)
   val pc      = UInt(OUTPUT, Config.xlen)
-  val pc_sel  = Bits(INPUT,  PC_SEL_WIDTH)
 
   val exe_ctrl = new ExecuteCtrl()
   val mem_ctrl = new MemoryCtrl()
   val wrb_ctrl = new WritebackCtrl()
 
-  def kill()
-  {
+  def kill() {
     exe_ctrl.kill()
     wrb_ctrl.kill()
     mem_ctrl.kill()
@@ -63,6 +75,11 @@ class ExecuteIO() extends Bundle {
   val mem_exe = new MemoryExecute().flip()
   val wrb_exe = new WritebackExecute().flip()
   val hdu_exe = new HazardDetectionUnitExecute().flip()
+
+  def kill() {
+    exe_mem.kill()
+    exe_fch.kill()
+  }
 }
 
 class ExecuteCtrl() extends Bundle {
@@ -73,7 +90,7 @@ class ExecuteCtrl() extends Bundle {
   val mult_func    = Bits(OUTPUT, MULT_FUNC_WIDTH)
   val mult_enable  = Bool(OUTPUT)
 
-  def kill(){
+  def kill() {
     bru_func := BNOT
     mult_enable := Bool(false)
   }
@@ -88,16 +105,20 @@ class ExecuteMemory() extends Bundle {
   val mem_ctrl = new MemoryCtrl()
   val wrb_ctrl = new WritebackCtrl()
 
-  def kill()
-  {
+  def kill() {
     mem_ctrl.kill()
     wrb_ctrl.kill()
   }
 }
 
 class ExecuteFetch() extends Bundle {
-  val pc_sel = Bits(OUTPUT, PC_SEL_WIDTH)
+  val branch_taken = Bool(OUTPUT)
   val pc_alu = UInt(OUTPUT, Config.xlen)
+
+  def kill() {
+    pc_alu := UInt(0)
+    branch_taken := Bool(false)
+  }
 }
 
 ////////////////////////////////////////
@@ -197,7 +218,7 @@ class ForwardingExecute() extends Bundle {
   val rs2_sel  = UInt(OUTPUT, RS_SEL_WIDTH)
 }
 
-class ForwardingMemory()extends Bundle {
+class ForwardingMemory() extends Bundle {
   val rd_addr = UInt(INPUT, 5)
   val rd_wen  = Bool(INPUT)
 }
@@ -219,21 +240,22 @@ class HazardDetectionUnitIO() extends Bundle {
 }
 
 class HazardDetectionUnitFetch() extends Bundle {
-  val instr_valid= Bool(INPUT)
-
   val stall = Bool(OUTPUT)
 }
 
 class HazardDetectionUnitDecode() extends Bundle {
   val stall = Bool(OUTPUT)
+  val flush = Bool(OUTPUT)
 }
 
 class HazardDetectionUnitExecute extends Bundle {
-  val mult_busy = Bool(INPUT)
-  val rs1_addr  = UInt(INPUT, 5)
-  val rs2_addr  = UInt(INPUT, 5)
+  val mult_busy    = Bool(INPUT)
+  val branch_taken = Bool(INPUT)
+  val rs1_addr     = UInt(INPUT, 5)
+  val rs2_addr     = UInt(INPUT, 5)
 
-  val stall     = Bool(OUTPUT)
+  val stall = Bool(OUTPUT)
+  val flush = Bool(OUTPUT)
 }
 
 class HazardDetectionUnitMemory extends Bundle {

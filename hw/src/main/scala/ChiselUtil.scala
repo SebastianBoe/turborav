@@ -1,3 +1,6 @@
+// Copyright (C) 2015 Sebastian Bøe, Joakim Andersson
+// License: BSD 2-Clause (see LICENSE for details)
+
 package TurboRav
 
 import Chisel._
@@ -20,6 +23,13 @@ object ClearIfDisabled {
 object Any {
   def apply[T <: Data](mod: T, mods: T*): Bool = apply(mod :: mods.toList)
   def apply[T <: Data](mods: Seq[T]):     Bool = orR(Cat(mods))
+}
+
+// Has the same signature as Cat, except that it returns a
+// Bool. Returns true iff all bits given as an argument are high.
+object All {
+  def apply[T <: Data](mod: T, mods: T*): Bool = apply(mod :: mods.toList)
+  def apply[T <: Data](mods: Seq[T]):     Bool = andR(Cat(mods))
 }
 
 /*

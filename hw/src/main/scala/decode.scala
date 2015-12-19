@@ -62,11 +62,26 @@ class Decode extends Module {
 
   val fch_dec = Reg(init = new FetchDecode())
 
+  val flushed_pipeline = new FetchDecode()
+
   when(io.hdu_dec.stall){
+    // Create a bubble when stalling.
     io.dec_exe.kill()
-  } .otherwise {
-    fch_dec := io.fch_dec
+    // TODO: The bubble should result in a NOP, bru_func should have
+    // the value BNOT.
   }
+
+  // Default to writing the input values to the pipeline register
+  // fch_dec. But when flushing, the pipeline register should be
+  // cleared, and when stalling the inputs should be ignored and the
+  // pipeline register should not be updated
+  fch_dec := MuxCase(
+    io.fch_dec,
+    Array(
+      io.hdu_dec.flush -> flushed_pipeline,
+      io.hdu_dec.stall -> fch_dec
+    )
+  )
 
   val rs1_addr   = fch_dec.instr(19, 15)
   val rs2_addr   = fch_dec.instr(24, 20)
@@ -171,19 +186,19 @@ class Decode extends Module {
   dec_exe.mem_ctrl.read  := isLoad(opcode)
 
   dec_exe.wrb_ctrl.rd_wen :=
-    rd_addr != UInt(0) && Any(
+    rd_addr =/= UInt(0) && Any(
       isLoad(opcode),
       isRegop(opcode),
       isUpper(opcode),
       isJump(opcode)
   )
 
-  dec_exe.wrb_ctrl.rd_sel := Mux(isJump(opcode), RD_PC,
-                             Mux(isLoad(opcode), RD_MEM,
-                                                 RD_ALU))
-
-  when(!fch_dec.instr_valid || io.dec_exe.pc_sel === PC_SEL_BRJMP) {
-    io.dec_exe.kill()
-  }
-
+  dec_exe.wrb_ctrl.rd_sel :=
+    MuxCase(
+      RD_ALU,
+      Array(
+        isJump(opcode) -> RD_PC,
+        isLoad(opcode) -> RD_MEM
+      )
+    )
 }

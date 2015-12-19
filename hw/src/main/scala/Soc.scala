@@ -1,3 +1,6 @@
+// Copyright (C) 2015 Sebastian Bøe, Joakim Andersson
+// License: BSD 2-Clause (see LICENSE for details)
+
 package TurboRav
 
 import Chisel._
@@ -52,20 +55,8 @@ class Soc(
     slave.getApbSlaveIo.in  := apbController.io.in
   }
 
-  apbController.io.out.rdata := PriorityMux(
+  apbController.io.out := PriorityMux(
     sel = apbController.io.selx,
-    in  = apb_slaves map (_.getApbSlaveIo.out.rdata)
+    in  = apb_slaves map (_.getApbSlaveIo().out)
   )
-  apbController.io.out.ready := PriorityMux(
-    sel = apbController.io.selx,
-    in  = apb_slaves map (_.getApbSlaveIo.out.ready)
-  )
-
-  // TODO: Remove the above redundancy by figuring out how to do this
-  // on a Bundle. Why doesn't the below work?
-
-  // apbController.io.out := PriorityMux(
-  //   sel = apbController.io.selx,
-  //   in  = apb_slaves map (_.io.apb_slave.out)
-  // )
 }

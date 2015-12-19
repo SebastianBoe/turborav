@@ -2,9 +2,6 @@ package TurboRav
 
 import Chisel._
 import scala.math.BigInt
-import scala.xml.PrettyPrinter
-import org.apache.commons.io.FileUtils
-import java.io.File
 
 /**
   A testbench for simulating tests in the riscv-tests repo.
@@ -13,15 +10,16 @@ import java.io.File
   failure and is able to stop the test execution once a test pass or
   failure has been detected.
   */
-class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
+class RiscvTest(c: Soc, test_name: String)
+extends JUnitTester(c, isTrace = false) {
   while(getTestStatus() == Running)
   {
+    possiblySimulatePutchar()
     step(1)
   }
   expect(getTestStatus() == Passed, "")
 
   val error_msg = "Failed test #%d".format( peekAt(c.ravv.dec.regbank.regs, 28 ) )
-  generateXmlForJenkins(error_msg)
 
   println("")
   printRegs()
@@ -31,11 +29,31 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
   private def getTestStatus() : TestStatus = {
     val TestPassInstr = ScalaUtil.hex2dec("51e0d073")
     val TestFailInstr = ScalaUtil.hex2dec("51ee1073")
-    peek(c.ravv.dec.fch_dec.instr) match {
+    getCurrentInstruction() match {
       case TestPassInstr => Passed
       case TestFailInstr => Failed
       case _ => Running
     }
+  }
+
+  private def possiblySimulatePutchar() {
+    if(magicPutcharInstructionFound()) {
+      print(getPutcharFunctionArgument().toChar)
+    }
+  }
+
+  private def magicPutcharInstructionFound() = {
+    getCurrentInstruction() == ScalaUtil.hex2dec("51ee9073")
+  }
+
+  private def getCurrentInstruction() : BigInt = { peek(c.ravv.dec.fch_dec.instr) }
+
+  private def getPutcharFunctionArgument() : BigInt = {
+    // The register is 10 because x10 maps to a0, and a0 is where the
+    // first argument of a function is stored. See "RISC-V calling
+    // convention".
+    val register = 10
+    peekAt(c.ravv.dec.regbank.regs, register)
   }
 
   private def printRegs() {
@@ -69,20 +87,8 @@ class RiscvTest(c: Soc, test_name: String) extends Tester(c, isTrace = false) {
     println("")
   }
 
-  private def generateXmlForJenkins(error_msg: String) {
-    val file_name = "%s/jenkins.xml" format(test_name)
-    val file_contents = new PrettyPrinter(80, 2).format(
-      <testsuite>
-        <testcase classname={test_name}>
-        {if (ok) "" else <failure type="a_type">{error_msg}</failure>}
-        </testcase>
-      </testsuite>
-    ) + "\n"
-
-    FileUtils.writeStringToFile(
-      new File(file_name),
-      file_contents
-    )
+  override def getTestName: String = {
+    test_name
   }
 }
 
