@@ -63,9 +63,12 @@ class Decode extends Module {
   val fch_dec = Reg(init = new FetchDecode())
 
   when(io.hdu_dec.stall){
+    // Create a bubble when stalling.
     io.dec_exe.kill()
   } .otherwise {
     fch_dec := io.fch_dec
+    // TODO: The bubble should result in a NOP, bru_func should have
+    // the value BNOT.
   }
 
   val rs1_addr   = fch_dec.instr(19, 15)
