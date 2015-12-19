@@ -22,28 +22,60 @@ REGION_ALIAS("REGION_RODATA", ROM);
 REGION_ALIAS("REGION_DATA"  , RAM);
 REGION_ALIAS("REGION_BSS"   , RAM);
 
+ENTRY( _crt0 )
+
 SECTIONS
 {
     .text :
     {
+        */crt0.o(.custom_startup_file_section)
         *(.text.startup)
         *(.text)
+        *(.text.*)
     } > REGION_TEXT
+
     .rodata :
     {
         *(.rodata)
+        *(.rodata.*)
+	    *(.srodata.*)
         rodata_end = .;
     } > REGION_RODATA
-    .data : AT (rodata_end)
+
+    .eh_frame   : { *(.eh_frame   ) } > ROM
+    .jcr        : { *(.jcr        ) } > ROM
+    .fini_array : { *(.fini_array ) } > ROM
+    .init_array : { *(.init_array ) } > ROM
+
+    rom_data_end = .;
+
+    /* Writable small data segment */
+	.sdata : AT (rom_data_end)
+	{
+        initialized_data_start = .;
+        *(.sdata)
+	    *(.sdata.*)
+        sdata_end = .;
+	} > RAM
+
+    .data : AT ( ADDR (.init_array) + SIZEOF (.sdata) + SIZEOF (.init_array) )
     {
-        data_start = .;
         *(.data)
-        data_end = .;
+        initialized_data_end = .;
     } > REGION_DATA
-    data_size = SIZEOF(.data);
-    data_load_start = LOADADDR(.data);
+
+    initialized_data_size = SIZEOF(.data) + SIZEOF(.sdata);
+    initialized_data_load_start = LOADADDR(.sdata);
+
     .bss :
     {
+        _fbss = .;
         *(.bss)
     } > REGION_BSS
+
+    _end = . ;
+
+    // Calculate what the last address of the RAM is so we can use it
+    // as a stack pointer.
+    ram_end = ORIGIN(RAM) + LENGTH(RAM) ;
 }

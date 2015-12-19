@@ -19,5 +19,10 @@ SConscript(
 )
 
 SConscript(
+    "c/SConscript",
+    exports = 'riscv_program_env startup_file turborav_jar sim_env'
+)
+
+SConscript(
     "lint/SConscript"
 )

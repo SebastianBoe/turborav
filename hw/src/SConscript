@@ -29,33 +29,40 @@ turborav_jar = Command(
     -C build/scala/classes TurboRav""".format(CLASSPATH)
 )[0]
 
-COMMON_FLAGS = (" -m32"
-                " -Wa,-march=RVIMAFDXhwacha "
-                " -nostdlib "
-                " --std=gnu11"
+COMMON_FLAGS = (
+                " -O3 "
+                " -Os "
 )
 
 CCFLAGS = COMMON_FLAGS + \
           (" -static"
-           " -nostartfiles"
-           " -ffreestanding"
            " -c"
+           " -m32"
+           " -Wa,-march=RVIMAFDXhwacha "
+           " --std=gnu11 "
+)
+
+LINKER_FLAGS = (" -T$LINKER_SCRIPT "
+                " -m elf32lriscv "
+                " -Map=${TARGET}.map "
 )
 
 CC = 'riscv64-unknown-elf-gcc'
+LD = 'riscv64-unknown-elf-ld'
 
 linker_script = SConscript("linker_script/SConscript")
 
 riscv_program_env = Environment(
+    ENV = os.environ,
+    CC = CC,
+    AS = CC,
+    LINK = LD,
+    LIBS = File("/opt/riscv/riscv64-unknown-elf/lib/soft-float/32/no-atomic/libc.a"),
+    CCFLAGS = CCFLAGS,
+    ASFLAGS = CCFLAGS,
+    LINKFLAGS = COMMON_FLAGS + LINKER_FLAGS,
+    LINKER_SCRIPT = linker_script
 )
-riscv_program_env['ENV'] = os.environ
-riscv_program_env['CC'] = CC
-riscv_program_env['AS'] = CC
-riscv_program_env['LD'] = CC
-riscv_program_env['CCFLAGS'] = CCFLAGS
-riscv_program_env['ASFLAGS'] = CCFLAGS
-riscv_program_env['LINKFLAGS'] = COMMON_FLAGS + " -T$LINKER_SCRIPT "
-riscv_program_env['LINKER_SCRIPT'] = File("linker_script/turborav.ld")
 
 startup_file = SConscript(
     "misc/SConscript",

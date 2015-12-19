@@ -1,28 +1,61 @@
-.section .text.startup
+/*
+    In this startup program we do a memcpy to copy initialized data
+	from the ROM to RAM. Also, we initialize the stack pointer to the
+	end of the RAM.
+*/
+
+    .section .custom_startup_file_section
+    .global _crt0
 _crt0:
-    lui	x1,   %hi(data_start)
-	add	x1,x1,%lo(data_start)
+    /* Initialize the global pointer (x3)*/
+	/*  NB: Hardcodes the assumption that the initialized data starts */
+	/*  at 0x1000_0000 */
+    lui gp,0x10000
 
-	lui	x2,   %hi(data_load_start)
-	add	x2,x2,%lo(data_load_start)
+    /* Initialize the stack pointer */
+    lui	x2,   %hi(ram_end)
+	add	x2,x2,%lo(ram_end)
 
-    beq	x1,x2,_start
+    add x28, gp, 0
 
-	lui	x3,   %hi(data_size)
-	add	x3,x3,%lo(data_size)
+	lui	x29,   %hi(initialized_data_load_start)
+	add	x29,x29,%lo(initialized_data_load_start)
 
-	lui	x6,   %hi(data_end)
-	add	x6,x6,%lo(data_end)
+    beq	x28,x29,main
 
-    beq	x6,x1,_start
+	lui	x30,   %hi(initialized_data_size)
+	add	x30,x30,%lo(initialized_data_size)
 
-    add x5, x0, x0
+    /* x6 contains initialized_data_end */
+    add x6, x30, gp
+
+    beq	x6,x28,main
+
+    add x31, x0, x0
 memcpy_loop:
-    lw x4, 0(x2)
-    sw x4, 0(x1)
-    add x2, x2, 4
-    add x1, x1, 4
-    add x5, x5, 4
-    bne x5, x3, memcpy_loop
+    lw x5, 0(x29)
+    sw x5, 0(x28)
+    add x29, x29, 4
+    add x28, x28, 4
+    add x31, x31, 4
+    bne x31, x30, memcpy_loop
 
+    j main
+
+/*
+ If a main function has not been defined, create one that jumps to
+ _start. This is useful for programs without a main function like
+ the RISC-V assembly test.
+*/
+    .weak main
+main:
+    j _start
+
+/*
+ This assembly routine should never be needed at runtime, but is
+ needed at compile time by the main assembly routine. _start should
+ be provided by riscv tests.
+*/
+    .weak _start
+_start:
     j _start
