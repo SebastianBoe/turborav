@@ -26,12 +26,20 @@ class Execute extends Module {
   // Default to pipelining decode's values.
   io.exe_mem := dec_exe
 
-  // But if we stall then insert a bubble by killing exe_mem.
+  val flushed_pipeline = new DecodeExecute()
+  flushed_pipeline.exe_ctrl.bru_func := BNOT
+
   when(io.hdu_exe.stall){
-    io.exe_mem.kill()
-  } .otherwise {
-    dec_exe := io.dec_exe
+    io.kill()
   }
+
+  dec_exe := MuxCase(
+    io.dec_exe,
+    Array(
+      io.hdu_exe.flush -> flushed_pipeline,
+      io.hdu_exe.stall -> dec_exe
+    )
+  )
 
   val ctrl = dec_exe.exe_ctrl
   val zero = UInt(0, width = Config.xlen)
@@ -61,10 +69,6 @@ class Execute extends Module {
   bru.io.in_a := rs1
   bru.io.in_b := rs2
   bru.io.func := ctrl.bru_func
-  val pc_sel = Mux(bru.io.take,
-                           PC_SEL_BRJMP,
-                           PC_SEL_PC_PLUS4)
-
 
   val mult_enable = dec_exe.exe_ctrl.mult_enable
   val mult_func = dec_exe.exe_ctrl.mult_func
@@ -98,13 +102,12 @@ class Execute extends Module {
     )
 
   io.exe_fch.pc_alu := alu.io.out
-  io.exe_fch.pc_sel := pc_sel
-  io.dec_exe.pc_sel := pc_sel
+  io.exe_fch.branch_taken := bru.io.take
+
+  io.hdu_exe.branch_taken := bru.io.take
 
   io.fwu_exe.rs1_addr := dec_exe.rs1_addr
   io.fwu_exe.rs2_addr := dec_exe.rs2_addr
-  io.dec_exe.pc_sel   := bru.io.take
-
   io.hdu_exe.rs1_addr := dec_exe.rs1_addr
   io.hdu_exe.rs2_addr := dec_exe.rs2_addr
 

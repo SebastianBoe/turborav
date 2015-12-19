@@ -52,7 +52,6 @@ class DecodeExecute() extends Bundle {
   val imm     = UInt(OUTPUT, Config.xlen)
   val rd_addr = UInt(OUTPUT, 5)
   val pc      = UInt(OUTPUT, Config.xlen)
-  val pc_sel  = Bits(INPUT,  PC_SEL_WIDTH)
 
   val exe_ctrl = new ExecuteCtrl()
   val mem_ctrl = new MemoryCtrl()
@@ -113,11 +112,12 @@ class ExecuteMemory() extends Bundle {
 }
 
 class ExecuteFetch() extends Bundle {
-  val pc_sel = Bits(OUTPUT, PC_SEL_WIDTH)
+  val branch_taken = Bool(OUTPUT)
   val pc_alu = UInt(OUTPUT, Config.xlen)
 
   def kill() {
     pc_alu := UInt(0)
+    branch_taken := Bool(false)
   }
 }
 
@@ -240,21 +240,22 @@ class HazardDetectionUnitIO() extends Bundle {
 }
 
 class HazardDetectionUnitFetch() extends Bundle {
-  val instr_valid= Bool(INPUT)
-
   val stall = Bool(OUTPUT)
 }
 
 class HazardDetectionUnitDecode() extends Bundle {
   val stall = Bool(OUTPUT)
+  val flush = Bool(OUTPUT)
 }
 
 class HazardDetectionUnitExecute extends Bundle {
   val mult_busy    = Bool(INPUT)
+  val branch_taken = Bool(INPUT)
   val rs1_addr     = UInt(INPUT, 5)
   val rs2_addr     = UInt(INPUT, 5)
 
   val stall = Bool(OUTPUT)
+  val flush = Bool(OUTPUT)
 }
 
 class HazardDetectionUnitMemory extends Bundle {
