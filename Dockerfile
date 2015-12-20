@@ -7,10 +7,13 @@ RUN pacman --noconfirm -S \
     gtkwave \
     java-commons-io \
     java-environment \
+    libftdi \
+    mercurial \
     python-pint \
     sbt \
     scala \
     scons \
+    tcl \
     && \
     pacman --noconfirm -Scc # Clean pacman cache before committing
 
@@ -21,10 +24,13 @@ RUN pacman --noconfirm -S \
 # git               # Retrieves external dependencies
 # java-commons-io   # Makes it easier to manipulate files from Scala
 # java-environment  # Creates jars
+# libftdi           # Needed by icestorm to flash netlists
+# mercurial         # Needed by Yosys when installing abc
 # python-pint       # Does unit conversion for statistics like slice usage
 # sbt               # Builds Chisel
 # scala             # Runs Chisel programs
 # scons             # Builds turborav
+# tcl               # Needed by Yosys
 
 
 # Download the RISC-V toolchain from github and build from source
@@ -72,6 +78,36 @@ RUN git clone https://aur.archlinux.org/chisel-git.git \
 USER root
 RUN pacman -U --noconfirm chisel-git/chisel-git*pkg*
 
+# Install FPGA synthesis tools from the AUR
+WORKDIR /home/turbo
+
+# Build and install icestorm
+USER turbo
+RUN git clone https://aur.archlinux.org/icestorm-git.git \
+    && cd icestorm-git \
+    && makepkg
+USER root
+RUN pacman -U --noconfirm icestorm-git/icestorm-git*pkg*
+
+# Build Yosys
+ENV YOSYS_REVISION ab0c44d3ed81f71cb0c6ff844679110cc27b38ad
+USER turbo
+RUN git clone https://aur.archlinux.org/yosys-git.git \
+    && cd yosys-git \
+    && sed -i "s yosys\.git yosys\.git#commit=$YOSYS_REVISION " PKGBUILD \
+    && makepkg
+
+# Build Arachne-pnr
+ENV ARACHNE_PNR_REVISION eb7876bcfa20508075760723e7afc170e06abab6
+RUN git clone https://aur.archlinux.org/arachne-pnr-git.git \
+    && cd arachne-pnr-git \
+    && sed -i "s arachne-pnr\.git arachne-pnr\.git#commit=$ARACHNE_PNR_REVISION " PKGBUILD \
+    && makepkg
+
+# Install Yosys and Arachne-pnr
+USER root
+RUN pacman -U --noconfirm yosys-git/yosys-git*pkg*
+RUN pacman -U --noconfirm arachne-pnr-git/arachne-pnr-git*pkg*
 
 # Assume user is going to be mounting his local repo at /mnt/turborav
 WORKDIR /mnt/turborav/hw
