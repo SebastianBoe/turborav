@@ -25,10 +25,7 @@ SConscript(
     exports = "synth_env soc_v"
 )
 
-log = File("yosys.log")
-yosys_env = Environment(YOSYS_LOG = log)
-Command(
-    ["Soc.blif", log],
-    soc_v,
-    'yosys -p "synth_ice40 -noflatten" $SOURCE > $YOSYS_LOG'
+SConscript(
+    "yosys/SConscript",
+    exports = "synth_env soc_v"
 )
