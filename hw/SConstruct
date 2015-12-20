@@ -3,16 +3,16 @@ import subprocess
 import multiprocessing
 
 Help("""Type:
-'scons build/test'                      to run all tests,
-'scons build/test/riscv/'               to run all riscv tests,
-'scons build/test/riscv/add'            to run the riscv add test,
-'scons build/test/unit/'                to run all unit tests,
-'scons build/test/unit/Alu'             to run the Alu test from src/test/scala,
-'scons build/test/lint'                 to lint the scala code,
-'scons build/synthesis/Soc.v'           to generate verilog code,
-'scons build/synthesis/turborav.bit'    to generate a netlist,
-'scons build/synthesis/programming.log' to program a netlist,
-'scons build'                           to build everything.
+'scons build/test'                             run all tests,
+'scons build/test/riscv/'                      run all riscv tests,
+'scons build/test/riscv/add'                   run the riscv add test,
+'scons build/test/unit/'                       run all unit tests,
+'scons build/test/unit/Alu'                    run the Alu test from src/test/scala,
+'scons build/test/lint'                        lint the scala code,
+'scons build/synthesis/Soc.v'                  generate verilog code,
+'scons build/synthesis/xilinx/turborav.bit'    generate a netlist,
+'scons build/synthesis/xilinx/programming.log' program a netlist,
+'scons build'                                  build everything.
 
 All build targets are files, or directories of files that can
 be "built" by the build system. Even programming a netlist is

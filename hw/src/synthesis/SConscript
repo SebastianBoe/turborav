@@ -20,43 +20,9 @@ soc_v = synth_env.Command(
     )
 )[0]
 
-# Synthesis
-Command(
-    "design_routed.ncd",
-    [
-        soc_v,
-        'Makefile',
-        'turborav.ucf',
-        'turborav.ut'
-    ],
-    'make --dir=build/synthesis HDL_FILE=Soc.v design_routed.ncd'
-)
-SideEffect("design_routed.par", "design_routed.ncd")
-
-Command(
-    "turborav.bit",
-    "design_routed.ncd",
-    'make --dir=build/synthesis HDL_FILE=Soc.v turborav.bit'
-)
-
-Command(
-    "programming.log",
-    "turborav.bit",
-    'make --dir=build/synthesis HDL_FILE=Soc.v program'
-)
-
-Command(
-    "slices.txt",
-    "design_routed.par",
-    "awk '/Number of Slices/{ printf \"YVALUE=%s\", $4 }' $SOURCE > $TARGET"
-)
-
-Command(
-    "timing.txt",
-    ["design_routed.par", "period_to_frequency.py"],
-    """echo -n "YVALUE=" > $TARGET && awk -F \"|\" '/NET \"clk_/{ print $4 }' $SOURCE |\
-    python build/synthesis/period_to_frequency.py >> $TARGET
-    """
+SConscript(
+    "xilinx/SConscript",
+    exports = "synth_env soc_v"
 )
 
 log = File("yosys.log")
