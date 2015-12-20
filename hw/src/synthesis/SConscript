@@ -1,7 +1,13 @@
+import os
+
 Import('turborav_jar CLASSPATH default_program')
 
+synth_env = Environment(
+    ENV = os.environ
+)
+
 # Verilog code generation of build/synthesis/Soc.v
-soc_v = Command(
+soc_v = synth_env.Command(
     "Soc.v",
     [turborav_jar, default_program],
     """scala \
