@@ -44,11 +44,12 @@ class DecodeIO() extends Bundle {
   val hdu_dec = new HazardDetectionUnitDecode().flip()
 }
 
-  val rs1_addr= UInt(OUTPUT, 5)
-  val rs1     = UInt(OUTPUT, Config.xlen)
-  val rs2_addr= UInt(OUTPUT, 5)
-  val rs2     = UInt(OUTPUT, Config.xlen)
 class DecodeExecute extends Bundle {
+  val rs1_addr = UInt(OUTPUT, 5)
+  val rs1      = UInt(OUTPUT, Config.xlen)
+  val rs2_addr = UInt(OUTPUT, 5)
+  val rs2      = UInt(OUTPUT, Config.xlen)
+
   val imm     = UInt(OUTPUT, Config.xlen)
   val rd_addr = UInt(OUTPUT, 5)
   val pc      = UInt(OUTPUT, Config.xlen)
@@ -197,9 +198,7 @@ class WritebackExecute() extends Bundle {
 }
 
 class WritebackDecode() extends Bundle {
-  val rd_wen  = Bool(OUTPUT)
-  val rd_data = UInt(OUTPUT, Config.xlen)
-  val rd_addr = UInt(OUTPUT, 5)
+  val reg_write = Valid(new RegWrite())
 }
 
 
@@ -269,4 +268,9 @@ class HazardDetectionUnitMemory extends Bundle {
 
 class HazardDetectionUnitWriteback extends Bundle {
   val stall = Bool(OUTPUT)
+}
+
+class RegWrite extends Bundle {
+  val addr = UInt(INPUT, 5)
+  val data = UInt(INPUT, Config.xlen)
 }

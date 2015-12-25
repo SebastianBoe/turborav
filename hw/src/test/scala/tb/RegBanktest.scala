@@ -5,21 +5,21 @@ import Chisel._
 class RegBankTest(c: RegBank) extends JUnitTester(c) {
   val xlen = Config.xlen
   private def read1(rx: Int, data: BigInt) = {
-    poke(c.io.rs1_addr, rx)
+    poke(c.io.reads.rs1.bits, rx)
     expect(c.io.rs1_data, data)
   }
 
   private def read2(rx: Int, data: BigInt) = {
-    poke(c.io.rs2_addr, rx)
+    poke(c.io.reads.rs2.bits, rx)
     expect(c.io.rs2_data, data)
   }
 
   private def write(rx: Int, data: BigInt)  = {
-    poke(c.io.rd_wen,  1)
-    poke(c.io.rd_addr, rx)
-    poke(c.io.rd_data,  data)
+    poke(c.io.write.valid,  1)
+    poke(c.io.write.bits.addr, rx)
+    poke(c.io.write.bits.data, data)
     step(1)
-    poke(c.io.rd_wen,  0)
+    poke(c.io.write.valid,  0)
   }
 
   val one = BigInt(1)

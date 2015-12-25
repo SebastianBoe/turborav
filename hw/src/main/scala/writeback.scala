@@ -14,7 +14,7 @@ class Writeback extends Module {
   unless(io.hdu_wrb.stall){
     mem_wrb := io.mem_wrb
   }
-  io.wrb_dec := mem_wrb
+  io.wrb_dec.reg_write.bits.addr := mem_wrb.rd_addr
 
   val ctrl = mem_wrb.wrb_ctrl
 
@@ -40,8 +40,8 @@ class Writeback extends Module {
 
   io.fwu_wrb.rd_addr := mem_wrb.rd_addr
 
-  io.wrb_dec.rd_data := rd_data
   io.wrb_exe.rd_data := rd_data
-  io.wrb_dec.rd_wen := mem_wrb.wrb_ctrl.rd_wen
   io.fwu_wrb.rd_wen := mem_wrb.wrb_ctrl.rd_wen
+  io.wrb_dec.reg_write.bits.data := rd_data
+  io.wrb_dec.reg_write.valid     := mem_wrb.wrb_ctrl.rd_wen
 }

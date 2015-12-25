@@ -4,11 +4,11 @@ import Chisel._
 
 class RegBank extends Module {
   val io = new Bundle(){
-    val rs1_addr = UInt(INPUT, 5)
-    val rs2_addr = UInt(INPUT, 5)
-    val rd_addr  = UInt(INPUT, 5)
-    val rd_wen   = Bool(INPUT)
-    val rd_data  = UInt(INPUT, Config.xlen)
+    val reads = new Bundle {
+      val rs1 = Valid(UInt(width = 5)).flip()
+      val rs2 = Valid(UInt(width = 5)).flip()
+    }
+    val write = Valid(new RegWrite()).flip()
 
     val rs1_data = UInt(OUTPUT, Config.xlen)
     val rs2_data = UInt(OUTPUT, Config.xlen)
@@ -16,18 +16,17 @@ class RegBank extends Module {
 
   val regs = Mem(UInt(width = Config.xlen), 32)
 
-  when (io.rd_wen && io.rd_addr =/= UInt(0)) {
-    regs(io.rd_addr) := io.rd_data
+  when (io.write.valid && io.write.bits.addr =/= UInt(0)) {
+    regs(io.write.bits.addr) := io.write.bits.data
   }
 
   io.rs1_data :=
-  Mux(io.rs1_addr === UInt(0),                 UInt(0, Config.xlen),
-  Mux(io.rs1_addr === io.rd_addr && io.rd_wen, io.rd_data,
-                                               regs(io.rs1_addr)
-                                               ))
+  Mux(io.reads.rs1.bits === UInt(0),                              UInt(0, Config.xlen),
+  Mux(io.reads.rs1.bits === io.write.bits.addr && io.write.valid, io.write.bits.data,
+                                                                  regs(io.reads.rs1.bits)))
+
   io.rs2_data :=
-  Mux(io.rs2_addr === UInt(0),                 UInt(0, Config.xlen),
-  Mux(io.rs2_addr === io.rd_addr && io.rd_wen, io.rd_data,
-                                               regs(io.rs2_addr)
-                                               ))
+  Mux(io.reads.rs2.bits === UInt(0),                              UInt(0, Config.xlen),
+  Mux(io.reads.rs2.bits === io.write.bits.addr && io.write.valid, io.write.bits.data,
+                                                                  regs(io.reads.rs2.bits)))
 }
