@@ -4,7 +4,7 @@ Import('sim_env turborav_jar default_program CLASSPATH')
 
 sim_env['ROM'] = default_program
 
-for scala_tb_source_path in Glob("#build/test/scala/tb/*"):
+for scala_tb_source_path in Glob("#src/test/scala/tb/*"):
     base = basename(str(scala_tb_source_path))
     top_module = base.replace("test.scala", "")
     target_dir = Dir(top_module)
