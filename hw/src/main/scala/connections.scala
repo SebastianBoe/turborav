@@ -44,11 +44,11 @@ class DecodeIO() extends Bundle {
   val hdu_dec = new HazardDetectionUnitDecode().flip()
 }
 
-class DecodeExecute() extends Bundle {
   val rs1_addr= UInt(OUTPUT, 5)
   val rs1     = UInt(OUTPUT, Config.xlen)
   val rs2_addr= UInt(OUTPUT, 5)
   val rs2     = UInt(OUTPUT, Config.xlen)
+class DecodeExecute extends Bundle {
   val imm     = UInt(OUTPUT, Config.xlen)
   val rd_addr = UInt(OUTPUT, 5)
   val pc      = UInt(OUTPUT, Config.xlen)
@@ -58,6 +58,7 @@ class DecodeExecute() extends Bundle {
   val wrb_ctrl = new WritebackCtrl()
 
   def kill() {
+    // Shouldn't reg_write and reg_read also be killed?
     exe_ctrl.kill()
     wrb_ctrl.kill()
     mem_ctrl.kill()
