@@ -19,7 +19,7 @@ extends JUnitTester(c, isTrace = false) {
   }
   expect(getTestStatus() == Passed, "")
 
-  val error_msg = "Failed test #%d".format( peekAt(c.ravv.dec.regbank.regs, 28 ) )
+  val error_msg = "Failed test #%d".format( readReg(28) )
 
   println("")
   printRegs()
@@ -52,8 +52,7 @@ extends JUnitTester(c, isTrace = false) {
     // The register is 10 because x10 maps to a0, and a0 is where the
     // first argument of a function is stored. See "RISC-V calling
     // convention".
-    val register = 10
-    peekAt(c.ravv.dec.regbank.regs, register)
+    readReg(10)
   }
 
   private def printRegs() {
@@ -73,7 +72,7 @@ extends JUnitTester(c, isTrace = false) {
     val regs = Array.ofDim[BigInt](32)
 
     for(i <- 0 until 32){
-      regs(i) = peekAt(c.ravv.dec.regbank.regs, i)
+      regs(i) = readReg(i)
     }
 
     println("Register bank:")
@@ -89,6 +88,10 @@ extends JUnitTester(c, isTrace = false) {
 
   override def getTestName: String = {
     test_name
+  }
+
+  private def readReg(i: Int): BigInt = {
+    peekAt(c.ravv.dec.regbank.regs, i)
   }
 }
 
