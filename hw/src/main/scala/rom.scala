@@ -48,7 +48,7 @@ class Rom(elf_path: String) extends Module {
   private def parseRomContents(elf_path: String): Array[UInt] = {
     val elf_path_bin = s"$elf_path.bin"
     Seq(
-      "riscv64-unknown-elf-objcopy",
+      "/opt/riscv/bin/riscv64-unknown-elf-objcopy",
       "-O",
       "binary",
       elf_path,
