@@ -123,9 +123,9 @@ class Decode extends Module {
                   fch_dec.instr(24, 20))
 
   val regbank = Module(new RegBank())
-  regbank.io.rs1_addr := rs1_addr
-  regbank.io.rs2_addr := rs2_addr
-  io.wrb_dec <> regbank.io
+  regbank.io.reads.rs1.bits := rs1_addr
+  regbank.io.reads.rs2.bits := rs2_addr
+  regbank.io.write := io.wrb_dec.reg_write
 
   val dec_exe = io.dec_exe
   val exe_ctrl = dec_exe.exe_ctrl
