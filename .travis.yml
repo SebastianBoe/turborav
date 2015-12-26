@@ -7,4 +7,4 @@ before_install:
   - docker build -t travis - < Dockerfile
 
 script:
-  - docker run -v $TRAVIS_BUILD_DIR:/mnt/turborav travis scons build/test
+  - docker run --user=root -v $TRAVIS_BUILD_DIR:/mnt/turborav travis scons build/test
