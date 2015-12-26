@@ -4,7 +4,7 @@ import Chisel._
 import Constants._
 
 class DecodeTest(c: Decode) extends JUnitTester(c) {
-
+  /*
   private def signed(a: Long) = { a & 0x00000000ffffffffL }
 
   private def testFunc(instr: Long,
@@ -198,4 +198,5 @@ class DecodeTest(c: Decode) extends JUnitTester(c) {
   testUpper(auipc_instr2,          0, true)
   testUpper(lui_instr1,   0xfffff000, false)
   testUpper(lui_instr2,            0, false)
+  */
 }
