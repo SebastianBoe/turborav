@@ -2,6 +2,11 @@ package TurboRav
 
 import Chisel._
 
+/** A Register Bank for a RISC-V processor with 32 registers of 32
+  * bits each for a total of 1024 bits.
+  *
+  * Register 0 AKA x0 is treated as special; all reads to it return 0
+  */
 class RegBank extends Module {
   val io = new Bundle(){
     val reads = new Bundle {
