@@ -33,13 +33,16 @@ class Execute extends Module {
     io.kill()
   }
 
-  dec_exe := MuxCase(
+  // Determine what should be written to the pipeline registers
+  val dec_exe_next = MuxCase(
     io.dec_exe,
     Array(
       io.hdu_exe.flush -> flushed_pipeline,
       io.hdu_exe.stall -> dec_exe
     )
   )
+  // Write to the pipeline registers
+  dec_exe := dec_exe_next
 
   val ctrl = dec_exe.exe_ctrl
   val zero = UInt(0, width = Config.xlen)
