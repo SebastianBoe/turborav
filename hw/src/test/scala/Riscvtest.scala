@@ -91,7 +91,7 @@ extends JUnitTester(c, isTrace = false) {
   }
 
   private def readReg(i: Int): BigInt = {
-    peekAt(c.ravv.dec.regbank.regs, i)
+    peekAt(c.ravv.exe.regbank.regs, i)
   }
 }
 

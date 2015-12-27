@@ -40,15 +40,14 @@ class FetchDecode() extends Bundle {
 class DecodeIO() extends Bundle {
   val fch_dec = new FetchDecode().flip()
   val dec_exe = new DecodeExecute()
-  val wrb_dec = new WritebackDecode().flip()
   val hdu_dec = new HazardDetectionUnitDecode().flip()
 }
 
 class DecodeExecute extends Bundle {
-  val rs1_addr = UInt(OUTPUT, 5)
-  val rs1      = UInt(OUTPUT, Config.xlen)
-  val rs2_addr = UInt(OUTPUT, 5)
-  val rs2      = UInt(OUTPUT, Config.xlen)
+  val reg_reads = new Bundle {
+      val rs1 = Valid(UInt(width = 5))
+      val rs2 = Valid(UInt(width = 5))
+  }
 
   val imm     = UInt(OUTPUT, Config.xlen)
   val rd_addr = UInt(OUTPUT, 5)
@@ -174,7 +173,6 @@ class MemoryExecute() extends Bundle {
 ////////////////////////////////////////c
 class WritebackIO() extends Bundle {
   val mem_wrb = new MemoryWriteback().flip()
-  val wrb_dec = new WritebackDecode()
   val fwu_wrb = new ForwardingWriteback().flip()
   val wrb_exe = new WritebackExecute()
   val hdu_wrb = new HazardDetectionUnitWriteback().flip()
@@ -194,13 +192,10 @@ class WritebackCtrl() extends Bundle {
 }
 
 class WritebackExecute() extends Bundle {
+  // TODO: Deprecate rd_data, it should be redundant with reg_write
   val rd_data = UInt(OUTPUT, Config.xlen)
-}
-
-class WritebackDecode() extends Bundle {
   val reg_write = Valid(new RegWrite())
 }
-
 
 ////////////////////////////////////////
 // Forwarding Unit

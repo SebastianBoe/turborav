@@ -14,7 +14,7 @@ class SocTest(c: Soc) extends JUnitTester(c) {
     val regs = Array.ofDim[BigInt](32)
 
     for(i <- 0 until 32){
-      regs(i) = peekAt(c.ravv.dec.regbank.regs, i)
+      regs(i) = peekAt(c.ravv.exe.regbank.regs, i)
     }
 
     print("\n\nRegister bank:\n")

@@ -44,16 +44,28 @@ class Execute extends Module {
   // Write to the pipeline registers
   dec_exe := dec_exe_next
 
+  // This input doesn't have to go into the pipeline registers because
+  // it is fed straight into regbank. And it does not need to be
+  // flushed because writes from the writeback stage cannot be
+  // cancelled in the current micro-architecture.
+  val wrb_exe_next = io.wrb_exe
+
+  // Create a register file and combinatorially connect it to the
+  // decode stage for reads and the writeback stage for writes.
+  val regbank = Module(new RegBank())
+  regbank.io.reads := dec_exe_next.reg_reads
+  regbank.io.write := wrb_exe_next.reg_write
+
   val ctrl = dec_exe.exe_ctrl
   val zero = UInt(0, width = Config.xlen)
 
   val rs1 = Mux(io.fwu_exe.rs1_sel === RS_SEL_MEM, io.mem_exe.alu_result,
             Mux(io.fwu_exe.rs1_sel === RS_SEL_WRB, io.wrb_exe.rd_data,
-                                                   dec_exe.rs1))
+                                                   regbank.io.rs1_data))
 
   val rs2 = Mux(io.fwu_exe.rs2_sel === RS_SEL_MEM, io.mem_exe.alu_result,
             Mux(io.fwu_exe.rs2_sel === RS_SEL_WRB, io.wrb_exe.rd_data,
-                                                   dec_exe.rs2))
+                                                   regbank.io.rs2_data))
 
   val alu_in_a = Mux(ctrl.alu_in_a_sel === ALU_IN_A_PC,  dec_exe.pc,
                  Mux(ctrl.alu_in_a_sel === ALU_IN_A_RS1, rs1,
@@ -109,10 +121,10 @@ class Execute extends Module {
 
   io.hdu_exe.branch_taken := bru.io.take
 
-  io.fwu_exe.rs1_addr := dec_exe.rs1_addr
-  io.fwu_exe.rs2_addr := dec_exe.rs2_addr
-  io.hdu_exe.rs1_addr := dec_exe.rs1_addr
-  io.hdu_exe.rs2_addr := dec_exe.rs2_addr
+  io.fwu_exe.rs1_addr := dec_exe.reg_reads.rs1.bits
+  io.fwu_exe.rs2_addr := dec_exe.reg_reads.rs2.bits
+  io.hdu_exe.rs1_addr := dec_exe.reg_reads.rs1.bits
+  io.hdu_exe.rs2_addr := dec_exe.reg_reads.rs2.bits
 
   io.exe_mem.rs2 := rs2
 }

@@ -4,7 +4,6 @@ import Chisel._
 import Constants._
 
 class DecodeTest(c: Decode) extends JUnitTester(c) {
-  /*
   private def signed(a: Long) = { a & 0x00000000ffffffffL }
 
   private def testFunc(instr: Long,
@@ -80,16 +79,6 @@ class DecodeTest(c: Decode) extends JUnitTester(c) {
     expect(c.io.dec_exe.exe_ctrl.alu_in_b_sel, ALU_IN_B_IMM_VAL)
   }
 
-  private def writeReg(addr: Int, data: BigInt) {
-    poke(c.io.wrb_dec.rd_wen, 1)
-    poke(c.io.wrb_dec.rd_addr, addr)
-    poke(c.io.wrb_dec.rd_data, data)
-  }
-
-  private def writeRegDisable() {
-    poke(c.io.wrb_dec.rd_wen, 0)
-  }
-
   val  add_instr1 = 0x7ff30193L   //    addi   x3, x6, 2047
   val  add_instr2 = 0x80038213L   //    addi   x4, x7, -2048
 
@@ -158,30 +147,6 @@ class DecodeTest(c: Decode) extends JUnitTester(c) {
   testFunc(srli_instr,   ALU_SRL_VAL,  7, true, 12)
   testFunc(srai_instr,   ALU_SRA_VAL,  7, true, 12)
 
-  // Test register write and read
-  // Make sure that register written by WRB will be read
-  poke(c.io.fch_dec.instr, add_instr)
-  writeReg(9, 123)
-  step(1)
-  writeRegDisable()
-  expect(c.io.dec_exe.rs1, 123)
-  expect(c.io.dec_exe.rs2, 0)
-
-  poke(c.io.fch_dec.instr, add_instr)
-  writeReg(11, 123)
-  step(1)
-  writeRegDisable()
-  expect(c.io.dec_exe.rs1, 123)
-  expect(c.io.dec_exe.rs2, 123)
-
-  poke(c.io.fch_dec.instr, add_instr)
-  writeReg(10, 321)
-  step(1)
-  writeRegDisable()
-  expect(c.io.dec_exe.rs1, 123)
-  expect(c.io.dec_exe.rs2, 123)
-
-
   testBranch(beq_instr,  BRANCH_BEQ_VAL,     -2)
   testBranch(bne_instr,  BRANCH_BNE_VAL,   4094)
   testBranch(blt_instr,  BRANCH_BLT_VAL,  -4096)
@@ -198,5 +163,4 @@ class DecodeTest(c: Decode) extends JUnitTester(c) {
   testUpper(auipc_instr2,          0, true)
   testUpper(lui_instr1,   0xfffff000, false)
   testUpper(lui_instr2,            0, false)
-  */
 }

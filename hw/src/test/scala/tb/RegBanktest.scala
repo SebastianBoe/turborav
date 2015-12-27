@@ -6,11 +6,13 @@ class RegBankTest(c: RegBank) extends JUnitTester(c) {
   val xlen = Config.xlen
   private def read1(rx: Int, data: BigInt) = {
     poke(c.io.reads.rs1.bits, rx)
+    step(1)
     expect(c.io.rs1_data, data)
   }
 
   private def read2(rx: Int, data: BigInt) = {
     poke(c.io.reads.rs2.bits, rx)
+    step(1)
     expect(c.io.rs2_data, data)
   }
 

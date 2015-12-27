@@ -122,10 +122,6 @@ class Decode extends Module {
   val shamt = Cat(UInt(0, width = Config.xlen - 5),
                   fch_dec.instr(24, 20))
 
-  val regbank = Module(new RegBank())
-  regbank.io.reads.rs1.bits := rs1_addr
-  regbank.io.reads.rs2.bits := rs2_addr
-  regbank.io.write := io.wrb_dec.reg_write
 
   val dec_exe = io.dec_exe
   val exe_ctrl = dec_exe.exe_ctrl
@@ -164,11 +160,10 @@ class Decode extends Module {
             ))
 
   dec_exe.pc       := fch_dec.pc
-  dec_exe.rs1_addr := rs1_addr
-  dec_exe.rs1      := regbank.io.rs1_data
-  dec_exe.rs2_addr := rs2_addr
-  dec_exe.rs2      := regbank.io.rs2_data
   dec_exe.rd_addr  := rd_addr
+
+  dec_exe.reg_reads.rs1.bits := rs1_addr
+  dec_exe.reg_reads.rs2.bits := rs2_addr
 
   val is_halfword = isLoad(opcode) && ( func3(0))
   val is_byte     = isLoad(opcode) && (!func3(1) && !func3(0))

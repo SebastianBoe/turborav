@@ -20,7 +20,6 @@ class RavV(elf_path: String, fpga: Boolean) extends Module {
   dec.io.dec_exe <> exe.io.dec_exe
   exe.io.exe_mem <> mem.io.exe_mem
   mem.io.mem_wrb <> wrb.io.mem_wrb
-  wrb.io.wrb_dec <> dec.io.wrb_dec
 
   fwu.io.fwu_exe <> exe.io.fwu_exe
   fwu.io.fwu_mem <> mem.io.fwu_mem
