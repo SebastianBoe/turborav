@@ -65,13 +65,17 @@ class Mult extends Module {
   val next_holding_mult = Cat( operand_a + operand_b, holding(xlen-1, 1))
 
   val holding_shift = holding << UInt(1)
-  val difference = UInt(width = xlen + 1)
   val next_holding_div = UInt(width = 2 * xlen + 1)
 
-  difference := holding_shift(xlen*2, xlen) - argument
-  next_holding_div := Mux(difference(xlen) === UInt(0),
-    Cat(difference, holding_shift(xlen-1, 1), UInt(1, width = 1)),
-    holding_shift)
+  val difference = UInt(
+    holding_shift(2 * xlen, xlen) - argument,
+    width = xlen + 1
+  )
+  next_holding_div := Mux(
+    difference(xlen) === UInt(0),
+    Cat(difference, holding_shift(xlen-1, 1), UInt(1)),
+    holding_shift
+  )
 
   when (state === s_idle && io.enable) {
     when (isDivide(io.func)) {
