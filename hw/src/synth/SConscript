@@ -6,18 +6,17 @@ synth_env = Environment(
     ENV = os.environ
 )
 
-# Verilog code generation of build/synth/Soc.v
+# Verilog code generation
 soc_v = synth_env.Command(
     "Soc.v",
     [turborav_jar, default_program],
     """scala \
-    -classpath {2}:{0}\
-    TurboRav.TurboRav Soc build/synth {1} 12 8 True"""
-    .format(
-        CLASSPATH,
-        default_program,
-        turborav_jar
-    )
+    -classpath $turborav_jar:$CLASSPATH\
+    TurboRav.TurboRav Soc $CWD $default_program 12 8 True""",
+    turborav_jar    = turborav_jar,
+    CLASSPATH       = CLASSPATH,
+    CWD             = Dir("."),
+    default_program = default_program
 )[0]
 
 SConscript(
