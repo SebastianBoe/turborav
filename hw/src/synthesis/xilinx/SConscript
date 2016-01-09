@@ -1,7 +1,9 @@
 Import("synth_env soc_v")
 
+cwd = Dir(".")
+
 # Synthesis
-Command(
+synth_env.Command(
     "design_routed.ncd",
     [
         soc_v,
@@ -9,7 +11,8 @@ Command(
         'turborav.ucf',
         'turborav.ut'
     ],
-    'make --dir=build/synthesis HDL_FILE=Soc.v design_routed.ncd'
+    'make --dir=$CWD HDL_FILE=../Soc.v design_routed.ncd',
+    CWD = cwd
 )
 SideEffect("design_routed.par", "design_routed.ncd")
 
