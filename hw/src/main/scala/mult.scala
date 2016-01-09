@@ -78,7 +78,12 @@ class Mult extends Module {
   )
 
   when (state === s_idle && io.enable) {
+    exec_func := io.func
+    count     := UInt(0)
     when (isDivide(io.func)) {
+      argument := io.in_b
+      holding  := ZeroExtend(io.in_a, new_length = 2 * xlen + 1)
+
       when(isSignedDivide(io.func)){
         state                  := s_negate_input
         should_negate_quotient := io.in_a(xlen-1) =/= io.in_b(xlen-1)
@@ -87,23 +92,20 @@ class Mult extends Module {
          // Unsigned
         state := s_div
       }
-      argument := io.in_b
-      holding := Cat(UInt(0, width = xlen + 1), io.in_a)
     } .otherwise {
-      when(isSignedMult(io.func)){
-        state := s_negate_input
-      } .otherwise {
-        state := s_mult
-      }
       argument := io.in_a
-      holding := Cat(UInt(0, width = xlen + 1), io.in_b)
-      should_negate_product := ((io.in_a(xlen-1)
-                                && io.func === MULT_MULHSU)
-                            || ((io.in_a(xlen-1) =/= io.in_b(xlen-1))
-                                && io.func === MULT_MULH))
+      holding  := ZeroExtend(io.in_b, new_length = 2 * xlen + 1)
+
+      state := Mux(isSignedMult(io.func), s_negate_input, s_mult)
+      should_negate_product := Lookup(
+        io.func,
+        Bool(false),
+        Array(
+          MULT_MULH   -> ( io.in_a(xlen-1) =/= io.in_b(xlen-1) ),
+          MULT_MULHSU -> ( io.in_a(xlen-1)                     )
+        )
+      )
     }
-    exec_func := io.func
-    count := UInt(0)
   }
 
   when (state === s_div) {
