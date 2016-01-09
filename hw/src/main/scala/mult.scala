@@ -6,11 +6,11 @@ package TurboRav
 import Chisel._
 import Constants._
 
-class Mult() extends Module {
+class Mult extends Module {
   val xlen = Config.xlen // Extract xlen for convenience
   require(isPow2(xlen))
 
-  val io = new Bundle(){
+  val io = new Bundle {
     // multiplicand, dividend
     val in_a    = UInt(INPUT, xlen)
     // multiplier, divisor
@@ -22,19 +22,25 @@ class Mult() extends Module {
     val out_lo = UInt(OUTPUT, xlen)
     val out_hi = UInt(OUTPUT, xlen)
     val done = Bool(OUTPUT)
-
   }
 
   private def isDivide(func: UInt) = func(2)
 
   private def isSignedDivide(func: UInt) = !func(0)
 
-  private def isSignedMult(func: UInt) = (
-    func === MULT_MULH || func === MULT_MULHSU
-  )
+  private def isSignedMult(func: UInt) =
+    func === MULT_MULH ||
+    func === MULT_MULHSU
 
-  val (s_idle :: s_mult :: s_div :: s_negate_input ::
-    s_negate_output_div :: s_negate_output_mult :: Nil) = Enum(UInt(), 6)
+  val (
+    s_idle ::
+    s_mult ::
+    s_div  ::
+    s_negate_input ::
+    s_negate_output_div ::
+    s_negate_output_mult ::
+    Nil
+  ) = Enum(UInt(), 6)
 
   val state     = Reg(init = s_idle)
   val exec_func = Reg(UInt())
@@ -46,10 +52,10 @@ class Mult() extends Module {
 
   // Holds the product, or the combined quotient and remainder
   // plus one for overflow from the adder during computation
-  val holding = Reg(UInt(xlen * 2 + 1))
+  val holding    = Reg(UInt(width = 2 * xlen + 1))
 
   // Holds the multiplicand or the divisor
-  val argument = Reg(UInt(xlen))
+  val argument = Reg(UInt(width = xlen))
 
   // Extend one bit to catch the carry
   val operand_a = Cat(UInt(0, width = 1), holding(xlen*2, xlen))
@@ -70,10 +76,11 @@ class Mult() extends Module {
   when (state === s_idle && io.enable) {
     when (isDivide(io.func)) {
       when(isSignedDivide(io.func)){
-        state := s_negate_input
+        state                  := s_negate_input
         should_negate_quotient := io.in_a(xlen-1) =/= io.in_b(xlen-1)
-        dividend_sign := io.in_a(xlen-1)
-      }.otherwise{
+        dividend_sign          := io.in_a(xlen-1)
+      }.otherwise {
+         // Unsigned
         state := s_div
       }
       argument := io.in_b
@@ -96,35 +103,25 @@ class Mult() extends Module {
   }
 
   when (state === s_div) {
-    when (count === UInt(xlen-1)) {
-      when(isSignedDivide(exec_func)){
-        state := s_negate_output_div
-      } .otherwise {
-        state := s_idle
-      }
+    val end_of_div = count === UInt(xlen-1)
+    when (end_of_div) {
+      state := Mux(isSignedDivide(exec_func), s_negate_output_div, s_idle)
     }
     holding := next_holding_div
     count := count + UInt(1)
   }
 
   when(state === s_mult){
-    when (count === UInt(xlen-1)) {
-      when (should_negate_product){
-        state := s_negate_output_mult
-      }.otherwise {
-        state := s_idle
-      }
+    val end_of_mult = count === UInt(xlen-1)
+    when (end_of_mult) {
+      state := Mux(should_negate_product, s_negate_output_mult, s_idle)
     }
     holding := next_holding_mult
     count := count + UInt(1)
   }
 
   when(state === s_negate_input){
-    when(isDivide(exec_func)){
-      state := s_div
-    } .otherwise {
-      state := s_mult
-    }
+    state := Mux(isDivide(exec_func), s_div, s_mult)
     when(argument(xlen-1)){
       argument := -argument
     }
@@ -135,8 +132,8 @@ class Mult() extends Module {
 
   when(state === s_negate_output_div){
     state := s_idle
-    when(dividend_sign =/= holding((xlen * 2) - 1)){
-      holding((xlen * 2) - 1, xlen) := -holding((xlen * 2) - 1, xlen)
+    when(dividend_sign =/= holding(2 * xlen - 1)){
+      holding(2 * xlen - 1, xlen) := -holding(2 * xlen - 1, xlen)
     }
     when(should_negate_quotient){
       holding(xlen - 1, 0) := -holding(xlen - 1, 0)
@@ -161,8 +158,7 @@ class Mult() extends Module {
     state := s_idle
   }
 
-  io.out_hi := holding((xlen * 2) - 1, xlen)
+  io.out_hi := holding(2 * xlen - 1, xlen)
   io.out_lo := holding(xlen - 1, 0)
-  io.done := state === s_idle
-
+  io.done   := state === s_idle
 }
