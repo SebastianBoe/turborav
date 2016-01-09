@@ -80,6 +80,6 @@ SConscript(
 )
 
 SConscript(
-    "synthesis/SConscript",
+    "synth/SConscript",
     exports = 'turborav_jar CLASSPATH default_program'
 )

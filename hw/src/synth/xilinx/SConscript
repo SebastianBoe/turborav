@@ -2,7 +2,6 @@ Import("synth_env soc_v")
 
 cwd = Dir(".")
 
-# Synthesis
 synth_env.Command(
     "design_routed.ncd",
     [
@@ -19,13 +18,13 @@ SideEffect("design_routed.par", "design_routed.ncd")
 Command(
     "turborav.bit",
     "design_routed.ncd",
-    'make --dir=build/synthesis HDL_FILE=Soc.v turborav.bit'
+    'make --dir=build/synth HDL_FILE=Soc.v turborav.bit'
 )
 
 Command(
     "programming.log",
     "turborav.bit",
-    'make --dir=build/synthesis HDL_FILE=Soc.v program'
+    'make --dir=build/synth HDL_FILE=Soc.v program'
 )
 
 Command(
@@ -38,6 +37,6 @@ Command(
     "timing.txt",
     ["design_routed.par", "period_to_frequency.py"],
     """echo -n "YVALUE=" > $TARGET && awk -F \"|\" '/NET \"clk_/{ print $4 }' $SOURCE |\
-    python build/synthesis/period_to_frequency.py >> $TARGET
+    python build/synth/period_to_frequency.py >> $TARGET
     """
 )
