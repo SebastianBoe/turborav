@@ -153,11 +153,7 @@ class Mult extends Module {
     // a carry from doing twos complement on the lower xlen bits.
     // This implies that negating the upper bits of the product
     // involves twos complement when the lower bits are zero, otherwise invert.
-    when(holding(xlen-1,0) === UInt(0)){
-      holding((xlen * 2) - 1, xlen) := ~(holding((xlen * 2)-1, xlen)) + UInt(1)
-    } .otherwise {
-      holding((xlen * 2) - 1, xlen) := ~(holding((xlen * 2)-1, xlen))
-    }
+    holding(2 * xlen - 1, xlen) := ~(holding(2 * xlen - 1, xlen)) + (holding(xlen-1,0) === UInt(0))
   }
 
   when (io.abort) {
