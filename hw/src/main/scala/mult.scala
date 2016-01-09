@@ -58,8 +58,8 @@ class Mult extends Module {
   val argument = Reg(UInt(width = xlen))
 
   // Extend one bit to catch the carry
-  val operand_a = Cat(UInt(0, width = 1), holding(xlen*2, xlen))
-  val operand_b = Cat(UInt(0, width = 1), Fill(xlen, holding(0)) & argument)
+  val operand_a = ZeroExtend(holding(2 * xlen, xlen)          , new_length = xlen + 1)
+  val operand_b = ZeroExtend(argument & Fill(xlen, holding(0)), new_length = xlen + 1)
 
   // Does an implicit right shift
   val next_holding_mult = Cat( operand_a + operand_b, holding(xlen-1, 1))
