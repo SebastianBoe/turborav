@@ -44,7 +44,7 @@ class Mult extends Module {
 
   val state     = Reg(init = s_idle)
   val exec_func = Reg(UInt())
-  val count     = Reg(UInt(width = log2Up(xlen)))
+  val counter   = Counter(xlen)
 
   val should_negate_product   = Reg(init = Bool(false))
   val dividend_sign           = Reg(init = Bool(false))
@@ -83,8 +83,8 @@ class Mult extends Module {
   )
 
   when (state === s_idle && io.enable) {
-    exec_func := io.func
-    count     := UInt(0)
+    exec_func   := io.func
+    counter.value := UInt(0)
     when (isDivide(io.func)) {
       argument := io.in_b
       holding  := ZeroExtend(io.in_a, new_length = 2 * xlen + 1)
@@ -114,21 +114,19 @@ class Mult extends Module {
   }
 
   when (state === s_div) {
-    val end_of_div = count === UInt(xlen-1)
+    val end_of_div = counter.inc()
     when (end_of_div) {
       state := Mux(isSignedDivide(exec_func), s_negate_output_div, s_idle)
     }
     holding := next_holding_div
-    count := count + UInt(1)
   }
 
   when(state === s_mult){
-    val end_of_mult = count === UInt(xlen-1)
+    val end_of_mult = counter.inc()
     when (end_of_mult) {
       state := Mux(should_negate_product, s_negate_output_mult, s_idle)
     }
     holding := next_holding_mult
-    count := count + UInt(1)
   }
 
   when(state === s_negate_input){
