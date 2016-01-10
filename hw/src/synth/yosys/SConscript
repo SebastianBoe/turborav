@@ -1,12 +1,15 @@
 Import("synth_env soc_v")
 
+script = File("yosys.ys")
 log = File("yosys.log")
 blif = File("Soc.blif")
 yosys_env = Environment(YOSYS_LOG = log, BLIF = blif)
 yosys_env.Command(
     [blif, log],
-    soc_v,
-    'yosys -p "synth_ice40 -blif $BLIF" $SOURCE > $YOSYS_LOG'
+    [soc_v, script],
+    'yosys $SOC_V $SCRIPT > $YOSYS_LOG',
+    SCRIPT = script,
+    SOC_V = soc_v
 )
 
 yosys_env['PCF'] = File("Soc.pcf")
