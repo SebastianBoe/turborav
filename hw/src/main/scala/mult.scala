@@ -55,31 +55,6 @@ class Mult extends Module {
   // Holds the multiplicand or the divisor
   val argument = Reg(UInt(width = xlen))
 
-  // Extend one bit to catch the carry
-  val operand_a = ZeroExtend(holding(2 * xlen, xlen)          , new_length = xlen + 1)
-  val operand_b = ZeroExtend(argument & Fill(xlen, holding(0)), new_length = xlen + 1)
-
-  // An expensive 33 bit addition
-  val sum = operand_a + operand_b
-
-  // Does an implicit right shift
-  val next_holding_mult = Cat( sum, holding(xlen-1, 1))
-
-  val holding_shift = holding << UInt(1)
-  val next_holding_div = UInt(width = 2 * xlen + 1)
-
-  // An expensive 33 bit subtraction
-  val difference = UInt(
-    holding_shift(2 * xlen, xlen) - argument,
-    width = xlen + 1
-  )
-
-  next_holding_div := Mux(
-    difference(xlen) === UInt(0),
-    Cat(difference, holding_shift(xlen-1, 1), UInt(1)),
-    holding_shift
-  )
-
   when (state === s_idle && io.enable) {
     exec_func   := io.func
     counter.value := UInt(0)
@@ -116,7 +91,20 @@ class Mult extends Module {
     when (end_of_div) {
       state := Mux(isSignedDivide(exec_func), s_negate_output_div, s_idle)
     }
-    holding := next_holding_div
+
+    val holding_shift = holding << UInt(1)
+
+    // An expensive 33 bit subtraction
+    val difference = UInt(
+      holding_shift(2 * xlen, xlen) - argument,
+      width = xlen + 1
+    )
+
+    holding := Mux(
+      difference(xlen) === UInt(0),
+      Cat(difference, holding_shift(xlen-1, 1), UInt(1)),
+      holding_shift
+    )
   }
 
   when(state === s_mult){
@@ -124,7 +112,16 @@ class Mult extends Module {
     when (end_of_mult) {
       state := Mux(should_negate_product, s_negate_output_mult, s_idle)
     }
-    holding := next_holding_mult
+
+    // Extend one bit to catch the carry
+    val operand_a = ZeroExtend(holding(2 * xlen, xlen)          , new_length = xlen + 1)
+    val operand_b = ZeroExtend(argument & Fill(xlen, holding(0)), new_length = xlen + 1)
+
+    // An expensive 33 bit addition
+    val sum = operand_a + operand_b
+
+    // Does an implicit right shift
+    holding := Cat(sum, holding(xlen-1, 1))
   }
 
   when(state === s_negate_input){
