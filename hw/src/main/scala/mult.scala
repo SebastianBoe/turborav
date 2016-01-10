@@ -86,72 +86,74 @@ class Mult extends Module {
     }
   }
 
-  when (state === s_div) {
-    val end_of_div = counter.inc()
-    when (end_of_div) {
-      state := Mux(isSignedDivide(exec_func), s_negate_output_div, s_idle)
+  switch(state){
+    is(s_div) {
+      val end_of_div = counter.inc()
+      when (end_of_div) {
+        state := Mux(isSignedDivide(exec_func), s_negate_output_div, s_idle)
+      }
+
+      val holding_shift = holding << UInt(1)
+
+      // An expensive 33 bit subtraction
+      val difference = UInt(
+        holding_shift(2 * xlen, xlen) - argument,
+        width = xlen + 1
+      )
+
+      holding := Mux(
+        difference(xlen) === UInt(0),
+        Cat(difference, holding_shift(xlen-1, 1), UInt(1)),
+        holding_shift
+      )
     }
 
-    val holding_shift = holding << UInt(1)
+    is(s_mult){
+      val end_of_mult = counter.inc()
+      when (end_of_mult) {
+        state := Mux(should_negate_product, s_negate_output_mult, s_idle)
+      }
 
-    // An expensive 33 bit subtraction
-    val difference = UInt(
-      holding_shift(2 * xlen, xlen) - argument,
-      width = xlen + 1
-    )
+      // Extend one bit to catch the carry
+      val operand_a = ZeroExtend(holding(2 * xlen, xlen)          , new_length = xlen + 1)
+      val operand_b = ZeroExtend(argument & Fill(xlen, holding(0)), new_length = xlen + 1)
 
-    holding := Mux(
-      difference(xlen) === UInt(0),
-      Cat(difference, holding_shift(xlen-1, 1), UInt(1)),
-      holding_shift
-    )
-  }
+      // An expensive 33 bit addition
+      val sum = operand_a + operand_b
 
-  when(state === s_mult){
-    val end_of_mult = counter.inc()
-    when (end_of_mult) {
-      state := Mux(should_negate_product, s_negate_output_mult, s_idle)
+      // Does an implicit right shift
+      holding := Cat(sum, holding(xlen-1, 1))
     }
 
-    // Extend one bit to catch the carry
-    val operand_a = ZeroExtend(holding(2 * xlen, xlen)          , new_length = xlen + 1)
-    val operand_b = ZeroExtend(argument & Fill(xlen, holding(0)), new_length = xlen + 1)
-
-    // An expensive 33 bit addition
-    val sum = operand_a + operand_b
-
-    // Does an implicit right shift
-    holding := Cat(sum, holding(xlen-1, 1))
-  }
-
-  when(state === s_negate_input){
-    state := Mux(isDivide(exec_func), s_div, s_mult)
-    when(argument(xlen-1)){
-      argument := -argument
+    is(s_negate_input){
+      state := Mux(isDivide(exec_func), s_div, s_mult)
+      when(argument(xlen-1)){
+        argument := -argument
+      }
+      when(holding(xlen-1) && exec_func =/= MULT_MULHSU){
+        holding(xlen-1, 0) := -holding(xlen-1, 0)
+      }
     }
-    when(holding(xlen-1) && exec_func =/= MULT_MULHSU){
-      holding(xlen-1, 0) := -holding(xlen-1, 0)
-    }
-  }
 
-  when(state === s_negate_output_div){
-    state := s_idle
-    when(dividend_sign =/= holding(2 * xlen - 1)){
-      holding(2 * xlen - 1, xlen) := -holding(2 * xlen - 1, xlen)
+    is(s_negate_output_div){
+      state := s_idle
+      when(dividend_sign =/= holding(2 * xlen - 1)){
+        holding(2 * xlen - 1, xlen) := -holding(2 * xlen - 1, xlen)
+      }
+      when(should_negate_quotient){
+        holding(xlen - 1, 0) := -holding(xlen - 1, 0)
+      }
     }
-    when(should_negate_quotient){
-      holding(xlen - 1, 0) := -holding(xlen - 1, 0)
+
+    is(s_negate_output_mult){
+      state := s_idle
+
+      // When the lower xlen bits of the result is zero, we will get
+      // a carry from doing twos complement on the lower xlen bits.
+      // This implies that negating the upper bits of the product
+      // involves twos complement when the lower bits are zero, otherwise invert.
+      holding(2 * xlen - 1, xlen) := ~(holding(2 * xlen - 1, xlen)) + (holding(xlen-1,0) === UInt(0))
     }
-  }
-
-  when(state === s_negate_output_mult){
-    state := s_idle
-
-    // When the lower xlen bits of the result is zero, we will get
-    // a carry from doing twos complement on the lower xlen bits.
-    // This implies that negating the upper bits of the product
-    // involves twos complement when the lower bits are zero, otherwise invert.
-    holding(2 * xlen - 1, xlen) := ~(holding(2 * xlen - 1, xlen)) + (holding(xlen-1,0) === UInt(0))
   }
 
   when (io.abort) {
