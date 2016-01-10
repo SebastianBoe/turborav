@@ -12,23 +12,21 @@ class Mult extends Module {
 
   val io = new Bundle {
     // multiplicand, dividend
-    val in_a    = UInt(INPUT, xlen)
+    val in_a   = UInt(INPUT, xlen)
     // multiplier, divisor
-    val in_b    = UInt(INPUT, xlen)
+    val in_b   = UInt(INPUT, xlen)
     val enable = Bool(INPUT)
     val abort  = Bool(INPUT)
     val func   = UInt(INPUT, MULT_FUNC_WIDTH)
 
     val out_lo = UInt(OUTPUT, xlen)
     val out_hi = UInt(OUTPUT, xlen)
-    val done = Bool(OUTPUT)
+    val done   = Bool(OUTPUT)
   }
 
-  private def isDivide(func: UInt) = func(2)
-
+  private def isDivide      (func: UInt) = func(2)
   private def isSignedDivide(func: UInt) = !func(0)
-
-  private def isSignedMult(func: UInt) =
+  private def isSignedMult  (func: UInt) =
     func === MULT_MULH ||
     func === MULT_MULHSU
 
