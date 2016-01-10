@@ -5,6 +5,7 @@ RUN pacman --noconfirm -S \
     clang \
     git \
     gtkwave \
+    graphviz \
     java-commons-io \
     java-environment \
     libftdi \
@@ -22,6 +23,7 @@ RUN pacman --noconfirm -S \
 # base-devel        # Builds the RISC-V toolchain
 # clang             # Speeds up the simulator compilation
 # git               # Retrieves external dependencies
+# graphviz          # Needed by Yosys to generate schematics
 # java-commons-io   # Makes it easier to manipulate files from Scala
 # java-environment  # Creates jars
 # libftdi           # Needed by icestorm to flash netlists
