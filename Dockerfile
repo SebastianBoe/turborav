@@ -84,9 +84,13 @@ RUN pacman -U --noconfirm chisel-git/chisel-git*pkg*
 WORKDIR /home/turbo
 
 # Build and install icestorm
+RUN pacman -S --noconfirm libftdi-compat
+
+ENV ICESTORM_REVISION 7a1e662a3f676f408f79127459be95b37e959f47
 USER turbo
 RUN git clone https://aur.archlinux.org/icestorm-git.git \
     && cd icestorm-git \
+    && sed -i "s icestorm\.git icestorm\.git#commit=$ICESTORM_REVISION " PKGBUILD \
     && makepkg --clean
 USER root
 RUN pacman -U --noconfirm icestorm-git/icestorm-git*pkg*
