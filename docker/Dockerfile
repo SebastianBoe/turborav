@@ -2,6 +2,8 @@ FROM sebomux/turborav_riscv
 # turborav_riscv is an Arch Linux docker image with the specific riscv
 # gcc toolchain that is compatible with the TurboRav project
 
+RUN sed -i "s/Required DatabaseOptional/Never/g" /etc/pacman.conf
+
 RUN pacman --noconfirm -S \
     clang \
     gtkwave \
