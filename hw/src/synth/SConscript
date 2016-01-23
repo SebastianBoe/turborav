@@ -12,7 +12,7 @@ soc_v = synth_env.Command(
     [turborav_jar, default_program],
     """scala \
     -classpath $turborav_jar:$CLASSPATH\
-    TurboRav.TurboRav Soc $CWD $default_program 12 8 True""",
+    TurboRav.TurboRav Soc $CWD $default_program 4 4 True""",
     turborav_jar    = turborav_jar,
     CLASSPATH       = CLASSPATH,
     CWD             = Dir("."),
