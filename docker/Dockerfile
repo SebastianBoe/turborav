@@ -96,7 +96,6 @@ RUN git clone https://aur.archlinux.org/arachne-pnr-git.git \
 USER root
 RUN pacman -U --noconfirm yosys-git/yosys-git*pkg*
 RUN pacman -U --noconfirm arachne-pnr-git/arachne-pnr-git*pkg*
-#RUN pacman --noconfirm -Scc
 
 # Assume user is going to be mounting his local repo at /mnt/turborav
 WORKDIR /mnt/turborav/hw
