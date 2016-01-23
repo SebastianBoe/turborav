@@ -1,0 +1,27 @@
+# This file contains a mapping from verilog wire names to the 8k LUT
+# version of the iCE40.
+
+set_io clk A1
+
+# Clock shall not be slower than 50MHz = 20ns due to the motherboard
+# crystal being 50MHz. How to ensure this with the open source flow?
+
+# Reset is connected to some floating pin at Jumper group JA.
+set_io reset B1
+
+# Expansion I/O Connections (See iCEstick User Guide)
+set_io io_pin_inputs[0]  C1
+set_io io_pin_inputs[1]  A2
+set_io io_pin_inputs[2]  B2
+set_io io_pin_inputs[3]  C2
+
+# LEDs
+set_io io_pin_outputs[0] C5
+set_io io_pin_outputs[1] A6
+set_io io_pin_outputs[2] B6
+set_io io_pin_outputs[3] C6
+
+# DVI
+set_io io_dvi_chan_0 B4
+set_io io_dvi_chan_1 C4
+set_io io_dvi_chan_2 A5
