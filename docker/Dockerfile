@@ -1,9 +1,9 @@
-FROM pritunl/archlinux
+FROM sebomux/turborav_riscv
+# turborav_riscv is an Arch Linux docker image with the specific riscv
+# gcc toolchain that is compatible with the TurboRav project
 
 RUN pacman --noconfirm -S \
-    base-devel \
     clang \
-    git \
     gtkwave \
     graphviz \
     java-commons-io \
@@ -20,9 +20,7 @@ RUN pacman --noconfirm -S \
 
 # Tool usage
 
-# base-devel        # Builds the RISC-V toolchain
 # clang             # Speeds up the simulator compilation
-# git               # Retrieves external dependencies
 # graphviz          # Needed by Yosys to generate schematics
 # java-commons-io   # Makes it easier to manipulate files from Scala
 # java-environment  # Creates jars
@@ -33,22 +31,6 @@ RUN pacman --noconfirm -S \
 # scala             # Runs Chisel programs
 # scons             # Builds turborav
 # tcl               # Needed by Yosys
-
-
-# Download the RISC-V toolchain from github and build from source
-
-# Using the latest RISC-V toolchain causes a compilation error when
-# building the RISC-V tests, but this revision is known to work. TODO:
-# debug compilation error.
-ENV TOOLCHAIN_REVISION f0addb7
-RUN git clone https://github.com/riscv/riscv-gnu-toolchain.git
-RUN pushd riscv-gnu-toolchain \
-	&& git checkout $TOOLCHAIN_REVISION \
-	&& ./configure --prefix=/opt/riscv \
-	&& make -j8 > /home/gcc_build.log \
-	&& popd \
-	&& rm -rf riscv-gnu-toolchain/
-ENV PATH $PATH:/opt/riscv/bin
 
 RUN useradd -m -G wheel turbo
 # Install scalastyle from the AUR
