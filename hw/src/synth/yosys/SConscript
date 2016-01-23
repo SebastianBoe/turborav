@@ -12,7 +12,7 @@ yosys_env.Command(
     SOC_V = soc_v
 )
 
-yosys_env['PCF'] = File("Soc.pcf")
+yosys_env['PCF'] = File("Soc.1k.pcf")
 yosys_env['TXT'] = File("Soc.txt")
 
 yosys_env.Command(
