@@ -13,7 +13,6 @@ RUN pacman --noconfirm -S \
     libftdi \
     mercurial \
     python-pint \
-    sbt \
     scala \
     scons \
     tcl \
@@ -29,32 +28,24 @@ RUN pacman --noconfirm -S \
 # libftdi           # Needed by icestorm to flash netlists
 # mercurial         # Needed by Yosys when installing abc
 # python-pint       # Does unit conversion for statistics like slice usage
-# sbt               # Builds Chisel
 # scala             # Runs Chisel programs
 # scons             # Builds turborav
 # tcl               # Needed by Yosys
 
 RUN useradd -m -G wheel turbo
 
-# Install chisel from Maven
-# USER root
-# ENV CHISEL_VERSION 2.2.31
-# ENV SCALA_VERSION 2.11
-# ENV CHISEL_JAR chisel_$SCALA_VERSION-$CHISEL_VERSION.jar
-# RUN curl http://central.maven.org/maven2/edu/berkeley/cs/chisel_$SCALA_VERSION/$CHISEL_VERSION/$CHISEL_JAR > \
-#     $CHISEL_JAR \
-#     && install -Dm644 $CHISEL_JAR /usr/share/scala/chisel/chisel.jar
-
 # Install chisel from the AUR
-USER turbo
-ENV CHISEL_REVISION 560d5f37ca60e629def7fc3cae7b3d343893b561
-WORKDIR /home/turbo
-RUN git clone https://aur.archlinux.org/chisel-git.git \
-    && cd chisel-git \
-    && sed -i "s chisel\.git chisel\.git#commit=$CHISEL_REVISION " PKGBUILD \
-    && makepkg --clean
-USER root
-RUN pacman -U --noconfirm chisel-git/chisel-git*pkg*
+# Don't delete this code. It is handy for the times when it is
+# necessary to build chisel from source.
+# USER turbo
+# ENV CHISEL_REVISION 560d5f37ca60e629def7fc3cae7b3d343893b561
+# WORKDIR /home/turbo
+# RUN git clone https://aur.archlinux.org/chisel-git.git \
+#     && cd chisel-git \
+#     && sed -i "s chisel\.git chisel\.git#commit=$CHISEL_REVISION " PKGBUILD \
+#     && makepkg --clean
+# USER root
+# RUN pacman -U --noconfirm chisel-git/chisel-git*pkg*
 
 # Install FPGA synthesis tools from the AUR
 WORKDIR /home/turbo
@@ -90,6 +81,15 @@ RUN git clone https://aur.archlinux.org/arachne-pnr-git.git \
 USER root
 RUN pacman -U --noconfirm yosys-git/yosys-git*pkg*
 RUN pacman -U --noconfirm arachne-pnr-git/arachne-pnr-git*pkg*
+
+# Install chisel from Maven
+USER root
+ENV CHISEL_VERSION 2.2.32
+ENV SCALA_VERSION 2.11
+ENV CHISEL_JAR chisel_$SCALA_VERSION-$CHISEL_VERSION.jar
+RUN curl http://central.maven.org/maven2/edu/berkeley/cs/chisel_$SCALA_VERSION/$CHISEL_VERSION/$CHISEL_JAR > \
+    $CHISEL_JAR \
+    && install -Dm644 $CHISEL_JAR /usr/share/scala/chisel/chisel.jar
 
 # Assume user is going to be mounting his local repo at /mnt/turborav
 WORKDIR /mnt/turborav/hw
