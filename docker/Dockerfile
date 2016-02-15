@@ -35,14 +35,6 @@ RUN pacman --noconfirm -S \
 # tcl               # Needed by Yosys
 
 RUN useradd -m -G wheel turbo
-# Install scalastyle from the AUR
-USER turbo
-WORKDIR /home/turbo
-RUN git clone https://aur.archlinux.org/scalastyle.git \
-    && cd scalastyle \
-    && makepkg
-USER root
-RUN pacman -U --noconfirm scalastyle/scalastyle*pkg*
 
 # Install chisel from Maven
 # USER root
