@@ -12,7 +12,6 @@ RUN pacman --noconfirm -S \
     java-environment \
     libftdi \
     mercurial \
-    python-pint \
     scala \
     scons \
     tcl \
