@@ -50,7 +50,7 @@ RUN useradd -m -G wheel turbo
 WORKDIR /home/turbo
 
 # Build and install icestorm
-RUN pacman -S --noconfirm libftdi-compat
+RUN pacman -S --noconfirm libftdi-compat python
 
 ENV ICESTORM_REVISION 7a1e662a3f676f408f79127459be95b37e959f47
 USER turbo
