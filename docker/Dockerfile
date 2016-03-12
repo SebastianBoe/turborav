@@ -49,7 +49,7 @@ RUN useradd -m -G wheel turbo
 # Install FPGA synthesis tools from the AUR
 WORKDIR /home/turbo
 
-# Build and install icestorm
+# Install icestorm dependencies
 RUN pacman -S --noconfirm libftdi-compat python
 
 ENV ICESTORM_REVISION da6ad20dba07ecb49b33323e9e3bf667786645b3
