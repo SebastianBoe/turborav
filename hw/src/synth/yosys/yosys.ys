@@ -14,7 +14,7 @@ coarse:
     opt
     wreduce
     alumacc
-    share -aggressive
+    share
     opt
     fsm
     opt -fast
