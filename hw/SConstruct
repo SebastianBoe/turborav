@@ -9,9 +9,9 @@ Help("""Type:
 'scons build/test/unit/'                       run all unit tests,
 'scons build/test/unit/Alu'                    run the Alu test from src/test/scala,
 'scons build/test/lint'                        lint the scala code,
-'scons build/synthesis/Soc.v'                  generate verilog code,
-'scons build/synthesis/xilinx/turborav.bit'    generate a netlist,
-'scons build/synthesis/xilinx/programming.log' program a netlist,
+'scons build/synth/Soc.v'                      generate verilog code,
+'scons build/synth/xilinx/turborav.bit'        generate a netlist,
+'scons build/synth/xilinx/programming.log'     program a netlist,
 'scons build'                                  build everything.
 
 All build targets are files, or directories of files that can
