@@ -1,27 +1,34 @@
-# This file contains a mapping from verilog wire names to the 8k LUT
-# version of the iCE40.
+# Physical constraints file for the icoboard.
+#
+# References:
+# https://stylesuxx.github.io/icoboard-wiki/examples/
+# http://downloads.amescon.com/icoboard.pdf
 
-set_io clk A1
+# clk is connected to a 25 MHz crystal (CB3LV-3C-25M0000) on the icoboard.
+# TODO: use icetime to ensure that the design can be clocked at 25MHz
+set_io clk R9
 
-# Clock shall not be slower than 50MHz = 20ns due to the motherboard
-# crystal being 50MHz. How to ensure this with the open source flow?
+# reset is connected to btn1
+set_io reset K11
 
-# Reset is connected to some floating pin at Jumper group JA.
-set_io reset B1
+# io_pin_inputs[0] is connected to BTN2
+set_io io_pin_inputs[0]  P13
 
-# Expansion I/O Connections (See iCEstick User Guide)
-set_io io_pin_inputs[0]  C1
-set_io io_pin_inputs[1]  A2
-set_io io_pin_inputs[2]  B2
-set_io io_pin_inputs[3]  C2
+# The rest of the inputs are connected to PMOD pins
+set_io io_pin_inputs[1]  B10
+set_io io_pin_inputs[2]  A10
+set_io io_pin_inputs[3]  B9
 
-# LEDs
-set_io io_pin_outputs[0] C5
-set_io io_pin_outputs[1] A6
-set_io io_pin_outputs[2] B6
-set_io io_pin_outputs[3] C6
+# io_pin_outputs[0] is connected to some P1 PMOD pin
+set_io io_pin_outputs[0] A9
 
-# DVI
-set_io io_dvi_chan_0 B4
-set_io io_dvi_chan_1 C4
-set_io io_dvi_chan_2 A5
+# {io_pin_outputs[x] is connected to LEDx, x ∈ {1,2,3} }
+set_io io_pin_outputs[1] C8
+set_io io_pin_outputs[2] F7
+set_io io_pin_outputs[3] K9
+
+# DVI is connected to the P3 and P4 PMOD
+# http://icoboard.org/icoboard-beta.html
+set_io io_dvi_chan_0 T5
+set_io io_dvi_chan_1 T6
+set_io io_dvi_chan_2 T7
