@@ -52,7 +52,7 @@ WORKDIR /home/turbo
 # Build and install icestorm
 RUN pacman -S --noconfirm libftdi-compat python
 
-ENV ICESTORM_REVISION 7a1e662a3f676f408f79127459be95b37e959f47
+ENV ICESTORM_REVISION da6ad20dba07ecb49b33323e9e3bf667786645b3
 USER turbo
 RUN git clone https://aur.archlinux.org/icestorm-git.git \
     && cd icestorm-git \
