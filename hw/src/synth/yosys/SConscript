@@ -1,8 +1,8 @@
 Import("synth_env soc_v")
 
 script = File("yosys.ys")
-log = File("yosys.log")
-blif = File("Soc.blif")
+log    = File("yosys.log")
+blif   = File("Soc.blif")
 yosys_env = Environment(YOSYS_LOG = log, BLIF = blif)
 yosys_env.Command(
     [blif, log],
@@ -12,19 +12,7 @@ yosys_env.Command(
     SOC_V = soc_v
 )
 
-yosys_env['PCF'] = File("Soc.8k.pcf")
-yosys_env['ASC'] = File("Soc.asc")
-
-yosys_env.Command(
-    yosys_env['ASC'],
-    [yosys_env['BLIF'], yosys_env['PCF']],
-    "arachne-pnr --device 8k --pcf-file $PCF $BLIF -o $ASC"
-)
-
-yosys_env['BIN'] = File("Soc.bin")
-
-yosys_env.Command(
-    yosys_env['BIN'],
-    yosys_env['ASC'],
-    "icepack $ASC $BIN"
+SConscript(
+    "icoboard/SConscript",
+    exports = "yosys_env blif"
 )

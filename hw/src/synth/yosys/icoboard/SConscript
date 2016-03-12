@@ -1,0 +1,18 @@
+Import("yosys_env blif")
+
+yosys_env['PCF'] = File("main.pcf")
+yosys_env['ASC'] = File("Soc.asc")
+
+yosys_env.Command(
+    yosys_env['ASC'],
+    [yosys_env['BLIF'], yosys_env['PCF']],
+    "arachne-pnr --device 8k --pcf-file $PCF $BLIF -o $ASC"
+)
+
+yosys_env['BIN'] = File("Soc.bin")
+
+yosys_env.Command(
+    yosys_env['BIN'],
+    yosys_env['ASC'],
+    "icepack $ASC $BIN"
+)

@@ -1,0 +1,2 @@
+This board is not supported because it was found to be too
+small. TurboRav uses 4k LUTs, the icestick has 1k LUTs.
