@@ -52,15 +52,6 @@ WORKDIR /home/turbo
 # Install icestorm dependencies
 RUN pacman -S --noconfirm libftdi-compat python
 
-ENV ICESTORM_REVISION da6ad20dba07ecb49b33323e9e3bf667786645b3
-USER turbo
-RUN git clone https://aur.archlinux.org/icestorm-git.git \
-    && cd icestorm-git \
-    && sed -i "s icestorm\.git icestorm\.git#commit=$ICESTORM_REVISION " PKGBUILD \
-    && makepkg --clean
-USER root
-RUN pacman -U --noconfirm icestorm-git/icestorm-git*pkg*
-
 # Build Yosys
 ENV YOSYS_REVISION ab0c44d3ed81f71cb0c6ff844679110cc27b38ad
 USER turbo
@@ -68,18 +59,8 @@ RUN git clone https://aur.archlinux.org/yosys-git.git \
     && cd yosys-git \
     && sed -i "s yosys\.git yosys\.git#commit=$YOSYS_REVISION " PKGBUILD \
     && makepkg --clean
-
-# Build Arachne-pnr
-ENV ARACHNE_PNR_REVISION eb7876bcfa20508075760723e7afc170e06abab6
-RUN git clone https://aur.archlinux.org/arachne-pnr-git.git \
-    && cd arachne-pnr-git \
-    && sed -i "s arachne-pnr\.git arachne-pnr\.git#commit=$ARACHNE_PNR_REVISION " PKGBUILD \
-    && makepkg --clean
-
-# Install Yosys and Arachne-pnr
 USER root
 RUN pacman -U --noconfirm yosys-git/yosys-git*pkg*
-RUN pacman -U --noconfirm arachne-pnr-git/arachne-pnr-git*pkg*
 
 # Install chisel from Maven
 USER root
@@ -89,6 +70,26 @@ ENV CHISEL_JAR chisel_$SCALA_VERSION-$CHISEL_VERSION.jar
 RUN curl http://central.maven.org/maven2/edu/berkeley/cs/chisel_$SCALA_VERSION/$CHISEL_VERSION/$CHISEL_JAR > \
     $CHISEL_JAR \
     && install -Dm644 $CHISEL_JAR /usr/share/scala/chisel/chisel.jar
+
+# Build icestorm
+ENV ICESTORM_REVISION da6ad20dba07ecb49b33323e9e3bf667786645b3
+USER turbo
+RUN git clone https://aur.archlinux.org/icestorm-git.git \
+    && cd icestorm-git \
+    && sed -i "s icestorm\.git icestorm\.git#commit=$ICESTORM_REVISION " PKGBUILD \
+    && makepkg --clean
+USER root
+RUN pacman -U --noconfirm icestorm-git/icestorm-git*pkg*
+
+# Build Arachne-pnr
+USER turbo
+ENV ARACHNE_PNR_REVISION eb7876bcfa20508075760723e7afc170e06abab6
+RUN git clone https://aur.archlinux.org/arachne-pnr-git.git \
+    && cd arachne-pnr-git \
+    && sed -i "s arachne-pnr\.git arachne-pnr\.git#commit=$ARACHNE_PNR_REVISION " PKGBUILD \
+    && makepkg --clean
+USER root
+RUN pacman -U --noconfirm arachne-pnr-git/arachne-pnr-git*pkg*
 
 # Assume user is going to be mounting his local repo at /mnt/turborav
 WORKDIR /mnt/turborav/hw
