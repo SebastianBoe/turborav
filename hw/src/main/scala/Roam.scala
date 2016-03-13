@@ -37,7 +37,7 @@ class Roam(elf_path: String, fpga: Boolean) extends Module {
   val mem_reading_ram     = request.valid && isRamAddress(request.bits.addr)
   val mem_requesting_mmio = request.valid && isApbAddress(request.bits.addr)
 
-  rom.io.pc := Mux(
+  rom.io.addr := Mux(
     mem_reading_rom,
     request.bits.addr,
     io.fch.request.bits.addr

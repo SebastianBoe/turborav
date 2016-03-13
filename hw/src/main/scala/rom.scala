@@ -11,7 +11,7 @@ import scala.sys.process._;
 
 class Rom(elf_path: String) extends Module {
   val io = new Bundle {
-    val pc    = UInt(INPUT, Config.xlen)
+    val addr    = UInt(INPUT, Config.xlen)
     val instr = UInt(OUTPUT, Config.xlen)
     val byte_en = UInt(INPUT, 2)
   }
@@ -31,15 +31,16 @@ class Rom(elf_path: String) extends Module {
   // words and assumes that all addresses are word-aligned. To go from
   // a byte-addressable address to a word addressable address we
   // right-shift twice.
-  val word_addr = io.pc >> UInt(2)
 
+  val word_addr = io.addr >> UInt(2)
   val rom_word = rom(word_addr)
   when(is_word_access) {
     io.instr := rom_word
   }.otherwise {
     // Shift and mask the 32 bit word to be able to read only one of
     // the 4 bytes, or one of the two halfwords in the 32bit word.
-    val shifted = rom_word >> (io.pc(1, 0) * UInt(8))
+
+    val shifted = rom_word >> (io.addr(1, 0) * UInt(8))
     val mask = Mux(is_byte_access, byte_mask, halfword_mask)
     val masked = shifted & mask
     io.instr := masked
