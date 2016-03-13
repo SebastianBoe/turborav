@@ -40,5 +40,5 @@ class RavV(elf_path: String, fpga: Boolean) extends Module {
   mem.io.has_wait_state := roam.io.mem.has_wait_state
 
   fch.io.rr_io <> roam.io.fch
-  io <> roam.io.rr_mmio
+  io           <> roam.io.rr_mmio
 }
