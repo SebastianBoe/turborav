@@ -7,15 +7,10 @@ c_sim_env = sim_env.Clone(
     TOP_MODULE = "Soc"
 )
 
-modules = [
-    "timer",
-    "sanity",
-    "syscalls"
-]
-
 c_test_env = riscv_program_env.Clone()
 c_test_env.Append(CPPPATH = ["modules"])
-for test_suite in [Dir("modules/" + d) for d in modules]:
+
+for test_suite in [test_suite for test_suite in Glob("modules/*") if test_suite.isdir()]:
     test_suite_lib_dir = test_suite.Dir(".lib")
     c_test_env.Append(CPPPATH = test_suite_lib_dir)
     for test in test_suite.glob("*.c"):
