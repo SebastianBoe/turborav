@@ -1,10 +1,9 @@
 Import('turborav_jar riscv_program_env startup_file default_program CLASSPATH')
 
-sim_env = DefaultEnvironment(
-)
+sim_env = DefaultEnvironment()
 sim_env['CLASSPATH'] = "{}:{}".format(turborav_jar, CLASSPATH)
 sim_env.Append(
-    ENV = {"CXX" : "clang++"},
+    ENV      = {"CXX"      : "clang++"  },
     BUILDERS = {"Simulate" : sim_builder}
 )
 

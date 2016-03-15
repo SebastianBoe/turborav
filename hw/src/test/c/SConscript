@@ -31,6 +31,13 @@ for test_suite in [Dir("modules/" + d) for d in modules]:
         )[0]
         Depends(program, c_test_env["LINKER_SCRIPT"])
 
+        target_dir = str(program.path) + "_dir"
+        c_sim_env.Simulate(
+            "#" + target_dir + "/jenkins.xml",
+            [turborav_jar, program],
+            TARGET_DIR = target_dir,
+            ROM = program.path
+        )
         # Generate disassembly for debugging
         riscv_program_env.Command(
             str(program) + ".dis",
@@ -38,12 +45,4 @@ for test_suite in [Dir("modules/" + d) for d in modules]:
             """riscv64-unknown-elf-objdump \
             -DS -M no-aliases -M numeric \
             $SOURCE > $TARGET"""
-        )
-
-        target_dir = str(program.path) + "_dir"
-        c_sim_env.Simulate(
-            "#" + target_dir + "/jenkins.xml",
-            [turborav_jar, program],
-            TARGET_DIR = target_dir,
-            ROM = program.path
         )
