@@ -55,8 +55,9 @@ language. These testbenches are located [here](hw/src/test/scala/tb/).
 
 System testing is done with C-code firmware running on the simulated
 SoC. The firmware can use printf's and assertions to report the test
-status. These firmware's will hopefully be portable to the FPGA
-platform once it is up and running.
+status. You can find these firmwares [here](hw/src/test/c/modules/).
+These firmware's will hopefully be portable to the FPGA platform once 
+it is up and running.
 
 ### CPU verification
 
