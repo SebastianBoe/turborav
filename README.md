@@ -40,6 +40,37 @@ with. But most importantly; have fun!
 The tool flow is quite involved, luckily how to use the tools is encoded into the build system, and all the tools are found pre-installed in a docker container.
 ![](https://docs.google.com/drawings/d/1R1S3EaMNbQhiivbtGhVuwwE5PzFvSRuUj1LCNBwp3wo/pub?w=1884&h=1553)
 
+## Verification
+
+Verification is done using automated tests that generate junit.xml
+files for consumption by CI tools. The SaaS CI tool Travis runs all
+tests on every commit and the status can be seen
+[here](https://travis-ci.org/SebastianBoe/turborav).
+
+### SoC
+
+The SoC is verified at the unit and system level. Unit testing of HW
+modules is done with testbenches written in the very powerful scala
+language. These testbenches are located [here](hw/src/test/scala/tb/).
+
+System testing is done with C-code firmware running on the simulated
+SoC. The firmware can use printf's and assertions to report the test
+status. These firmware's will hopefully be portable to the FPGA
+platform once it is up and running.
+
+### CPU verification
+
+The custom RISC-V CPU is verified using assembly tests from
+https://github.com/riscv/riscv-tests. And also through the SoC system
+tests that run C-code programs.
+
+### FPGA
+
+Verification using the FPGA platform is not supported yet (currently
+[2016 easter] working on some clock frequency performance bugs). But
+automatic synthesis using only free and open source tools is supported
+through the scons build target build/synth/yosys/icoboard.
+
 ## Development
 
 The below screenshot demonstrates what the development environment might look
