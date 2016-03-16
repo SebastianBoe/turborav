@@ -22,7 +22,7 @@ object TurboRav {
       Array(
         "--genHarness",
         "--Wall",
-        "--vcdMem", //TODO: Understand how to view this.
+        "--vcdMem",
         "--backend", "v",
         "--targetDir", target_dir
       ),
