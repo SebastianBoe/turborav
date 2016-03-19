@@ -36,4 +36,6 @@ push_uri="https://$GITHUB_SECRET_TOKEN@github.com/$GITHUB_REPO"
 
 # Redirect to /dev/null to avoid secret leakage
 git push "$push_uri" "$BRANCH_TO_MERGE_INTO" >/dev/null 2>&1
-git push "$push_uri" :"$TRAVIS_BRANCH" >/dev/null 2>&1
+
+# Don't delete the merged branch
+# git push "$push_uri" :"$TRAVIS_BRANCH" >/dev/null 2>&1
