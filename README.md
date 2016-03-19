@@ -72,6 +72,18 @@ Verification using the FPGA platform is not supported yet (currently
 automatic synthesis using only free and open source tools is supported
 through the scons build target build/synth/yosys/icoboard.
 
+## Git workflow
+
+Development happens on the dev branch. When travis verifies that dev
+is green it will [automatically update the master branch with the
+known good commits from dev.](.travis.yml). Master is not updated
+directly by developers, but it can be branched off from if a developer
+wants a known good revision.
+
+Topic branches are optional and will be tested by
+[travis](https://travis-ci.org/SebastianBoe/turborav/builds) when
+pushed to github.
+
 ## Development
 
 The below screenshot demonstrates what the development environment might look
