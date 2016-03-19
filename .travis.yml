@@ -8,3 +8,13 @@ before_install:
 
 script:
   - docker run --user=root -v $TRAVIS_BUILD_DIR:/mnt/turborav travis scons build/test
+
+# Auto-merge dev into master when travis is green.
+# https://chrisdown.name/2015/09/27/auto-merging-successful-builds-from-travis-ci.html
+after_success:
+    - "BRANCHES_TO_MERGE_REGEX=dev BRANCH_TO_MERGE_INTO=master GITHUB_REPO=SebastianBoe/turborav $TRAVIS_BUILD_DIR/tools/travis-automerge.sh"
+
+# The below is used by travis-automerge.sh
+env:
+  global:
+    secure: gJ2S6UHhCZkx4piYozWhWeQN7TUYOP4GGj581DYgeCNFQdo1NvJn1zEKP+JsZEu4pvNPb13k/SrzSio5DtPQaTtYNJ89DAVlEkA8vGEqPTO9ZdsPEdwWamXCfAvoVmICLb7x9WKOXB3C5/uQTK+9KfQqzlPB3HSTE1EDCtU0XPJhcJufKmrC/1tMrGF+rStLxi3W7pZIPbvTNZmUzFbf1mMygMEsAeB66KJy8qxgV7+R4NdxZhSkVhzY0bWDOsdnno0VgJoezl4A24CRum/ScjVldnDjG7OKKiaF/ezRSRjwkZX4zdsQ6rilQdgnv2h4HiPspKYWxbDyfq20gzh3CC3qDUNb3moPF7qi+7GwA4lAYYBXK+F0ypY7qlxrt1qOWLNSdtZzovsLiwMP6CCUJ3ciN7569RlvW7byDbJXMFgnn7llOPepdl0zq7lFE8Fg+GoZ12RFvElNHEoHV3l1fp7YWeJUXSNLWgcchIkkJJpPZbFBIORGTmmC8+651W+0XRCRbNU8NJuUs1SFbJJiQK4LnE0h9Aq8Y9WzI2wN0eg6VDuvH0gEBxeoN4dnqQzgcZDh+9vIS8nBEbRYkYphxveucoEI8d0RPqvYHWjDXJe0yPukjZIbS0x1UvGnyFjTtKR2tfkiT4R7Jc7zcJo9PDA+ktfOBu4GNcaNLbqCGgI=
