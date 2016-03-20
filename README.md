@@ -57,15 +57,14 @@ System testing is done with C-code firmware running on the simulated
 SoC. When no external stimuli from outside the SoC is needed the test
 code consists solely of C-code. These are known as C-tests and can be
 found [here](hw/src/test/c/modules/). These firmwares can use printf's
-and assertions to report the test status. You can find these firmwares
-[here](hw/src/test/c/modules/).  These firmware's will hopefully be
-portable to the FPGA platform once it is up and running.
+and assertions to report the test status. These firmware's will
+hopefully be portable to the FPGA platform once it is up and running.
 
-When external stimuli is needed, e.g. a GPIO peripheral test. The test
-code consists of C-code running on the SoC, as with C-tests, but also
-scala testbench code that wraps the SoC in a similar manner to Unit
-tests. These tests are known as hybrid tests because they are a hybrid
-of C-tests and Unit tests and can be found [here](hw/src/test/hybrid).
+When external stimuli is needed, e.g. a GPIO peripheral test, the test
+code consists of C-code running on the SoC and scala testbench code
+that wraps the SoC. These tests are known as hybrid tests because they
+are a hybrid of C-tests and Unit tests and can be found
+[here](hw/src/test/hybrid).
 
 ### CPU verification
 
