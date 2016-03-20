@@ -1,4 +1,4 @@
-Import('riscv_program_env startup_file turborav_jar sim_env')
+Import('riscv_program_env turborav_jar sim_env')
 
 # C-tests re-use the same toplevel scala simulation testbench
 # (src/test/scala/Riscvtest.scala) that is used for simulating RISC-V
@@ -28,7 +28,7 @@ for test_suite in [test_suite for test_suite in Glob("modules/*") if test_suite.
                 "modules/unit.c",
                 test_suite_lib_dir.glob("*.c"),
                 "syscalls.c",
-                startup_file
+                c_test_env["crt0_o"]
             ]
         )[0]
         Depends(program, c_test_env["LINKER_SCRIPT"])

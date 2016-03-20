@@ -1,0 +1,10 @@
+Import('riscv_program_env')
+
+# https://en.wikipedia.org/wiki/Crt0
+riscv_program_env['crt0_o'] = riscv_program_env.StaticObject(
+    target = 'crt0.o',
+    source = 'crt0.s'
+)
+
+# When RISC-V programs are built they take care to link in this C
+# runtime initialization code.

@@ -1,6 +1,6 @@
 from subprocess import check_output
 
-Import('turborav_jar riscv_program_env startup_file sim_env')
+Import('turborav_jar riscv_program_env sim_env')
 # Here we build the riscv tests and also run the tests to generate
 # jenkins.xml reports.
 
@@ -17,7 +17,7 @@ def main():
     for test in get_test_sources():
         # RISC-V firmware
         program = riscv_program_env.Program(
-            [test, startup_file]
+            [test, riscv_program_env['crt0_o']]
         )[0]
         Depends(program, riscv_program_env['LINKER_SCRIPT'])
 

@@ -1,5 +1,0 @@
-Import('riscv_program_env')
-
-startup_file = riscv_program_env.StaticObject(target = 'crt0.o', source = 'crt0.s')
-
-Return('startup_file')
