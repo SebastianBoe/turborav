@@ -6,19 +6,19 @@ Help("""
 Welcome to TurboRav's monolithic test and synthesis build system.
 
 Simulation tests
-'scons build/test'           run all tests,
-'scons build/test/riscv/'    run all riscv tests,
-'scons build/test/riscv/add' run the riscv add test,
-'scons build/test/unit/'     run all unit tests,
-'scons build/test/unit/Alu'  run the Alu test from src/test/scala,
-'scons build/test/c/'        run all c-based tests,
+'scons build/test'           run all tests
+'scons build/test/riscv/'    run all riscv tests
+'scons build/test/riscv/add' run the riscv add test
+'scons build/test/unit/'     run all unit tests
+'scons build/test/unit/Alu'  run the Alu test from src/test/scala
+'scons build/test/c/'        run all c-based tests
 
 Synthesis
-'scons build/synth/Soc.v'                             generate verilog code,
-'scons build/synth/yosys/Soc.blif'                    Synthesize a technology-mapped netlist,
-'scons build/synth/yosys/icoboard/Soc.asc'            Create a placed and routed textual bitstream,
-'scons build/synth/yosys/icoboard/Soc.bin'            Create a netlist for FPGA-programming,
-'scons build/synth/yosys/icoboard/icetime.report.txt' Create a timing report,
+'scons build/synth/Soc.v'                             generate verilog code
+'scons build/synth/yosys/Soc.blif'                    Synthesize a technology-mapped netlist
+'scons build/synth/yosys/icoboard/Soc.asc'            Create a placed and routed textual bitstream
+'scons build/synth/yosys/icoboard/Soc.bin'            Create a netlist for FPGA-programming
+'scons build/synth/yosys/icoboard/icetime.report.txt' Create a timing report
 
 All build targets are files, or directories of files that can be
 "built" by the build system. When SCons is given a directory for a
