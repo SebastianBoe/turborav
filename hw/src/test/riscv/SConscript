@@ -1,6 +1,6 @@
 from subprocess import check_output
 
-Import('turborav_jar riscv_program_env sim_env')
+Import('riscv_program_env sim_env')
 # Here we build the riscv tests and also run the tests to generate
 # jenkins.xml reports.
 
@@ -34,7 +34,7 @@ def main():
         target = str(program).split('/')[-1]
         riscv_sim_env.Simulate(
             target + "/jenkins.xml",
-            [turborav_jar, program],
+            [sim_env["TURBORAV_JAR"], program],
             TARGET_DIR = Dir(target).path,
             ROM = program.path
         )

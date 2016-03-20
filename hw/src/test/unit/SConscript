@@ -1,6 +1,6 @@
 from os.path import basename
 
-Import('sim_env turborav_jar default_program')
+Import('sim_env default_program')
 
 sim_env['ROM'] = default_program
 
@@ -11,7 +11,7 @@ for scala_tb_source_path in Glob("#src/test/scala/tb/*"):
 
     sim_env.Simulate(
         target_dir.File("jenkins.xml"),
-        [turborav_jar, default_program],
+        [sim_env["TURBORAV_JAR"], default_program],
         TARGET_DIR = target_dir,
         MODULE     = base.replace(".scala", ""),
         TOP_MODULE = top_module

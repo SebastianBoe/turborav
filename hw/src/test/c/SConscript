@@ -1,4 +1,4 @@
-Import('riscv_program_env turborav_jar sim_env')
+Import('riscv_program_env sim_env')
 
 # C-tests re-use the same toplevel scala simulation testbench
 # (src/test/scala/Riscvtest.scala) that is used for simulating RISC-V
@@ -36,7 +36,7 @@ for test_suite in [test_suite for test_suite in Glob("modules/*") if test_suite.
         target_dir = str(program.path) + "_dir"
         c_sim_env.Simulate(
             "#" + target_dir + "/jenkins.xml",
-            [turborav_jar, program],
+            [c_sim_env["TURBORAV_JAR"], program],
             TARGET_DIR = target_dir,
             ROM = program.path
         )
