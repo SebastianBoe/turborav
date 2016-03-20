@@ -61,7 +61,13 @@ riscv_program_env = Environment(
     CCFLAGS = CCFLAGS,
     ASFLAGS = CCFLAGS,
     LINKFLAGS = COMMON_FLAGS + LINKER_FLAGS,
-    LINKER_SCRIPT = linker_script
+    LINKER_SCRIPT = linker_script,
+    BUILDERS = {
+        'Disassemble' : Builder(
+            action = """riscv64-unknown-elf-objdump \
+            -DS -M no-aliases -M numeric $SOURCE > $TARGET"""
+        )
+    }
 )
 
 SConscript(

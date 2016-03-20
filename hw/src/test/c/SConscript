@@ -41,10 +41,7 @@ for test_suite in [test_suite for test_suite in Glob("modules/*") if test_suite.
             ROM = program.path
         )
         # Generate disassembly for debugging
-        riscv_program_env.Command(
+        riscv_program_env.Disassemble(
             str(program) + ".dis",
-            program,
-            """riscv64-unknown-elf-objdump \
-            -DS -M no-aliases -M numeric \
-            $SOURCE > $TARGET"""
+            program
         )
