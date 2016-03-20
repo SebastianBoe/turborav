@@ -37,8 +37,8 @@ class Execute extends Module {
   val dec_exe_next = MuxCase(
     io.dec_exe,
     Array(
-      io.hdu_exe.flush -> flushed_pipeline,
-      io.hdu_exe.stall -> dec_exe
+      io.hdu_exe.stall -> dec_exe,
+      io.hdu_exe.flush -> flushed_pipeline
     )
   )
   // Write to the pipeline registers
