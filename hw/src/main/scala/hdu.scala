@@ -5,11 +5,16 @@ package TurboRav
 
 import Chisel._
 
-// Purely combinatorial Hazard Detection Unit
+// Purely combinatorial Hazard Detection Unit (HDU)
 
-// The hazard detection unit collects information from the different
-// stages that could lead to a bubble and then distributes stall
-// signals accordingly.
+// The HDU collects information from the different stages that could
+// lead to a bubble and then distributes stall signals
+// accordingly. When stalling, a pipeline stage should not modify it's
+// pipeline register, and it should send a bubble to the next stage.
+
+// In addition to stall signals the HDU generates flush signals. When
+// a pipeline stage is flushed it should clear it's pipeline register,
+// but not send a bubble to the next stage.
 
 class HazardDetectionUnit extends Module {
   val io = new HazardDetectionUnitIO()
