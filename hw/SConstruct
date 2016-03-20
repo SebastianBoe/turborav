@@ -12,6 +12,7 @@ Simulation tests
 'scons build/test/unit/'     run all unit tests
 'scons build/test/unit/Alu'  run the Alu test from src/test/scala
 'scons build/test/c/'        run all c-based tests
+'scons build/test/hybrid/'   run tests with custom firmware and custom testbench
 
 Synthesis
 'scons build/synth/Soc.v'                             generate verilog code

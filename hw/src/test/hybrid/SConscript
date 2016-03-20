@@ -1,0 +1,26 @@
+Import('riscv_program_env sim_env')
+
+env = sim_env.Clone(
+    TOP_MODULE = "Soc"
+)
+
+c_firmwares = SConscript(
+    "c/SConscript",
+    exports = 'riscv_program_env'
+)
+
+# Just one program right now
+program = c_firmwares
+
+# Just one testbench right now
+module = "Gpiotest"
+
+target_dir = "{}_{}_dir".format(program.path, module)
+
+env.Simulate(
+    "#" + target_dir + "/jenkins.xml",
+    [sim_env["TURBORAV_JAR"], program],
+    TARGET_DIR = target_dir,
+    ROM = program.path,
+    MODULE = module
+)

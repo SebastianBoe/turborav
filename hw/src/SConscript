@@ -8,6 +8,7 @@ turborav_jar = Command(
     ['scala/classes/TurboRav.jar'],
     Glob('main/scala/*') +
     Glob('test/scala/*') +
+    Glob('test/hybrid/scala/*') +
     Glob('test/scala/tb/*'),
     """fsc\
     -feature\
@@ -21,6 +22,7 @@ turborav_jar = Command(
     build/main/scala/*.scala\
     build/test/scala/*.scala\
     build/test/scala/tb/*.scala\
+    build/test/hybrid/scala/*.scala\
     \
     &&\
     \

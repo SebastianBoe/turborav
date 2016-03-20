@@ -19,6 +19,11 @@ SConscript(
 )
 
 SConscript(
+    "hybrid/SConscript",
+    exports = 'sim_env riscv_program_env'
+)
+
+SConscript(
     "unit/SConscript",
     exports = 'sim_env default_program'
 )

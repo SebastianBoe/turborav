@@ -163,6 +163,15 @@ Options:
         chiselMainTest(test_args, () => Module(new FpgaRam())) {
           c => new FpgaRamTest(c)
         }
+      case "Gpiotest" =>
+        chiselMainTest(test_args, () => Module(new Soc(
+          rom,
+          num_pin_inputs,
+          num_pin_outputs,
+          fpga
+        ))){
+          c => new GpioTest(c, target_dir)
+        }
     }
     //TODO: simplify scala command by doing waveform tricks here?
   }
