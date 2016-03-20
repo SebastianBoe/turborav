@@ -1,9 +1,16 @@
-import os
+Import('riscv_program_env startup_file turborav_jar sim_env')
 
-Import('startup_file riscv_program_env turborav_jar sim_env')
+# C-tests re-use the same toplevel scala simulation testbench
+# (src/test/scala/Riscvtest.scala) that is used for simulating RISC-V
+# assembly tests (src/test/riscv/).
+
+# This testbench controls a simulation of software running on the SoC
+# and looks for special signals that indicate test pass, test fail, or
+# printf messages.
+module = "Riscvtest"
 
 c_sim_env = sim_env.Clone(
-    MODULE     = "Riscvtest",
+    MODULE     = module,
     TOP_MODULE = "Soc"
 )
 
