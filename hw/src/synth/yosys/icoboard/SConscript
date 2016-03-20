@@ -21,5 +21,5 @@ yosys_env['ICETIME_REPORT'] = File("icetime.report.txt")
 yosys_env.Command(
     yosys_env['ICETIME_REPORT'],
     [yosys_env['PCF'], yosys_env['ASC']],
-    "icetime -t -p $PCF $ASC | tee $ICETIME_REPORT | tail --lines=4"
+    "icetime -t -d hx8k -p $PCF $ASC | tee $ICETIME_REPORT | tail --lines=4"
 )

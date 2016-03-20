@@ -72,7 +72,7 @@ RUN curl http://central.maven.org/maven2/edu/berkeley/cs/chisel_$SCALA_VERSION/$
     && install -Dm644 $CHISEL_JAR /usr/share/scala/chisel/chisel.jar
 
 # Build icestorm
-ENV ICESTORM_REVISION da6ad20dba07ecb49b33323e9e3bf667786645b3
+ENV ICESTORM_REVISION 6178dfbbd612d15a46c7d2a439b2252d6d0a87ba
 USER turbo
 RUN git clone https://aur.archlinux.org/icestorm-git.git \
     && cd icestorm-git \
