@@ -19,7 +19,7 @@ class Gpio(num_pin_inputs: Int, num_pin_outputs: Int)
   def getApbSlaveIo = io.apb_slave
 
   val input_reg  = Reg(init = UInt(0), next = io.pin_inputs)
-  val output_reg = Reg(init = UInt(0))
+  val output_reg = Reg(UInt(width = num_pin_outputs))
 
   val s_idle :: s_setup :: Nil = Enum(UInt(), 2)
   val state = Reg(init = s_idle)
