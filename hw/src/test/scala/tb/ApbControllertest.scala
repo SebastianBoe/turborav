@@ -4,7 +4,7 @@ import Chisel._
 
 class ApbControllerTest(c: ApbController) extends JUnitTester(c) {
 
-  def pokeRr(addr: Int, data: Int, write: Boolean) {
+  def pokeRequest(addr: Int, data: Int, write: Boolean) {
     poke(c.io.rr.request.bits.addr, addr)
     poke(c.io.rr.request.bits.wdata, data)
     poke(c.io.rr.request.valid, 1)
@@ -24,12 +24,12 @@ class ApbControllerTest(c: ApbController) extends JUnitTester(c) {
     expect(c.io.selx, selx)
   }
 
-  def expectRr(data: Int, valid: Boolean) {
+  def expectResponse(data: Int, valid: Boolean) {
     expect(c.io.rr.response.valid, if(valid) 1 else 0)
     expect(c.io.rr.response.bits.word, data)
   }
 
-  def clearRr() {
+  def clearRequest() {
     poke(c.io.rr.request.bits.addr, 0)
     poke(c.io.rr.request.bits.wdata, 0)
     poke(c.io.rr.request.valid, 0)
@@ -46,16 +46,16 @@ class ApbControllerTest(c: ApbController) extends JUnitTester(c) {
   expectApb(0, 0, false, false, 0)
 
   // Test single write transaction with no wait state
-  pokeRr(0x20040040, 0xdeadbeef, true)
+  pokeRequest(0x20040040, 0xdeadbeef, true)
   step(1)
   expectApb(0x40, 0xdeadbeef, true, false, 1 << 4)
-  expectRr(0, false)
+  expectResponse(0, false)
 
-  clearRr()
+  clearRequest()
   step(1)
   pokeApb(0xbaadf00d, true)
   expectApb(0x40, 0xdeadbeef, true, true, 1 << 4)
-  expectRr(0x0, true)
+  expectResponse(0x0, true)
 
   step(1)
   clearApb()
@@ -65,16 +65,16 @@ class ApbControllerTest(c: ApbController) extends JUnitTester(c) {
   expectApb(0, 0, false, false, 0)
 
   // Test single read transaction with no wait state
-  pokeRr(0x20020080, 0xbaadf00d, false)
+  pokeRequest(0x20020080, 0xbaadf00d, false)
   step(1)
   expectApb(0x80, 0x0, false, false, 1 << 2)
-  expectRr(0, false)
+  expectResponse(0, false)
 
-  clearRr()
+  clearRequest()
   step(1)
   pokeApb(0xdeadbeef, true)
   expectApb(0x80, 0, false, true, 1 << 2)
-  expectRr(0xdeadbeef, true)
+  expectResponse(0xdeadbeef, true)
 
   step(1)
   clearApb()
@@ -84,22 +84,22 @@ class ApbControllerTest(c: ApbController) extends JUnitTester(c) {
   expectApb(0, 0, false, false, 0)
 
     // Test single write transaction with no wait state
-  pokeRr(0x20040040, 0xdeadbeef, true)
+  pokeRequest(0x20040040, 0xdeadbeef, true)
   step(1)
   expectApb(0x40, 0xdeadbeef, true, false, 1 << 4)
-  expectRr(0, false)
+  expectResponse(0, false)
 
-  clearRr()
+  clearRequest()
   step(1)
   pokeApb(0xbaadf00d, false)
   for(i <- 0 until 4){
     expectApb(0x40, 0xdeadbeef, true, true, 1 << 4)
-    expectRr(0x0, false)
+    expectResponse(0x0, false)
     step(1)
   }
   pokeApb(0xbaadf00d, true)
   expectApb(0x40, 0xdeadbeef, true, true, 1 << 4)
-  expectRr(0x0, true)
+  expectResponse(0x0, true)
 
   step(1)
   clearApb()
@@ -109,22 +109,22 @@ class ApbControllerTest(c: ApbController) extends JUnitTester(c) {
   expectApb(0, 0, false, false, 0)
 
   // Test single read transaction with wait state
-  pokeRr(0x20020080, 0xbaadf00d, false)
+  pokeRequest(0x20020080, 0xbaadf00d, false)
   step(1)
   expectApb(0x80, 0x0, false, false, 1 << 2)
-  expectRr(0, false)
+  expectResponse(0, false)
 
-  clearRr()
+  clearRequest()
   step(1)
   pokeApb(0xdeadbeef, false)
   for(i <-0 until 4){
     expectApb(0x80, 0, false, true, 1 << 2)
-    expectRr(0x0, false)
+    expectResponse(0x0, false)
     step(1)
   }
   pokeApb(0xdeadbeef, true)
   expectApb(0x80, 0, false, true, 1 << 2)
-  expectRr(0xdeadbeef, true)
+  expectResponse(0xdeadbeef, true)
 
   step(1)
   clearApb()
@@ -134,27 +134,27 @@ class ApbControllerTest(c: ApbController) extends JUnitTester(c) {
   expectApb(0, 0, false, false, 0)
 
   // Test back to back write read transaction
-  pokeRr(0x20040040, 0xdeadbeef, true)
+  pokeRequest(0x20040040, 0xdeadbeef, true)
   step(1)
   expectApb(0x40, 0xdeadbeef, true, false, 1 << 4)
-  expectRr(0, false)
+  expectResponse(0, false)
 
-  clearRr()
+  clearRequest()
   step(1)
   pokeApb(0xbaadf00d, true)
   expectApb(0x40, 0xdeadbeef, true, true, 1 << 4)
-  expectRr(0, true)
+  expectResponse(0, true)
 
-  pokeRr(0x20040080, 0xdeadbeef, false)
+  pokeRequest(0x20040080, 0xdeadbeef, false)
   step(1)
   expectApb(0x80, 0, false, false, 1 << 4)
-  expectRr(0, false)
+  expectResponse(0, false)
 
-  clearRr()
+  clearRequest()
   step(1)
   pokeApb(0xbaadf00d, true)
   expectApb(0x80, 0, false, true, 1 << 4)
-  expectRr(0xbaadf00d, true)
+  expectResponse(0xbaadf00d, true)
 
   step(1)
   clearApb()
