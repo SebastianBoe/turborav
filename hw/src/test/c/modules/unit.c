@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include "encoding.h"
 #include "unit.h"
 #include <stdio.h>
 
