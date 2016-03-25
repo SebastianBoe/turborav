@@ -1,4 +1,4 @@
-Import('riscv_program_env sim_env')
+Import('turborav_program_env sim_env')
 
 env = sim_env.Clone(
     TOP_MODULE = "Soc"
@@ -6,7 +6,7 @@ env = sim_env.Clone(
 
 c_firmwares = SConscript(
     "c/SConscript",
-    exports = 'riscv_program_env'
+    exports = 'turborav_program_env'
 )
 
 # Just one program right now

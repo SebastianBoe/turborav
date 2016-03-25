@@ -1,4 +1,4 @@
-Import('riscv_program_env sim_env')
+Import('turborav_program_env sim_env')
 
 # C-tests re-use the same toplevel scala simulation testbench
 # (src/test/scala/Riscvtest.scala) that is used for simulating RISC-V
@@ -19,8 +19,7 @@ modules = [
     "sanity",
     "syscalls"
 ]
-
-c_test_env = riscv_program_env.Clone()
+c_test_env = turborav_program_env.Clone()
 c_test_env.Append(CPPPATH = ["modules"])
 for test_suite in [Dir("modules/" + d) for d in modules]:
     test_suite_lib_dir = test_suite.Dir(".lib")
@@ -29,10 +28,8 @@ for test_suite in [Dir("modules/" + d) for d in modules]:
         program = c_test_env.Program(
             [
                 test,
-                "modules/tr.c",
                 "modules/unit.c",
                 test_suite_lib_dir.glob("*.c"),
-                "syscalls.c",
                 c_test_env["crt0_o"]
             ]
         )[0]
@@ -46,7 +43,7 @@ for test_suite in [Dir("modules/" + d) for d in modules]:
             ROM = program.path
         )
         # Generate disassembly for debugging
-        riscv_program_env.Disassemble(
+        c_test_env.Disassemble(
             str(program) + ".dis",
             program
         )

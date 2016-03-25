@@ -1,13 +1,13 @@
-Import('riscv_program_env')
+Import('turborav_program_env')
 
-program = riscv_program_env.Program(
+program = turborav_program_env.Program(
     [
         "btn2_to_led1.c",
-        riscv_program_env["crt0_o"]
+        turborav_program_env["crt0_o"]
     ]
 )[0]
-Depends(program, riscv_program_env["LINKER_SCRIPT"])
+Depends(program, turborav_program_env["LINKER_SCRIPT"])
 
-riscv_program_env.Disassemble(str(program) + ".dis", program)
+turborav_program_env.Disassemble(str(program) + ".dis", program)
 
 Return('program')

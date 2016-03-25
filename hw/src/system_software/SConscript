@@ -1,0 +1,26 @@
+Import('riscv_program_env')
+
+# Create turborav_program_env, a build environment for C programs that
+# run on the TurboRav SoC, and libsystem.a, a system library that
+# contains necessary system software for all TurboRav programs.
+
+# libsystem.a includes the tr.c, which has information about the
+# memory map. And syscalls.c which implements the necessary system
+# calls to use libc.
+
+turborav_program_env = riscv_program_env.Clone()
+
+# Add tr.h to the include path of TurboRav programs
+turborav_program_env.Append(CPPPATH = Dir("."))
+
+system = turborav_program_env.StaticLibrary(
+    target = 'system',
+    source = [
+        "tr.c",
+        "syscalls.c"
+    ]
+)
+
+turborav_program_env.Append(LIBS = system)
+
+Return('turborav_program_env')
