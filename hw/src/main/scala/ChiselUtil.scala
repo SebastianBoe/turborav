@@ -136,3 +136,24 @@ object splitBitsIntoVec {
     Vec(for (i <- indices) yield bits(i + vec_element_width - 1, i))
   }
 }
+
+/**
+ * Range is analogous to python's range function. But instead of
+ *  creating a list of integers, it creates a Vec of UInt's.
+ */
+object Range {
+  def apply(start: Int, end_not_inclusive: Int): Vec[UInt] = {
+    Vec(for (i <- start until end_not_inclusive) yield UInt(i))
+  }
+}
+
+/**
+ * Returns a Chisel Bool that indicates if the UInt x is between the
+ *  scala integers start and end_not_inclusive.
+ */
+object InRange {
+  def apply(x: UInt, start: Int, end_not_inclusive: Int): Bool = {
+    Range(start, end_not_inclusive).contains(x)
+  }
+}
+
