@@ -13,7 +13,7 @@ c_firmwares = SConscript(
 program = c_firmwares
 
 # Just one testbench right now
-module = "Gpiotest"
+module = "GpioHybridtest"
 
 target_dir = "{}_{}_dir".format(program.path, module)
 

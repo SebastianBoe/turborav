@@ -3,7 +3,7 @@ package TurboRav
 import Chisel._
 import scala.math.BigInt
 
-class GpioTest(c: Soc, test_name: String)
+class GpioHybridTest(c: Soc, test_name: String)
 extends JUnitTester(c, isTrace = true) {
 
   expect(! getLed1Status(), "LED should be off on boot")
@@ -62,6 +62,6 @@ extends JUnitTester(c, isTrace = true) {
   }
 
   override def getTestName: String = {
-    test_name + "_" + "Gpiotest"
+    test_name + "_" + "GpioHybridtest"
   }
 }
