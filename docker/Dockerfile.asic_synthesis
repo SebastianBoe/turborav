@@ -1,0 +1,54 @@
+FROM sebomux/turborav
+
+WORKDIR /home/turbo
+
+### Install qflow, for asic synthesis
+
+## Install graywolf, a qflow dependency
+# NB: The version is not specified, so this is subject to bit rot
+
+# Install cmake, a graywolf dependency
+USER root
+RUN pacman --noconfirm -S cmake
+
+USER turbo
+RUN git clone https://aur.archlinux.org/graywolf.git \
+    && cd graywolf \
+    && makepkg --clean
+USER root
+RUN pacman -U --noconfirm graywolf/graywolf*pkg*
+## End of graywolf installation
+
+## Install magic, a qflow dependency
+# Install magic dependencies
+USER root
+RUN pacman --noconfirm -S tcsh tk
+# RUN pacman --noconfirm -S tcl libx11 # already installed
+USER turbo
+ENV PKG magic
+RUN git clone https://aur.archlinux.org/$PKG.git \
+    && cd $PKG \
+    && makepkg --clean
+USER root
+RUN pacman -U --noconfirm $PKG/$PKG*pkg*
+## End of magic installation
+
+## Install qrouter, a qflow dependency
+USER turbo
+ENV PKG qrouter
+RUN git clone https://aur.archlinux.org/$PKG.git \
+    && cd $PKG \
+    && makepkg --clean
+USER root
+RUN pacman -U --noconfirm $PKG/$PKG*pkg*
+## End of qrouter installation
+
+## Finally install qflow itself
+USER turbo
+ENV PKG qflow
+RUN git clone https://aur.archlinux.org/$PKG.git \
+    && cd $PKG \
+    && makepkg --clean
+USER root
+RUN pacman -U --noconfirm $PKG/$PKG*pkg*
+### End of qflow installation
