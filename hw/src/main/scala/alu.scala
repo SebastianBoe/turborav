@@ -6,27 +6,23 @@ package TurboRav
 import Chisel._
 import Constants._
 
-// The purely combinatorial Arithmetic Logic Unit.
+// A purely combinatorial Arithmetic Logic Unit.
 
-class Alu () extends Module {
-
-  require(isPow2(Config.xlen))
-
+class Alu extends Module {
   val io = new Bundle {
     val func = UInt(INPUT, 4)
-    val in_a  = UInt(INPUT, Config.xlen)
-    val in_b  = UInt(INPUT, Config.xlen)
+    val in_a = UInt(INPUT, Config.xlen)
+    val in_b = UInt(INPUT, Config.xlen)
     val out  = UInt(OUTPUT, Config.xlen)
   }
 
-  val shamt = UInt(
-    io.in_b(log2Up(Config.xlen) - 1, 0),
-    width = log2Up(Config.xlen)
-  )
+  val DEFAULT_ALU_OUTPUT = UInt(0, Config.xlen)
+
+  val shamt = io.in_b(log2Up(Config.xlen) - 1, 0)
 
   io.out := Lookup(
     io.func,
-    UInt(0, Config.xlen),
+    DEFAULT_ALU_OUTPUT,
     Array(
       ALU_ADD  -> (io.in_a + io.in_b),
       ALU_SUB  -> (io.in_a - io.in_b),
