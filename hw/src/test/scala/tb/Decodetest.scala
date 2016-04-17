@@ -79,6 +79,21 @@ class DecodeTest(c: Decode) extends JUnitTester(c) {
     expect(c.io.dec_exe.exe_ctrl.alu_in_b_sel, ALU_IN_B_IMM_VAL)
   }
 
+  // Expect that the decode stage will pipeline registers
+  // correctly. Specifically, it will retain it's pipeline register
+  // contents when stalled.
+  private def testStall() {
+    poke(c.io.fch_dec.pc, 42)
+
+    step(1)
+    poke(c.io.fch_dec.pc, 1)
+    poke(c.io.hdu_dec.stall, 1)
+
+    step(1)
+    poke(c.io.hdu_dec.stall, 0)
+    expect(c.io.dec_exe.pc, 42)
+  }
+
   val  add_instr1 = 0x7ff30193L   //    addi   x3, x6, 2047
   val  add_instr2 = 0x80038213L   //    addi   x4, x7, -2048
 
@@ -163,4 +178,6 @@ class DecodeTest(c: Decode) extends JUnitTester(c) {
   testUpper(auipc_instr2,          0, true)
   testUpper(lui_instr1,   0xfffff000, false)
   testUpper(lui_instr2,            0, false)
+
+  testStall()
 }
