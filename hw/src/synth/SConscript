@@ -28,5 +28,5 @@ SConscript(
 
 SConscript(
     "yosys/SConscript",
-    exports = "synth_env soc_v"
+    exports = "soc_v"
 )

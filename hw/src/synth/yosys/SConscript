@@ -1,4 +1,4 @@
-Import("synth_env soc_v")
+Import("soc_v")
 
 script = File("yosys.ys")
 log    = File("yosys.log")
