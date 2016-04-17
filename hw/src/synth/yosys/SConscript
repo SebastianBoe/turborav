@@ -1,18 +1,33 @@
 Import("soc_v")
 
-script = File("yosys.ys")
-log    = File("yosys.log")
-blif   = File("Soc.blif")
-yosys_env = Environment(YOSYS_LOG = log, BLIF = blif)
-yosys_env.Command(
-    [blif, log],
-    [soc_v, script],
-    'yosys $SOC_V $SCRIPT > $YOSYS_LOG',
-    SCRIPT = script,
-    SOC_V = soc_v
-)
+def main():
+    script = File("yosys.ys")
+    log    = File("yosys.log")
+    blif   = File("Soc.blif")
 
-SConscript(
-    "icoboard/SConscript",
-    exports = "yosys_env blif"
-)
+    yosys_env = Environment(YOSYS_LOG = log, BLIF = blif)
+
+    append_builders(yosys_env)
+
+    yosys_env.Yosys(
+        [blif, log],
+        [soc_v, script],
+        SCRIPT = script,
+        SOC_V = soc_v
+    )
+
+    SConscript(
+        "icoboard/SConscript",
+        exports = "yosys_env blif"
+    )
+
+def append_builders(env):
+    env.Append(
+        BUILDERS = {
+            'Yosys' : Builder(
+                action = 'yosys $SOC_V $SCRIPT > $YOSYS_LOG'
+            )
+        }
+    )
+
+main()
