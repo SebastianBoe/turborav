@@ -24,12 +24,9 @@ extends JUnitTester(c, isTrace = true) {
   println("Driving BTN2 high")
   driveBtn2(true)
 
-  // Expect that eventually the LED will be driven high.
-  while(! getLed1Status())
-  {
-    step(1)
-  }
-  println("LED1 was driven high")
+  // Expect that after 1000 cycles, the LED will be driven high.
+  step(1000)
+  expect(getLed1Status(), "LED should have been driven high")
 
   for(i <- 0 until 200){
     expect(getLed1Status(), "LED should be held high")
