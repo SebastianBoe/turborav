@@ -179,6 +179,10 @@ Options:
         ))){
           c => new GpioTest(c)
         }
+      case "HazardDetectionUnittest" =>
+        chiselMainTest(test_args, () => Module(new HazardDetectionUnit())){
+          c => new HazardDetectionUnitTest(c)
+        }
     }
     //TODO: simplify scala command by doing waveform tricks here?
   }
