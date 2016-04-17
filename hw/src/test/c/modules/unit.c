@@ -25,6 +25,13 @@ void u_gt(uint32_t a, uint32_t b){
     }
 }
 
+void u_eq(uint32_t a, uint32_t b){
+    if (! (a == b)){
+        iprintf("ERROR: %u == %u", a, b);
+        u_fail();
+    }
+}
+
 void u_pass(void) {
     // NB: Has to be this exact instruction
 
