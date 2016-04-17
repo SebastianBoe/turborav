@@ -4,7 +4,7 @@ Import('sim_env default_program')
 
 sim_env['ROM'] = default_program
 
-for scala_tb_source_path in Glob("#src/test/scala/tb/*"):
+for scala_tb_source_path in Glob("#src/test/scala/tb/*.scala"):
     base = basename(str(scala_tb_source_path))
     top_module = base.replace("test.scala", "")
     target_dir = Dir(top_module)
