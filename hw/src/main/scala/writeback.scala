@@ -16,12 +16,7 @@ class Writeback extends Module {
   }
 
   val ctrl = mem_wrb.wrb_ctrl
-
-  val word = Mux(
-    ctrl.has_wait_state,
-    io.mem_wrb.mem_read_data,
-       mem_wrb.mem_read_data
-  )
+  val word = mem_wrb.mem_read_data
 
   val half_of_word = UInt(word(16 - 1, 0), width = 16)
   val byte_of_word = UInt(word(8  - 1, 0), width = 8 )

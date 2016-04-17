@@ -14,9 +14,13 @@ class Fetch extends Module {
   val pc = Reg(init = UInt(0, width = Config.xlen))
 
   val pc_next = Mux(
-    exe_fch.branch_taken,
-    exe_fch.pc_alu,
-    pc + UInt(4)
+    io.hdu_fch.stall,
+    pc,
+    Mux(
+      exe_fch.branch_taken,
+      exe_fch.pc_alu,
+      pc + UInt(4)
+    )
   )
 
   when(io.hdu_fch.stall){
@@ -27,7 +31,7 @@ class Fetch extends Module {
   }
 
   io.rr_io.kill()
-  io.rr_io.request.bits.addr := pc
+  io.rr_io.request.bits.addr := pc_next
   io.rr_io.request.valid     := Bool(true)
 
   // Fetch to decode

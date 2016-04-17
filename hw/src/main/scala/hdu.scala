@@ -33,13 +33,12 @@ class HazardDetectionUnit extends Module {
   // It is the responsibility of the pipeline stage to insert bubbles
   // when it is stalling.
   val stall_wrb = Bool(false)
-  val stall_mem = stall_wrb || mem_busy
-  val stall_exe = stall_mem || mult_busy || load_use
+  val stall_mem = stall_wrb
+  val stall_exe = stall_mem || mult_busy || load_use || mem_busy
   val stall_dec = stall_exe
   val stall_fch = stall_dec
 
   io.hdu_wrb.stall := stall_wrb
-  io.hdu_mem.stall := stall_mem
   io.hdu_exe.stall := stall_exe
   io.hdu_dec.stall := stall_dec
   io.hdu_fch.stall := stall_fch

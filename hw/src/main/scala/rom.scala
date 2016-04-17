@@ -20,9 +20,10 @@ class Rom(elf_path: String) extends Module {
   val rom_array = parseRomContents(elf_path)
   val rom = Vec(rom_array)
 
-  val is_word_access     = io.byte_en === UInt(0)
-  val is_byte_access     = io.byte_en === UInt(1)
-  val is_halfword_access = io.byte_en === UInt(2)
+  val reg_byte_en        = RegNext(io.byte_en) // Does init matter?
+  val is_word_access     = reg_byte_en === UInt(0)
+  val is_byte_access     = reg_byte_en === UInt(1)
+  val is_halfword_access = reg_byte_en === UInt(2)
 
   val byte_mask = UInt("h000000FF")
   val halfword_mask = UInt("h0000FFFF")
@@ -32,7 +33,8 @@ class Rom(elf_path: String) extends Module {
   // a byte-addressable address to a word addressable address we
   // right-shift twice.
 
-  val word_addr = io.addr >> UInt(2)
+  val next_word_addr = io.addr >> UInt(2)
+  val word_addr = Reg(init = UInt(0), next = next_word_addr)
   val rom_word = rom(word_addr)
   when(is_word_access) {
     io.instr := rom_word
@@ -40,7 +42,7 @@ class Rom(elf_path: String) extends Module {
     // Shift and mask the 32 bit word to be able to read only one of
     // the 4 bytes, or one of the two halfwords in the 32bit word.
 
-    val shifted = rom_word >> (io.addr(1, 0) * UInt(8))
+    val shifted = rom_word >> (RegNext(io.addr(1, 0)) * UInt(8))
     val mask = Mux(is_byte_access, byte_mask, halfword_mask)
     val masked = shifted & mask
     io.instr := masked

@@ -133,7 +133,6 @@ class MemoryIO() extends Bundle {
   val hdu_mem = new HazardDetectionUnitMemory().flip()
 
   val rr_io = new RequestResponseIo()
-  val has_wait_state = Bool(INPUT)
 }
 
 class MemoryCtrl() extends Bundle {
@@ -160,6 +159,10 @@ class MemoryWriteback() extends Bundle {
   val wrb_ctrl = new WritebackCtrl()
 
   def kill(): Unit = {
+    rd_addr       := UInt(0)
+    alu_result    := UInt(0)
+    mem_read_data := UInt(0)
+    pc            := UInt(0)
     wrb_ctrl.kill()
   }
 }
@@ -181,13 +184,16 @@ class WritebackIO() extends Bundle {
 class WritebackCtrl() extends Bundle {
   val rd_wen         = Bool(OUTPUT)
   val rd_sel         = Bits(OUTPUT, RD_SEL_WIDTH)
-  val has_wait_state = Bool(OUTPUT)
   val is_halfword    = Bool(OUTPUT)
   val is_byte        = Bool(OUTPUT)
   val sign_extend    = Bool(OUTPUT)
 
   def kill(): Unit = {
-    rd_wen := Bool(false)
+    rd_wen      := Bool(false)
+    rd_sel      := UInt(0)
+    is_halfword := Bool(false)
+    is_byte     := Bool(false)
+    sign_extend := Bool(false)
   }
 }
 
@@ -257,8 +263,6 @@ class HazardDetectionUnitMemory extends Bundle {
   val mem_busy = Bool(INPUT)
   val mem_read = Bool(INPUT)
   val rd_addr  = UInt(INPUT, 5)
-
-  val stall    = Bool(OUTPUT)
 }
 
 class HazardDetectionUnitWriteback extends Bundle {

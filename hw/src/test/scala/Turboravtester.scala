@@ -179,6 +179,13 @@ Options:
         ))){
           c => new GpioTest(c)
         }
+      case "Roamtest" =>
+        chiselMainTest(test_args, () => Module(new Roam(
+          rom,
+          fpga
+        ))){
+          c => new RoamTest(c)
+        }
       case "HazardDetectionUnittest" =>
         chiselMainTest(test_args, () => Module(new HazardDetectionUnit())){
           c => new HazardDetectionUnitTest(c)

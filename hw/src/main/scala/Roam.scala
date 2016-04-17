@@ -20,7 +20,6 @@ class Roam(elf_path: String, fpga: Boolean) extends Module {
     val fch     = new RequestResponseIo().flip
     val mem     = new Bundle {
       val rr = new RequestResponseIo().flip
-      val has_wait_state = Bool(OUTPUT)
     }
     val rr_mmio = new RequestResponseIo()
   }
@@ -64,13 +63,12 @@ class Roam(elf_path: String, fpga: Boolean) extends Module {
     request.valid
   )
   response.bits.word := MuxCase(ram.io.word_r, Array(
-    mem_reading_rom     -> (rom.io.instr),
+    RegNext(mem_reading_rom) -> (rom.io.instr),
     mem_requesting_mmio -> (io.rr_mmio.response.bits.word)
   ))
-  io.mem.has_wait_state := mem_reading_ram
 
   io.fch.response.bits.word  := rom.io.instr
-  io.fch.response.valid      := ! mem_reading_rom && io.fch.request.valid
+  io.fch.response.valid      := ! RegNext(mem_reading_rom)
 
   io.rr_mmio.request.bits  := request.bits
   io.rr_mmio.request.valid := mem_requesting_mmio
