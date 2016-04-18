@@ -160,6 +160,7 @@ class Decode extends Module {
             ))
 
   dec_exe.pc       := fch_dec.pc
+  dec_exe.pc_next  := fch_dec.pc_next
   dec_exe.rd_addr  := rd_addr
 
   dec_exe.reg_reads.rs1.bits := rs1_addr

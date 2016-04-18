@@ -35,7 +35,13 @@ class Fetch extends Module {
   io.rr_io.request.valid     := Bool(true)
 
   // Fetch to decode
+
+  // pc_next is fed through because writeback needs it for
+  // something. This costs us a few flip flops to feed it through so
+  // far. TODO: See how the area cost compares if exe re-computes pc +
+  // 4
   io.fch_dec.pc          := pc
+  io.fch_dec.pc_next     := pc_next
   io.fch_dec.instr_valid := io.rr_io.response.valid
 
   // Send a NOP to Decode if we branch.

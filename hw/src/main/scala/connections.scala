@@ -26,11 +26,13 @@ class FetchDecode() extends Bundle {
   val instr_valid = Bool(OUTPUT)
   val instr       = UInt(OUTPUT, INSTRUCTION_WIDTH)
   val pc          = UInt(OUTPUT, Config.xlen)
+  val pc_next     = UInt(OUTPUT, Config.xlen)
 
   def kill(){
     instr_valid := Bool(false)
     instr       := UInt(0)
     pc          := UInt(0)
+    pc_next     := UInt(0)
   }
 }
 
@@ -52,6 +54,7 @@ class DecodeExecute extends Bundle {
   val imm     = UInt(OUTPUT, Config.xlen)
   val rd_addr = UInt(OUTPUT, 5)
   val pc      = UInt(OUTPUT, Config.xlen)
+  val pc_next = UInt(OUTPUT, Config.xlen)
 
   val exe_ctrl = new ExecuteCtrl()
   val mem_ctrl = new MemoryCtrl()
@@ -101,7 +104,7 @@ class ExecuteMemory() extends Bundle {
   val rd_addr    = UInt(OUTPUT, 5)
   val alu_result = UInt(OUTPUT, Config.xlen)
   val rs2        = UInt(OUTPUT, Config.xlen)
-  val pc         = UInt(OUTPUT, Config.xlen)
+  val pc_next    = UInt(OUTPUT, Config.xlen)
 
   val mem_ctrl = new MemoryCtrl()
   val wrb_ctrl = new WritebackCtrl()
@@ -154,7 +157,7 @@ class MemoryWriteback() extends Bundle {
   val rd_addr       = UInt(OUTPUT, Config.xlen)
   val alu_result    = UInt(OUTPUT, Config.xlen)
   val mem_read_data = UInt(OUTPUT, Config.xlen)
-  val pc            = UInt(OUTPUT, Config.xlen)
+  val pc_next       = UInt(OUTPUT, Config.xlen)
 
   val wrb_ctrl = new WritebackCtrl()
 
@@ -162,7 +165,7 @@ class MemoryWriteback() extends Bundle {
     rd_addr       := UInt(0)
     alu_result    := UInt(0)
     mem_read_data := UInt(0)
-    pc            := UInt(0)
+    pc_next       := UInt(0)
     wrb_ctrl.kill()
   }
 }

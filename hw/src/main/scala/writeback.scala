@@ -28,13 +28,11 @@ class Writeback extends Module {
     (!ctrl.sign_extend && ctrl.is_byte     ) -> ZeroExtend(byte_of_word, 32)
   ))
 
-  val pc_next = mem_wrb.pc + UInt(4) // TODO: This was expensive, 8ns
-
   val rd_data = Lookup(
     addr    = ctrl.rd_sel,
     default = mem_wrb.alu_result,
     mapping = Array(
-      RD_PC  -> pc_next,
+      RD_PC  -> mem_wrb.pc_next,
       RD_MEM -> mem_read
     )
   )
