@@ -42,4 +42,8 @@ if GetOption("clean"):
     # invalidate the fsc cache on every clean command.
     subprocess.call(["fsc", "-reset"])
 
+# Place a cache in the build directory (ensuring that a clean build
+# will clear the cache).
+CacheDir('build/scons_cache')
+
 SConscript("src/SConscript", variant_dir = "build")
