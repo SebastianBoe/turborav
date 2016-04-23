@@ -20,20 +20,31 @@ class Alu extends Module {
 
   val shamt = io.in_b(log2Up(Config.xlen) - 1, 0)
 
+  val add  = io.in_a          +  io.in_b
+  val sub  = io.in_a          -  io.in_b
+  val slt  = io.in_a.toSInt() <  io.in_b.toSInt()
+  val sltu = io.in_a          <  io.in_b
+  val and  = io.in_a          &  io.in_b
+  val or   = io.in_a          |  io.in_b
+  val xor  = io.in_a          ^  io.in_b
+  val sll  = io.in_a          << shamt
+  val srl  = io.in_a          >> shamt
+  val sra  = io.in_a.toSInt() >> shamt
+
   io.out := Lookup(
     io.func,
     DEFAULT_ALU_OUTPUT,
     Array(
-      ALU_ADD  -> (io.in_a + io.in_b),
-      ALU_SUB  -> (io.in_a - io.in_b),
-      ALU_SLT  -> (io.in_a.toSInt() < io.in_b.toSInt()).toUInt,
-      ALU_SLTU -> (io.in_a < io.in_b),
-      ALU_AND  -> (io.in_a & io.in_b),
-      ALU_OR   -> (io.in_a | io.in_b),
-      ALU_XOR  -> (io.in_a ^ io.in_b),
-      ALU_SLL  -> (io.in_a << shamt),
-      ALU_SRL  -> (io.in_a >> shamt),
-      ALU_SRA  -> (io.in_a.toSInt() >> shamt).toUInt
+      ALU_ADD  -> add,
+      ALU_SUB  -> sub,
+      ALU_SLT  -> slt,
+      ALU_SLTU -> sltu,
+      ALU_AND  -> and,
+      ALU_OR   -> or,
+      ALU_XOR  -> xor,
+      ALU_SLL  -> sll,
+      ALU_SRL  -> srl,
+      ALU_SRA  -> sra
     )
   )
 }
