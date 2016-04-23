@@ -26,6 +26,13 @@ class FpgaRamTest(c: FpgaRam) extends JUnitTester(c) {
       case 4 => 0xFFFFFFFFL
     }
 
+    if(is_unaligned_access(addr, word_length_bytes)){
+      println("Skip test of unaligned accesses until it is supported.")
+      return;
+    }
+
+
+
     poke(c.io.addr, addr)
     poke(c.io.word_w, word)
     poke(c.io.wen, 1)
@@ -54,4 +61,8 @@ class FpgaRamTest(c: FpgaRam) extends JUnitTester(c) {
     word              = word,
     word_length_bytes = word_length_bytes
   )
+
+  def is_unaligned_access(addr: Long, word_length_bytes: Int) = {
+    addr % word_length_bytes != 0
+  }
 }

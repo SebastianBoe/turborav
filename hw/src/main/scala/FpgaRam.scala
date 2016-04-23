@@ -31,34 +31,35 @@ class FpgaRam extends Module {
   val base_addr = io.addr(addr_msb, addr_lsb)
   val byte_addr = io.addr(addr_lsb - 1, 0)
 
-  val mask = Mux(io.byte_en(0), UInt("b0001"),
-             Mux(io.byte_en(1), UInt("b0011"),
-                                UInt("b1111")
-             ))
+  val is_halfword_access = io.byte_en(1)
+  val is_byte_access     = io.byte_en(0)
+  val is_word_access     = ! Any(is_halfword_access, is_byte_access)
 
-  val bytes_out = Vec.fill(word_size_in_bytes) { UInt() }
+  val byte_mask     = UInt("b0001")
+  val halfword_mask = UInt("b0011")
+  val word_mask     = UInt("b1111")
 
-  val word_shifted = Vec.fill(word_size_in_bytes) { UInt()}
-  val mask_shifted = Vec.fill(word_size_in_bytes) { UInt()}
-  for(i <- 0 until word_size_in_bytes){
-    word_shifted(i) := LeftRotate(io.word_w , i * 8)
-    mask_shifted(i) := LeftRotate(mask      , i    )
-  }
+  val mask = MuxCase(
+    word_mask,
+    Array(
+      is_byte_access     -> byte_mask,
+      is_halfword_access -> halfword_mask
+    )
+  ) << byte_addr
+
+  val bytes_out  = Vec.fill(word_size_in_bytes) { UInt() }
+  val write_word  = io.word_w << (byte_addr * UInt(8))
 
   for(i <- 0 until word_size_in_bytes){
     /* Ram is kept in RAID0 configuration for FPGA performance
        reasons. There is one ram module per byte in a word */
     val ram_stripe = Mem(UInt(width = 8), num_words)
-    val ram_addr = base_addr + UInt(byte_addr > UInt(i))
 
-    val enable_mask = mask_shifted(byte_addr)
-    val write_word  = word_shifted(byte_addr)
-
-    when(enable_mask(i)) {
+    when(mask(i)) {
       when(io.wen) {
-        ram_stripe(ram_addr) := write_word(i * 8 + 7, i * 8)
+        ram_stripe(base_addr) := write_word(i * 8 + 7, i * 8)
       } .elsewhen( io.ren ) {
-        bytes_out(i) := ram_stripe(Reg(init = UInt(0), next = ram_addr))
+        bytes_out(i) := ram_stripe(Reg(init = UInt(0), next = base_addr))
       }
     } .otherwise {
       bytes_out(i) := UInt(0)
@@ -69,12 +70,15 @@ class FpgaRam extends Module {
   //TODO: Investigate why chisel couldn't infer this width.
   word_out.setWidth(32)
 
-  val word_out_shifted = Vec.fill(word_size_in_bytes) { UInt()}
-  for(i <- 0 until word_size_in_bytes){
-    word_out_shifted(i) := RightRotate(word_out, i * 8)
-  }
+  io.word_r := word_out >> RegNext(byte_addr * UInt(8))
 
-  io.word_r := word_out_shifted(
-    Reg(init = UInt(0), next = byte_addr)
+  assert(! is_word_access || is_word_access && byte_addr === UInt(0),
+         "Unaligned word access is not supported"
+       )
+
+  assert(
+    ! is_halfword_access ||
+    is_halfword_access && Vec(UInt(0), UInt(2)).contains(byte_addr),
+    "Unaligned halfword access is not supported yet"
   )
 }
