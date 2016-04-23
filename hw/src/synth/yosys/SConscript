@@ -28,7 +28,7 @@ def append_builders(env):
                 action = 'yosys $SOC_V $SCRIPT > $YOSYS_LOG'
             )
             , 'ArachnePnr' : Builder(
-                action = "arachne-pnr --device 8k --pcf-file $PCF $BLIF -o $TARGET"
+                action = "arachne-pnr --seed $SEED --device 8k --pcf-file $PCF $BLIF -o $TARGET"
             )
             , 'Icetime' : Builder(
                 action = "icetime -t -d hx8k -p $PCF $ASC | tee $TARGET | tail --lines=4"
