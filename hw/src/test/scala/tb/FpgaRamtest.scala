@@ -3,8 +3,11 @@ package TurboRav
 import Chisel._
 
 class FpgaRamTest(c: FpgaRam) extends JUnitTester(c) {
-  def write_and_then_read_back(addr: Long, word: Long, word_length_bytes: Int) = {
-    println("write_and_then_read_back(%x, %x, %x)".format(addr, word, word_length_bytes))
+  def write_and_then_read_back(addr: Long, word: Long, word_length_bytes: Int): Unit = {
+    println("write_and_then_read_back(addr: %x, word: %x, word_length_bytes: %x)".format(
+      addr, word, word_length_bytes
+      )
+    )
 
     //TODO: Check that we aren't modifying any memory contents that we
     //shouldn't be.
