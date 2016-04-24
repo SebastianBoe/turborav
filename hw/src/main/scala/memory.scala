@@ -49,7 +49,7 @@ class Memory extends Module {
 
   val is_mem_transfer = ctrl.mem_ctrl.write || ctrl.mem_ctrl.read
   request.valid        := is_mem_transfer
-  request.bits.addr    := ClearIfDisabled(ctrl.alu_result, is_mem_transfer)
+  request.bits.addr    := ctrl.alu_result
   request.bits.wdata   := ClearIfDisabled(ctrl.rs2, ctrl.mem_ctrl.write)
   request.bits.write   := ctrl.mem_ctrl.write
   request.bits.byte_en := Cat(ctrl.mem_ctrl.is_halfword, ctrl.mem_ctrl.is_byte)
