@@ -109,8 +109,6 @@ class Execute extends Module {
     ((state === s_normal) && mult_enable)  ||
     ((state === s_mult)   && !mult.io.done)
 
-  // This 32bit mux is expensive! TODO: Remove it.
-  // TODO: What broke from changing alu_result?
   io.exe_mem.alu_result := alu.io.out
   io.exe_mem.mult.valid := state === s_mult
   io.exe_mem.mult.bits.result := Mux(
