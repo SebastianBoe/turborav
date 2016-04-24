@@ -6,10 +6,10 @@ CLASSPATH = "{0}:{1}".format(CHISEL_JAR, COMMONS_IO_JAR)
 
 turborav_jar = Command(
     ['scala/classes/TurboRav.jar'],
-    Glob('main/scala/*') +
-    Glob('test/scala/*') +
-    Glob('test/hybrid/scala/*') +
-    Glob('test/scala/tb/*'),
+    Glob('main/scala/*.scala') +
+    Glob('test/scala/*.scala') +
+    Glob('test/hybrid/scala/*.scala') +
+    Glob('test/scala/tb/*.scala'),
     """fsc\
     -feature\
     -deprecation\
