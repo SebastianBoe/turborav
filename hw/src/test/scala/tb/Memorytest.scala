@@ -25,6 +25,7 @@ class MemoryTest(c: Memory) extends JUnitTester(c) {
     poke(c.io.rr_io.response.valid, 0)
     poke(c.io.rr_io.response.bits.word, 0)
     poke  (c.io.exe_mem.wrb_ctrl.sign_extend, 0)
+    poke(c.io.exe_mem.wrb_ctrl.rd_sel, 0)
   }
 
   println("The mem stage will pipeline control signals")
@@ -76,7 +77,6 @@ class MemoryTest(c: Memory) extends JUnitTester(c) {
   step(1) // Roam responds 1 cycle later with a valid flag and a word
   poke  (c.io.rr_io.response.valid, 1)
   poke  (c.io.rr_io.response.bits.word, 42)
-  expect(c.io.mem_wrb.alu_result, ram_address)
   expect(c.io.mem_wrb.mem_read_data, 42)
 
   reset_all()
@@ -127,7 +127,6 @@ class MemoryTest(c: Memory) extends JUnitTester(c) {
   expect(c.io.hdu_mem.mem_busy, 1, "Mem should keep the busy signal for one last cycle")
 
   expect(c.io.mem_wrb.wrb_ctrl.rd_wen, 1)
-  expect(c.io.mem_wrb.alu_result, apb_address)
   expect(c.io.mem_wrb.mem_read_data, 21)
 
   step(1)
@@ -280,6 +279,31 @@ class MemoryTest(c: Memory) extends JUnitTester(c) {
   expect(c.io.rr_io.request.bits.wdata, 0)
   expect(c.io.rr_io.request.bits.addr, apb_address)
   expect(c.io.rr_io.request.bits.write, 1)
+
+  reset_all()
+
+  println("Mem should mux between pc_next and alu_result")
+  // Writeback can write either a memory read (mem_read_data), an alu
+  // result (alu_result), or PC + 4 (pc_next) to the register
+  // bank. Decode determines which one based on the instrucion and
+  // encodes this in rd_sel. Muxing between these options in writeback
+  // is expensive and on the critical path, so we do the mux between
+  // alu_result and pc_next in Memory instead.
+
+  val RD_SEL_ALU = 0
+  poke(c.io.exe_mem.wrb_ctrl.rd_sel, RD_SEL_ALU)
+  poke(c.io.exe_mem.alu_result, 4)
+  step(1)
+  expect(c.io.mem_wrb.pc_next_or_alu_result, 4, "Mem should choose alu_result when rd_sel is 0")
+
+  reset_all()
+
+  val RD_SEL_PC_NEXT = 2
+  poke(c.io.exe_mem.wrb_ctrl.rd_sel, RD_SEL_PC_NEXT)
+  poke(c.io.exe_mem.alu_result, 4)
+  poke(c.io.exe_mem.pc_next, 8)
+  step(1)
+  expect(c.io.mem_wrb.pc_next_or_alu_result, 8, "Mem should choose pc_next when rd_sel is 2")
 
   step(1)
 }

@@ -30,9 +30,8 @@ class Writeback extends Module {
 
   val rd_data = Lookup(
     addr    = ctrl.rd_sel,
-    default = mem_wrb.alu_result,
+    default = mem_wrb.pc_next_or_alu_result,
     mapping = Array(
-      RD_PC  -> mem_wrb.pc_next,
       RD_MEM -> mem_read
     )
   )

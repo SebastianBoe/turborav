@@ -155,17 +155,18 @@ class MemoryCtrl() extends Bundle {
 
 class MemoryWriteback() extends Bundle {
   val rd_addr       = UInt(OUTPUT, Config.xlen)
-  val alu_result    = UInt(OUTPUT, Config.xlen)
   val mem_read_data = UInt(OUTPUT, Config.xlen)
-  val pc_next       = UInt(OUTPUT, Config.xlen)
+
+  val pc_next_or_alu_result = UInt(OUTPUT, Config.xlen)
 
   val wrb_ctrl = new WritebackCtrl()
 
   def kill(): Unit = {
     rd_addr       := UInt(0)
-    alu_result    := UInt(0)
     mem_read_data := UInt(0)
-    pc_next       := UInt(0)
+
+    pc_next_or_alu_result := UInt(0)
+
     wrb_ctrl.kill()
   }
 }

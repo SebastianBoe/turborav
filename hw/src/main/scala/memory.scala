@@ -67,6 +67,11 @@ class Memory extends Module {
   io.mem_wrb := exe_mem
 
   io.mem_wrb.mem_read_data := response.bits.word
+  io.mem_wrb.pc_next_or_alu_result := Mux(
+    exe_mem.wrb_ctrl.rd_sel === RD_PC,
+    exe_mem.pc_next,
+    exe_mem.alu_result
+  )
 
   // Forwarding of ALU result
   io.mem_exe.alu_result := exe_mem.alu_result
