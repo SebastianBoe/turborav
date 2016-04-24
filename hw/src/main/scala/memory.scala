@@ -67,14 +67,21 @@ class Memory extends Module {
   io.mem_wrb := exe_mem
 
   io.mem_wrb.mem_read_data := response.bits.word
-  io.mem_wrb.pc_next_or_alu_result := Mux(
-    exe_mem.wrb_ctrl.rd_sel === RD_PC,
-    exe_mem.pc_next,
+
+  val alu_result_or_mult_result = Mux(
+    exe_mem.mult.valid,
+    exe_mem.mult.bits.result,
     exe_mem.alu_result
   )
 
-  // Forwarding of ALU result
-  io.mem_exe.alu_result := exe_mem.alu_result
+  io.mem_wrb.pc_next_or_alu_result_or_mult_result := Mux(
+    exe_mem.wrb_ctrl.rd_sel === RD_PC,
+    exe_mem.pc_next,
+    alu_result_or_mult_result
+  )
+
+  // Forwarding of either the ALU result or the MULT result
+  io.mem_exe.alu_result_or_mult_result := alu_result_or_mult_result
 
   io.fwu_mem.rd_wen  := exe_mem.wrb_ctrl.rd_wen
   io.fwu_mem.rd_addr := exe_mem.rd_addr

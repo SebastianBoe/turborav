@@ -59,13 +59,13 @@ class Execute extends Module {
   val ctrl = dec_exe.exe_ctrl
   val zero = UInt(0, width = Config.xlen)
 
-  val rs1 = Mux(io.fwu_exe.rs1_sel === RS_SEL_MEM, io.mem_exe.alu_result,
-            Mux(io.fwu_exe.rs1_sel === RS_SEL_WRB, io.wrb_exe.rd_data,
-                                                   regbank.io.rs1_data))
+  val rs_sel_mapping = Array(
+    RS_SEL_MEM -> io.mem_exe.alu_result_or_mult_result,
+    RS_SEL_WRB -> io.wrb_exe.rd_data
+  )
 
-  val rs2 = Mux(io.fwu_exe.rs2_sel === RS_SEL_MEM, io.mem_exe.alu_result,
-            Mux(io.fwu_exe.rs2_sel === RS_SEL_WRB, io.wrb_exe.rd_data,
-                                                   regbank.io.rs2_data))
+  val rs1 = Lookup(io.fwu_exe.rs1_sel, regbank.io.rs1_data, rs_sel_mapping)
+  val rs2 = Lookup(io.fwu_exe.rs2_sel, regbank.io.rs2_data, rs_sel_mapping)
 
   val alu_in_a = Mux(ctrl.alu_in_a_sel === ALU_IN_A_PC,  dec_exe.pc,
                  Mux(ctrl.alu_in_a_sel === ALU_IN_A_RS1, rs1,
@@ -109,12 +109,15 @@ class Execute extends Module {
     ((state === s_normal) && mult_enable)  ||
     ((state === s_mult)   && !mult.io.done)
 
-  io.exe_mem.alu_result :=
-    Mux(
-      state === s_mult,
-      Mux(isMultUpper(mult_func), mult.io.out_hi, mult.io.out_lo),
-      alu.io.out
-    )
+  // This 32bit mux is expensive! TODO: Remove it.
+  // TODO: What broke from changing alu_result?
+  io.exe_mem.alu_result := alu.io.out
+  io.exe_mem.mult.valid := state === s_mult
+  io.exe_mem.mult.bits.result := Mux(
+    isMultUpper(mult_func),
+    mult.io.out_hi,
+    mult.io.out_lo
+  )
 
   io.exe_fch.pc_alu := alu.io.out
   io.exe_fch.branch_taken := bru.io.take

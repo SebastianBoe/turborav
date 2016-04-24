@@ -106,6 +106,10 @@ class ExecuteMemory() extends Bundle {
   val rs2        = UInt(OUTPUT, Config.xlen)
   val pc_next    = UInt(OUTPUT, Config.xlen)
 
+  val mult = Valid(
+    new Bundle { val result = UInt(width = Config.xlen) }
+  )
+
   val mem_ctrl = new MemoryCtrl()
   val wrb_ctrl = new WritebackCtrl()
 
@@ -157,7 +161,7 @@ class MemoryWriteback() extends Bundle {
   val rd_addr       = UInt(OUTPUT, Config.xlen)
   val mem_read_data = UInt(OUTPUT, Config.xlen)
 
-  val pc_next_or_alu_result = UInt(OUTPUT, Config.xlen)
+  val pc_next_or_alu_result_or_mult_result = UInt(OUTPUT, Config.xlen)
 
   val wrb_ctrl = new WritebackCtrl()
 
@@ -165,14 +169,14 @@ class MemoryWriteback() extends Bundle {
     rd_addr       := UInt(0)
     mem_read_data := UInt(0)
 
-    pc_next_or_alu_result := UInt(0)
+    pc_next_or_alu_result_or_mult_result := UInt(0)
 
     wrb_ctrl.kill()
   }
 }
 
 class MemoryExecute() extends Bundle {
-  val alu_result = UInt(OUTPUT, Config.xlen)
+  val alu_result_or_mult_result = UInt(OUTPUT, Config.xlen)
 }
 
 ////////////////////////////////////////

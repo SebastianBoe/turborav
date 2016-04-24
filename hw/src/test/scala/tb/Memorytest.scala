@@ -294,7 +294,7 @@ class MemoryTest(c: Memory) extends JUnitTester(c) {
   poke(c.io.exe_mem.wrb_ctrl.rd_sel, RD_SEL_ALU)
   poke(c.io.exe_mem.alu_result, 4)
   step(1)
-  expect(c.io.mem_wrb.pc_next_or_alu_result, 4, "Mem should choose alu_result when rd_sel is 0")
+  expect(c.io.mem_wrb.pc_next_or_alu_result_or_mult_result, 4, "Mem should choose alu_result when rd_sel is 0")
 
   reset_all()
 
@@ -303,7 +303,7 @@ class MemoryTest(c: Memory) extends JUnitTester(c) {
   poke(c.io.exe_mem.alu_result, 4)
   poke(c.io.exe_mem.pc_next, 8)
   step(1)
-  expect(c.io.mem_wrb.pc_next_or_alu_result, 8, "Mem should choose pc_next when rd_sel is 2")
+  expect(c.io.mem_wrb.pc_next_or_alu_result_or_mult_result, 8, "Mem should choose pc_next when rd_sel is 2")
 
   step(1)
 }
