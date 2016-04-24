@@ -20,13 +20,13 @@ soc_v = synth_env.Command(
 )[0]
 
 SConscript(
-    # NB: The Xilinx synthesis flow is not tested in CI and is subject
-    # to bit rot.
-    "xilinx/SConscript",
-    exports = "synth_env soc_v"
-)
-
-SConscript(
     "yosys/SConscript",
     exports = "soc_v"
 )
+
+# SConscript(
+#     # NB: The deprecated Xilinx synthesis flow is not tested in CI and is subject
+#     # to bit rot.
+#     "xilinx/SConscript",
+#     exports = "synth_env soc_v"
+# )
