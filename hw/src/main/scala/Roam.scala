@@ -35,6 +35,11 @@ class Roam(elf_path: String, fpga: Boolean) extends Module {
   val mem_reading_rom     = request.valid && isRomAddress(request.bits.addr)
   val mem_reading_ram     = request.valid && isRamAddress(request.bits.addr)
   val mem_requesting_mmio = request.valid && isApbAddress(request.bits.addr)
+  assert(
+    ! request.valid ||
+    request.valid && request.bits.addr(31, 30) === UInt(0),
+    "isApbAddress assumes the top two bits are unused"
+  )
 
   rom.io.addr := Mux(
     mem_reading_rom,

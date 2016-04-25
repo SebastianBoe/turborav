@@ -35,7 +35,9 @@ object getMemorySegment {
 
 object isApbAddress {
   def apply(address: UInt):Bool = {
-    getMemorySegment(address) === MEMORY_SEGMENT_APB
+    // Assumes that bits 31 to 30 are unused
+
+    getMemorySegment(address)(1) === UInt(1)
   }
 }
 
