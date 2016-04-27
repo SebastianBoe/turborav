@@ -18,3 +18,8 @@ sim_builder = Builder(
     generator = sim_builder_generator,
     ENV = os.environ
 )
+
+def get_classpath():
+    CHISEL_JAR     = "/usr/share/scala/chisel/chisel.jar"
+    COMMONS_IO_JAR = "/usr/share/java/commons-io/commons-io.jar"
+    return "{0}:{1}".format(CHISEL_JAR, COMMONS_IO_JAR)

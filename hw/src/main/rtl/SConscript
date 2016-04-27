@@ -1,0 +1,28 @@
+turborav_jar = Command(
+    ['classes/TurboRav.jar'],
+    Glob('*.scala') +
+    Glob('../../test/scala/*.scala') +
+    Glob('../../test/hybrid/scala/*.scala') +
+    Glob('../../test/scala/tb/*.scala'),
+    """fsc\
+    -feature\
+    -deprecation\
+    -language:reflectiveCalls\
+    -Xlint\
+    -Xlint:-nullary-unit\
+    -Xfatal-warnings\
+    -classpath {0}\
+    -d build/main/rtl/classes\
+    build/main/rtl/*.scala\
+    build/test/scala/*.scala\
+    build/test/scala/tb/*.scala\
+    build/test/hybrid/scala/*.scala\
+    \
+    &&\
+    \
+    jar cf \
+    build/main/rtl/classes/TurboRav.jar \
+    -C build/main/rtl/classes TurboRav""".format(get_classpath())
+)[0]
+
+Return('turborav_jar')

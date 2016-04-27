@@ -55,4 +55,4 @@ check:
     check -noinit
 
 blif:
-    write_blif -gates -attr -param build/synth/yosys/Soc.blif
+    write_blif -gates -attr -param build/main/synth/yosys/Soc.blif

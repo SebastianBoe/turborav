@@ -1,0 +1,16 @@
+turborav_jar = SConscript(
+    "rtl/SConscript"
+)
+
+sw_env = SConscript(
+    "sw/SConscript",
+    exports = "turborav_jar"
+)
+
+default_program = sw_env['DEFAULT_PROGRAM']
+SConscript(
+    "synth/SConscript",
+    exports = 'turborav_jar default_program'
+)
+
+Return('turborav_jar sw_env')

@@ -15,11 +15,11 @@ Simulation tests
 'scons build/test/hybrid/'   run tests with custom firmware and custom testbench
 
 Synthesis
-'scons build/synth/Soc.v'                             generate verilog code
-'scons build/synth/yosys/Soc.blif'                    Synthesize a technology-mapped netlist
-'scons build/synth/yosys/icoboard/Soc.asc'            Create a placed and routed textual bitstream
-'scons build/synth/yosys/icoboard/Soc.bin'            Create a netlist for FPGA-programming
-'scons build/synth/yosys/icoboard/icetime.report.txt' Create a timing report
+'scons build/main/synth/Soc.v'                             generate verilog code
+'scons build/main/synth/yosys/Soc.blif'                    Synthesize a technology-mapped netlist
+'scons build/main/synth/yosys/icoboard/Soc.asc'            Create a placed and routed textual bitstream
+'scons build/main/synth/yosys/icoboard/Soc.bin'            Create a netlist for FPGA-programming
+'scons build/main/synth/yosys/icoboard/icetime.report.txt' Create a timing report
 
 All build targets are files, or directories of files that can be
 "built" by the build system. When SCons is given a directory for a

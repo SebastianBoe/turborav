@@ -1,6 +1,8 @@
 from subprocess import check_output
 
-Import('riscv_program_env sim_env')
+Import('turborav_program_env sim_env')
+riscv_program_env = turborav_program_env
+
 # Here we build the riscv tests and also run the tests to generate
 # jenkins.xml reports.
 

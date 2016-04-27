@@ -1,7 +1,7 @@
-Import('turborav_jar riscv_program_env default_program CLASSPATH turborav_program_env')
+Import('turborav_jar turborav_program_env')
 
 sim_env = DefaultEnvironment()
-sim_env['CLASSPATH'] = "{}:{}".format(turborav_jar, CLASSPATH)
+sim_env['CLASSPATH'] = "{}:{}".format(turborav_jar, get_classpath())
 sim_env.Append(
     TURBORAV_JAR = turborav_jar,
     ENV      = {"CXX"      : "clang++"  },
@@ -10,7 +10,7 @@ sim_env.Append(
 
 SConscript(
     "riscv/SConscript",
-    exports = ' sim_env riscv_program_env'
+    exports = ' sim_env turborav_program_env'
 )
 
 SConscript(
@@ -23,6 +23,7 @@ SConscript(
     exports = 'sim_env turborav_program_env'
 )
 
+default_program = turborav_program_env['DEFAULT_PROGRAM']
 SConscript(
     "unit/SConscript",
     exports = 'sim_env default_program'
