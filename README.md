@@ -32,6 +32,9 @@ docker run -v /absolute/path/to/turborav/repo/on/your/machine:/mnt/turborav -it 
 scons build/test/riscv/add && scons --help
 ```
 
+Video demonstration
+[![asciicast](https://asciinema.org/a/eenhl1vytb77pel6jrmg9qhn5.png)](https://asciinema.org/a/eenhl1vytb77pel6jrmg9qhn5)
+
 Peruse the issue-tracker to see if there is anything that interests
 you or create your own issue based on what you want to contribute
 with. But most importantly; have fun!
