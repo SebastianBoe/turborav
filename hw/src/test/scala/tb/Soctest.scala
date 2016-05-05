@@ -5,7 +5,7 @@ import Constants._
 
 class SocTest(c: Soc) extends JUnitTester(c) {
   poke(c.io.pin_inputs, 2)
-  step(1000)
+  step(100 * 1000)
   printRegs()
 
   // Could easily do something similair with the memory when we want
