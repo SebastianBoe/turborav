@@ -16,6 +16,7 @@ turborav_program_env.Append(CPPPATH = Dir("."))
 system = turborav_program_env.StaticLibrary(
     target = 'system',
     source = [
+        "delay.c",
         "tr.c",
         "syscalls.c"
     ]
