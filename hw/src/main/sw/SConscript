@@ -36,7 +36,8 @@ riscv_program_env = Environment(
     BUILDERS = {
         'Disassemble' : Builder(
             action = """riscv64-unknown-elf-objdump \
-            -DS -M no-aliases -M numeric $SOURCE > $TARGET"""
+            -DS -M no-aliases -M numeric $SOURCE > $TARGET""",
+            suffix = ".dis"
         )
     }
 )
