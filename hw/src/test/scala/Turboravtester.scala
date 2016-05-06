@@ -190,6 +190,10 @@ Options:
         chiselMainTest(test_args, () => Module(new HazardDetectionUnit())){
           c => new HazardDetectionUnitTest(c)
         }
+      case "Fetchtest" =>
+        chiselMainTest(test_args, () => Module(new Fetch())){
+          c => new FetchTest(c)
+        }
     }
     //TODO: simplify scala command by doing waveform tricks here?
   }
