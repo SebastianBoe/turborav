@@ -74,6 +74,19 @@ RVTEST_CODE_BEGIN
     li  x2, 2; \
   )
 
+  #-------------------------------------
+  # Reading from RO memory
+  #-------------------------------------
+  # Depending on your micro-architecture, this test might provoke a
+  # structural hazard.
+  TEST_CASE( 20, x2, 2, \
+    la  x3, trodat; \
+    lw  x2, 0(x3); \
+    nop; \
+    nop; \
+    li  x2, 2; \
+  )
+
   TEST_PASSFAIL
 
 RVTEST_CODE_END
@@ -90,3 +103,7 @@ tdat3:  .word 0x0ff00ff0
 tdat4:  .word 0xf00ff00f
 
 RVTEST_DATA_END
+
+  .text
+trodat:
+trodat1: .word 0x00ff00ff
