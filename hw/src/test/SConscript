@@ -19,6 +19,11 @@ SConscript(
 )
 
 SConscript(
+    "csmith/SConscript",
+    exports = 'sim_env turborav_program_env'
+)
+
+SConscript(
     "hybrid/SConscript",
     exports = 'sim_env turborav_program_env'
 )
