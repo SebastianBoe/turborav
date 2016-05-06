@@ -13,8 +13,15 @@ class Fetch extends Module {
 
   val pc = Reg(init = UInt(0, width = Config.xlen))
 
+  // Fetch should stall when the Hazard Detection Unit commands it and
+  // when we discover that reading an instruction from roam didn't
+  // give us a valid instruction. Invalid responses can come from the
+  // structural hazard of both fetch and mem wanting access to the
+  // ROM.
+  val stall = io.hdu_fch.stall || ! io.rr_io.response.valid
+
   val pc_next = Mux(
-    io.hdu_fch.stall,
+    stall,
     pc,
     Mux(
       exe_fch.branch_taken,
@@ -22,13 +29,6 @@ class Fetch extends Module {
       pc + UInt(4)
     )
   )
-
-  when(io.hdu_fch.stall){
-    io.kill()
-  } .otherwise {
-    exe_fch := io.exe_fch
-    pc      := pc_next
-  }
 
   io.rr_io.kill()
   io.rr_io.request.bits.addr := pc_next
@@ -54,6 +54,10 @@ class Fetch extends Module {
     io.rr_io.response.bits.word
   )
 
-  // TODO: What to do with the structural hazard of MEM and FCH both
-  // wanting to access the same memory?
+  when(stall){
+    io.kill()
+  } .otherwise {
+    exe_fch := io.exe_fch
+    pc      := pc_next
+  }
 }

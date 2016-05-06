@@ -18,7 +18,6 @@ class FetchIO() extends Bundle {
 
   def kill(){
     fch_dec.kill()
-    rr_io.kill()
   }
 }
 
