@@ -38,7 +38,8 @@ extends JUnitTester(c, isTrace = false) {
 
   private def possiblySimulatePutchar() {
     if(magicPutcharInstructionFound()) {
-      print(getPutcharFunctionArgument().toChar)
+      val c = getPutcharFunctionArgument().toChar
+      print(c)
     }
   }
 
