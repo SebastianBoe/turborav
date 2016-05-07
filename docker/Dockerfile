@@ -91,6 +91,14 @@ RUN git clone https://aur.archlinux.org/arachne-pnr-git.git \
 USER root
 RUN pacman -U --noconfirm arachne-pnr-git/arachne-pnr-git*pkg*
 
+# Build Csmith
+USER turbo
+RUN git clone https://aur.archlinux.org/csmith.git \
+    && cd csmith \
+    && makepkg --clean
+USER root
+RUN pacman -U --noconfirm csmith/csmith*pkg*
+
 # Assume user is going to be mounting his local repo at /mnt/turborav
 WORKDIR /mnt/turborav/hw
 USER turbo
