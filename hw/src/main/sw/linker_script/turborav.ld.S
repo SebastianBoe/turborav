@@ -32,6 +32,8 @@ SECTIONS
         *(.text.startup)
         *(.text)
         *(.text.*)
+
+        . = ALIGN(4);
     } > REGION_TEXT
 
     .rodata :
@@ -39,13 +41,16 @@ SECTIONS
         *(.rodata)
         *(.rodata.*)
 	    *(.srodata.*)
+
+        . = ALIGN(4);
+
         rodata_end = .;
     } > REGION_RODATA
 
-    .eh_frame   : { *(.eh_frame   ) } > ROM
-    .jcr        : { *(.jcr        ) } > ROM
-    .fini_array : { *(.fini_array ) } > ROM
-    .init_array : { *(.init_array ) } > ROM
+    .eh_frame   : { *(.eh_frame   ); . = ALIGN(4); } > ROM
+    .jcr        : { *(.jcr        ); . = ALIGN(4); } > ROM
+    .fini_array : { *(.fini_array ); . = ALIGN(4); } > ROM
+    .init_array : { *(.init_array ); . = ALIGN(4); } > ROM
 
     rom_data_end = .;
 
@@ -55,12 +60,18 @@ SECTIONS
         initialized_data_start = .;
         *(.sdata)
 	    *(.sdata.*)
+
+        . = ALIGN(4);
+
         sdata_end = .;
 	} > RAM
 
     .data : AT ( ADDR (.init_array) + SIZEOF (.sdata) + SIZEOF (.init_array) )
     {
         *(.data)
+
+        . = ALIGN(4);
+
         initialized_data_end = .;
     } > REGION_DATA
 
@@ -71,6 +82,9 @@ SECTIONS
     {
         _fbss = .;
         *(.bss)
+
+        . = ALIGN(4);
+
     } > REGION_BSS
 
     _end = . ;
