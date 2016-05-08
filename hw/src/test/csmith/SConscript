@@ -74,3 +74,9 @@ host_program = Program(
         CPPPATH = "."
     )
 )
+
+host_stdout = Command(
+    "host_stdout.txt",
+    host_program,
+    "$SOURCE 0> $TARGET"
+)
