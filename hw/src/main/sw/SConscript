@@ -1,5 +1,7 @@
 import os
 
+Import('env')
+
 COMMON_FLAGS = (
                 " -O3 "
                 " -Os "
@@ -23,8 +25,7 @@ LD = 'riscv64-unknown-elf-ld'
 
 linker_script = SConscript("linker_script/SConscript")
 
-riscv_program_env = Environment(
-    ENV = os.environ,
+riscv_program_env = env.Clone(
     CC = CC,
     AS = CC,
     LINK = LD,
@@ -33,6 +34,8 @@ riscv_program_env = Environment(
     ASFLAGS = CCFLAGS,
     LINKFLAGS = COMMON_FLAGS + LINKER_FLAGS,
     LINKER_SCRIPT = linker_script,
+)
+riscv_program_env.Append(
     BUILDERS = {
         'Disassemble' : Builder(
             action = """riscv64-unknown-elf-objdump \

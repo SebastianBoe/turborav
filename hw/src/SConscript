@@ -1,5 +1,8 @@
+Import('env')
+
 turborav_jar, sw_env = SConscript(
-    "main/SConscript"
+    "main/SConscript",
+    exports = 'env'
 )
 
 turborav_program_env = sw_env

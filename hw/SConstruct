@@ -2,6 +2,13 @@ import os
 import subprocess
 import multiprocessing
 
+# Allow user to customize the build from either the CLI or custom.py
+vars = Variables('custom.py', ARGUMENTS)
+env = Environment(
+    variables = vars,
+    ENV = os.environ,
+)
+
 Help("""
 Welcome to TurboRav's monolithic test and synthesis build system.
 
@@ -25,13 +32,11 @@ All build targets are files, or directories of files that can be
 "built" by the build system. When SCons is given a directory for a
 build target it will generate everything in that directory recursively
 downwards.
-""")
+""" + vars.GenerateHelpText(env)
+)
 
 # Multi-threaded builds
 SetOption("num_jobs", multiprocessing.cpu_count() + 1)
-
-# Use host environment by default.
-DefaultEnvironment(ENV = os.environ)
 
 # This ensures the entire build directory is cleaned, even files in
 # there that SCons didn't know that it generated.
@@ -46,4 +51,8 @@ if GetOption("clean"):
 # will clear the cache).
 CacheDir('build/scons_cache')
 
-SConscript("src/SConscript", variant_dir = "build")
+SConscript(
+    "src/SConscript",
+    exports = "env",
+    variant_dir = "build"
+)
