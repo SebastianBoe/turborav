@@ -66,11 +66,7 @@ for seed in range(NUM_TEST_PROGRAMS):
         ROM = program.path
     )
 
-    # Generate disassembly for debugging
-    c_test_env.Disassemble(
-        str(program) + ".dis",
-        program
-    )
+    c_test_env.Disassemble(program) # Generate disassembly for debugging
 
     host_program = Program(
         Object(
