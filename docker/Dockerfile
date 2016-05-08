@@ -1,37 +1,44 @@
-FROM sebomux/turborav_riscv
-# turborav_riscv is an Arch Linux docker image with the specific riscv
-# gcc toolchain that is compatible with the TurboRav project
+FROM sebomux/yosys
+# Dockerfile.yosys
+
+# CI does not* pull images from Docker hub, but instead builds a fresh
+# image from the this Dockerfile. We do this because we want to test
+# the Dockerfile, and also because we want to be able to test a
+# dependency change in CI by editing the Dockerfile.
+
+# Unfortunately, it is prohibitively expensive to build the gcc
+# toolchain and Yosys on every build. So we put those two dependencies
+# in their own Images / Dockerfile's: Dockerfile.yosys and
+# Dockerfile.riscv.
+
+# * It does pull the yosys and riscv image.
+
+# TODO:Perhaps if we did a docker pull and then a docker build in CI
+# we wouldn't have this issue and could achieve the same affect?
 
 RUN sed -i "s/Required DatabaseOptional/Never/g" /etc/pacman.conf
 
 RUN pacman --noconfirm -S \
     clang \
     gtkwave \
-    graphviz \
     java-commons-io \
     java-environment \
-    libftdi \
-    mercurial \
+    libftdi-compat \
+    python \
     scala \
     scons \
-    tcl \
     && \
     pacman --noconfirm -Scc # Clean pacman cache before committing
 
 # Tool usage
 
 # clang             # Speeds up the simulator compilation
-# graphviz          # Needed by Yosys to generate schematics
+# gtkwave           # Used to convert from vcd to fst
 # java-commons-io   # Makes it easier to manipulate files from Scala
 # java-environment  # Creates jars
-# libftdi           # Needed by icestorm to flash netlists
-# mercurial         # Needed by Yosys when installing abc
-# python-pint       # Does unit conversion for statistics like slice usage
+# libftdi-compat    # Needed by icestorm to flash netlists
 # scala             # Runs Chisel programs
 # scons             # Builds turborav
-# tcl               # Needed by Yosys
-
-RUN useradd -m -G wheel turbo
 
 # Install chisel from the AUR
 # Don't delete this code. It is handy for the times when it is
@@ -49,18 +56,13 @@ RUN useradd -m -G wheel turbo
 # Install FPGA synthesis tools from the AUR
 WORKDIR /home/turbo
 
-# Install icestorm dependencies
-RUN pacman -S --noconfirm libftdi-compat python
-
-# Build Yosys
-ENV YOSYS_REVISION ab0c44d3ed81f71cb0c6ff844679110cc27b38ad
+# Build Csmith
 USER turbo
-RUN git clone https://aur.archlinux.org/yosys-git.git \
-    && cd yosys-git \
-    && sed -i "s yosys\.git yosys\.git#commit=$YOSYS_REVISION " PKGBUILD \
+RUN git clone https://aur.archlinux.org/csmith.git \
+    && cd csmith \
     && makepkg --clean
 USER root
-RUN pacman -U --noconfirm yosys-git/yosys-git*pkg*
+RUN pacman -U --noconfirm csmith/csmith*pkg*
 
 # Install chisel from Maven
 USER root
@@ -90,14 +92,6 @@ RUN git clone https://aur.archlinux.org/arachne-pnr-git.git \
     && makepkg --clean
 USER root
 RUN pacman -U --noconfirm arachne-pnr-git/arachne-pnr-git*pkg*
-
-# Build Csmith
-USER turbo
-RUN git clone https://aur.archlinux.org/csmith.git \
-    && cd csmith \
-    && makepkg --clean
-USER root
-RUN pacman -U --noconfirm csmith/csmith*pkg*
 
 # Assume user is going to be mounting his local repo at /mnt/turborav
 WORKDIR /mnt/turborav/hw
