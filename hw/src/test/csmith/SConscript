@@ -1,4 +1,4 @@
-Import('turborav_program_env sim_env')
+Import('turborav_program_env sim_env seed')
 
 # Re-purposing the compiler verification tool csmith to verify CPUs
 # was not an original thought. Credit goes to Clifford Wolf.
@@ -11,69 +11,66 @@ c_sim_env = sim_env.Clone(
     TOP_MODULE = "Soc"
 )
 
-NUM_TEST_PROGRAMS = 16
+test_c = Command(
+    File("test.c"),
+    [],
+    """csmith               \
+    --no-packed-struct      \
+    --seed $SEED            \
+    --concise               \
+    --quiet                 \
+    --no-float              \
+    --no-arrays             \
+    --max-block-depth 1     \
+    --max-expr-complexity 1 \
+    --max-funcs 1           \
+    --max-struct-fields 1   \
+    > $TARGET
+    """,
+    SEED = seed
+)
 
-for seed in range(NUM_TEST_PROGRAMS):
-    test_c = Command(
-        Dir(seed).File("test.c"),
-        [],
-        """csmith               \
-        --no-packed-struct      \
-        --seed $SEED            \
-        --concise               \
-        --quiet                 \
-        --no-float              \
-        --no-arrays             \
-        --max-block-depth 1     \
-        --max-expr-complexity 1 \
-        --max-funcs 1           \
-        --max-struct-fields 1   \
-        > $TARGET
-        """,
-        SEED = seed
-    )
+CSMITH_DEFINES = [
+    "CSMITH_MINIMAL",
+    "TCC",
+    "NO_PRINTF",
+]
 
-    CSMITH_DEFINES = [
-        "CSMITH_MINIMAL",
-        "TCC",
-        "NO_PRINTF",
+c_test_env = turborav_program_env.Clone(
+    SEED = seed,
+    CPPDEFINES = CSMITH_DEFINES + [
+        "RISCV"
+    ],
+    CPPPATH = ".",
+    # Disable warnings. CSmith's generated code produces a lot of
+    # warnings.
+    CFLAGS = "-w"
+)
+
+program = c_test_env.Program(
+    [
+        test_c,
+        c_test_env["crt0_o"]
     ]
+)[0]
+Depends(program, c_test_env["LINKER_SCRIPT"])
 
-    c_test_env = turborav_program_env.Clone(
-        SEED = seed,
-        CPPDEFINES = CSMITH_DEFINES + [
-            "RISCV"
-        ],
-        CPPPATH = ".",
-        # Disable warnings. CSmith's generated code produces a lot of
-        # warnings.
-        CFLAGS = "-w"
+target_dir = Dir(".")
+c_sim_env.Simulate(
+    File("jenkins.xml"),
+    [c_sim_env["TURBORAV_JAR"], program],
+    TARGET_DIR = target_dir,
+    ROM = program.path
+)
+
+c_test_env.Disassemble(program) # Generate disassembly for debugging
+
+host_program = Program(
+    Object(
+        File("test_x64.o"),
+        test_c,
+        CPPDEFINES = CSMITH_DEFINES,
+        CFLAGS = "-w",
+        CPPPATH = "."
     )
-
-    program = c_test_env.Program(
-        [
-            test_c,
-            c_test_env["crt0_o"]
-        ]
-    )[0]
-    Depends(program, c_test_env["LINKER_SCRIPT"])
-
-    target_dir = str(program.path) + "_dir"
-    c_sim_env.Simulate(
-        "#" + target_dir + "/jenkins.xml",
-        [c_sim_env["TURBORAV_JAR"], program],
-        TARGET_DIR = target_dir,
-        ROM = program.path
-    )
-
-    c_test_env.Disassemble(program) # Generate disassembly for debugging
-
-    host_program = Program(
-        Object(
-            Dir(seed).File("test_host.o"),
-            test_c,
-            CPPDEFINES = CSMITH_DEFINES,
-            CFLAGS = "-w",
-            CPPPATH = "."
-        )
-    )
+)

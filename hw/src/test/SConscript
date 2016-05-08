@@ -18,10 +18,12 @@ SConscript(
     exports = 'sim_env turborav_program_env'
 )
 
-SConscript(
-    "csmith/SConscript",
-    exports = 'sim_env turborav_program_env'
-)
+for seed in range(16) + [turborav_program_env['csmith_seed']]:
+    SConscript(
+        "csmith/SConscript",
+        exports = 'sim_env turborav_program_env seed',
+        variant_dir = "csmith/{}".format(seed)
+    )
 
 SConscript(
     "hybrid/SConscript",

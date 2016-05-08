@@ -4,6 +4,15 @@ import multiprocessing
 
 # Allow user to customize the build from either the CLI or custom.py
 vars = Variables('custom.py', ARGUMENTS)
+vars.AddVariables(
+    (
+        'csmith_seed',
+        """Create a csmith test with the given seed in
+        build/test/csmith/$csmith_seed/""",
+        16
+    )
+)
+
 env = Environment(
     variables = vars,
     ENV = os.environ,
