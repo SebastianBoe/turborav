@@ -12,9 +12,17 @@ import scala.math.BigInt
   */
 class RiscvTest(c: Soc, test_name: String)
 extends JUnitTester(c, isTrace = false) {
+
+  // Riscvtest creates a file stdout.txt in the directory test_name
+  // that contains the simulated FW's printf's.
+  val path = test_name + "/stdout.txt"
+  val file = new java.io.File(path)
+  file.delete() // Delete existing log file
+  val stdoutPrintWriter = new java.io.PrintWriter(file)
+
   while(getTestStatus() == Running)
   {
-    possiblySimulatePutchar()
+    possiblySimulatePutchar(stdoutPrintWriter)
     step(1)
   }
   expect(getTestStatus() == Passed, "")
@@ -26,6 +34,8 @@ extends JUnitTester(c, isTrace = false) {
   if(!ok) println(error_msg)
   println("")
 
+  stdoutPrintWriter.close()
+
   private def getTestStatus() : TestStatus = {
     val TestPassInstr = ScalaUtil.hex2dec("51e0d073")
     val TestFailInstr = ScalaUtil.hex2dec("51ee1073")
@@ -36,9 +46,14 @@ extends JUnitTester(c, isTrace = false) {
     }
   }
 
-  private def possiblySimulatePutchar() {
+  private def possiblySimulatePutchar(pw: java.io.PrintWriter) {
     if(magicPutcharInstructionFound()) {
       val c = getPutcharFunctionArgument().toChar
+
+      // Write to file
+      pw.append(c)
+
+      // Write also to stdout
       print(c)
     }
   }
