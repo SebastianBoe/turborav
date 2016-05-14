@@ -27,11 +27,10 @@ extends JUnitTester(c, isTrace = false) {
   }
   expect(getTestStatus() == Passed, "")
 
-  val error_msg = "Failed test #%d".format( readReg(28) )
 
   println("")
   printRegs()
-  if(!ok) println(error_msg)
+  if(!ok) println("Failed test #%d".format( readReg(28) ))
   println("")
 
   stdoutPrintWriter.close()
