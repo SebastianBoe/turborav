@@ -11,7 +11,7 @@ import scala.util.control.Breaks._
   failure and is able to stop the test execution once a test pass or
   failure has been detected.
   */
-class RiscvTest(c: Soc, test_name: String)
+class RiscvTest(c: Soc, test_name: String, max_cycles: Int)
 extends JUnitTester(c, isTrace = false) {
 
   // Riscvtest creates a file stdout.txt in the directory test_name
@@ -26,6 +26,12 @@ extends JUnitTester(c, isTrace = false) {
     {
       possiblySimulatePutchar(stdoutPrintWriter)
       step(1)
+
+      if(t > max_cycles){
+        println("Timed out because cycles simulated exceeded --max-cycles !")
+        expect(false, "Why isn't this printed?")
+        break
+      }
     }
   }
   expect(getTestStatus() == Passed, "")

@@ -8,6 +8,7 @@ object TurboRavTestRunner {
   val default_gpio_input_pins  = 4
   val default_gpio_output_pins = 4
   val default_fpga             = true
+  val default_max_cycles       = Int.MaxValue
 
   val help = s"""
 Usage: scala TurboRav.TurboRavTestRunner [OPTIONS] COMMAND
@@ -35,6 +36,11 @@ Options:
   --fpga, --no-fpga
     Configure the build for FPGA synthesis.
     Default: --fpga
+
+  -m <int>, --max-cycles <int>
+    The maximum number of cycles to be simulated. (Only applies to
+    Riscvtest).
+    Default $default_max_cycles
 """
   def main(args: Array[String]) {
     if (args.length == 0) println(help)
@@ -49,6 +55,8 @@ Options:
         case "--gpio-input-pins"  :: value :: tail => nextOption(map ++ Map('i          -> value.toInt ), tail)
         case "-o"                 :: value :: tail => nextOption(map ++ Map('o          -> value.toInt ), tail)
         case "--gpio-output-pins" :: value :: tail => nextOption(map ++ Map('o          -> value.toInt ), tail)
+        case "-m"                 :: value :: tail => nextOption(map ++ Map('m          -> value.toInt ), tail)
+        case "--max-cycles"       :: value :: tail => nextOption(map ++ Map('m          -> value.toInt ), tail)
         case "-r"                 :: value :: tail => nextOption(map ++ Map('rom        -> value       ), tail)
         case "--rom"              :: value :: tail => nextOption(map ++ Map('rom        -> value       ), tail)
         case "-t"                 :: value :: tail => nextOption(map ++ Map('target_dir -> value       ), tail)
@@ -68,6 +76,7 @@ Options:
     val rom             = options('rom).asInstanceOf[String]
     val num_pin_inputs  = options.getOrElse('i, default_gpio_input_pins ).asInstanceOf[Int]
     val num_pin_outputs = options.getOrElse('o, default_gpio_output_pins).asInstanceOf[Int]
+    val max_cycles      = options.getOrElse('m, default_max_cycles      ).asInstanceOf[Int]
     val fpga            = options.getOrElse('fpga, default_fpga).asInstanceOf[Boolean]
 
     val test_args = Array(
@@ -157,7 +166,7 @@ Options:
           num_pin_outputs,
           fpga
         ))){
-          c => new RiscvTest(c, target_dir)
+          c => new RiscvTest(c, target_dir, max_cycles)
         }
       case "FpgaRamtest" =>
         chiselMainTest(test_args, () => Module(new FpgaRam())) {
