@@ -4,7 +4,6 @@ FROM sebomux/turborav_riscv
 RUN pacman --noconfirm -S \
     mercurial \
     graphviz \
-    clang \
     python \
     tcl \
     && \
