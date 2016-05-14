@@ -1,6 +1,6 @@
 begin:
     read_verilog -lib +/ice40/cells_sim.v
-    hierarchy -check -auto-top
+    hierarchy -check -top Soc
 
 flatten:
     proc
