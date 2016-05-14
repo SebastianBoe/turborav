@@ -2,6 +2,7 @@ package TurboRav
 
 import Chisel._
 import scala.math.BigInt
+import scala.util.control.Breaks._
 
 /**
   A testbench for simulating tests in the riscv-tests repo.
@@ -20,10 +21,12 @@ extends JUnitTester(c, isTrace = false) {
   file.delete() // Delete existing log file
   val stdoutPrintWriter = new java.io.PrintWriter(file)
 
-  while(getTestStatus() == Running)
-  {
-    possiblySimulatePutchar(stdoutPrintWriter)
-    step(1)
+  breakable { // (lol scala, you so crazy, no breaks? really?)
+    while(getTestStatus() == Running)
+    {
+      possiblySimulatePutchar(stdoutPrintWriter)
+      step(1)
+    }
   }
   expect(getTestStatus() == Passed, "")
 
