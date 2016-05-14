@@ -1,4 +1,4 @@
-FROM pritunl/archlinux
+FROM pritunl/archlinux:2016-04-30
 
 RUN pacman --noconfirm -S \
     base-devel \
