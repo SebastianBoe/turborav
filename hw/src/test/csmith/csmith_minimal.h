@@ -119,10 +119,10 @@ platform_main_end (uint64_t x, int flag)
 #ifndef NOT_PRINT_CHECKSUM
   if (!flag) {
 #ifdef NO_PRINTF
-    int i;
     my_puts ("checksum = ");
-    for (i=0; i<16; i++) {
-      put_hex (x & 0xf);
+    for (uint64_t i=0; i<16; i++) {
+      int32_t masked = x & 0xf;
+      put_hex (masked);
       x >>= 4;
     }
 #else
