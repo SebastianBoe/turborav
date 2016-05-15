@@ -78,5 +78,5 @@ host_program = Program(
 host_stdout = Command(
     "host_stdout.txt",
     host_program,
-    "$SOURCE 0> $TARGET"
+    "timeout 1 $SOURCE 0> $TARGET"
 )
