@@ -4,7 +4,7 @@ import Chisel._
 import scala.math.BigInt
 
 class GpioHybridTest(c: Soc, test_name: String)
-extends JUnitTester(c, isTrace = true) {
+extends BoardTester(c, isTrace = true) {
 
   expect(! getLed1Status(), "LED should be off on boot")
 
@@ -48,14 +48,6 @@ extends JUnitTester(c, isTrace = true) {
     expect(! getLed1Status(), "LED should be held low")
 
     step(1)
-  }
-
-  private def driveBtn2(level: Boolean) = {
-    poke(c.io.pin_inputs, level)
-  }
-
-  private def getLed1Status(): Boolean = {
-    (peek(c.io.pin_outputs) & 2) > 0
   }
 
   override def getTestName: String = {
