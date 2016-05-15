@@ -11,11 +11,12 @@ c_sim_env = sim_env.Clone(
     TOP_MODULE = "Soc"
 )
 
-test_c = Command(
-    File("test.c"),
+test_c_unpatched = Command(
+    File("test.c.unpatched"),
     [],
     """csmith               \
     --no-packed-struct      \
+    --no-argc               \
     --seed $SEED            \
     --concise               \
     --quiet                 \
@@ -30,13 +31,22 @@ test_c = Command(
     SEED = seed
 )
 
+# Default is to not print the global variables, but doing so is useful
+# to narrow down issues so we modify the generated code.
+test_c = Command(
+    File("test.c"),
+    test_c_unpatched,
+    "sed 's/int print_hash_value = 0/int print_hash_value = 1/g' < $SOURCE > $TARGET"
+)
+
 CSMITH_DEFINES = [
     "CSMITH_MINIMAL",
     "TCC",
     "NO_PRINTF",
 ]
 
-c_test_env = turborav_program_env.Clone(
+c_test_env = turborav_program_env.Clone()
+c_test_env.Append(
     SEED = seed,
     CPPDEFINES = CSMITH_DEFINES + [
         "RISCV"

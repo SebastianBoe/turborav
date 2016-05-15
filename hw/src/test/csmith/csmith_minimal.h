@@ -81,9 +81,20 @@ extern int strcmp (const char *, const char *);
 static inline void 
 transparent_crc (uint64_t val, char* vname, int flag)
 {
-#ifndef NO_PRINTF
-  if (flag) printf ("%s %d\n", vname, val);
-#endif
+  if (flag)
+  {
+    #ifdef NO_PRINTF
+      write(0, vname, strlen(vname));
+      write(0, " ", 1);
+      for (int i=0; i<16; i++) {
+        put_hex (val & 0xf);
+        val >>= 4;
+      }
+      write(0, "\n", 1);
+    #else
+      printf ("%s %d\n", vname, val);
+    #endif
+  }
   crc32_context += val;
 }
 
