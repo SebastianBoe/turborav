@@ -94,3 +94,16 @@ host_stdout = Command(
     host_program,
     "timeout 1 $SOURCE 0> $TARGET"
 )
+
+# CSmith program execution difference between the host machine and
+# TurboRav
+Command(
+    "stdout.comm.txt",
+    [
+        stdout,
+        host_stdout
+    ],
+    "comm -3 $RISCV_STDOUT $HOST_STDOUT | sed 's/^\\t//' > $TARGET",
+    RISCV_STDOUT = stdout,
+    HOST_STDOUT = host_stdout
+)
