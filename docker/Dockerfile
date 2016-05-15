@@ -20,6 +20,7 @@ RUN sed -i "s/Required DatabaseOptional/Never/g" /etc/pacman.conf
 
 RUN pacman --noconfirm -S \
     clang \
+    gdb \
     gtkwave \
     java-commons-io \
     java-environment \
@@ -39,6 +40,7 @@ RUN pacman --noconfirm -S \
 # libftdi-compat    # Needed by icestorm to flash netlists
 # scala             # Runs Chisel programs
 # scons             # Builds turborav
+# gdb               # Useful for debugging (unused by CI)
 
 # Install chisel from the AUR
 # Don't delete this code. It is handy for the times when it is
