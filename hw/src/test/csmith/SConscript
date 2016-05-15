@@ -55,9 +55,13 @@ program = c_test_env.Program(
 )[0]
 Depends(program, c_test_env["LINKER_SCRIPT"])
 
+# The simulation will produce a file called stdout.txt that contains
+# the printf's of the simulated FW.
+stdout = File("stdout.txt")
+
 target_dir = Dir(".")
 c_sim_env.Simulate(
-    File("jenkins.xml"),
+    [File("jenkins.xml"), stdout],
     [c_sim_env["TURBORAV_JAR"], program],
     TARGET_DIR = target_dir,
     ROM = program.path
