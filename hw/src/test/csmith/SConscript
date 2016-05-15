@@ -70,7 +70,7 @@ host_program = Program(
         File("test_x64.o"),
         test_c,
         CPPDEFINES = CSMITH_DEFINES,
-        CFLAGS = "-w",
+        CFLAGS = "-w -g --std=gnu11",
         CPPPATH = "."
     )
 )
