@@ -13,6 +13,7 @@ CCFLAGS = COMMON_FLAGS + \
            " -m32"
            " -Wa,-march=RVIMAFDXhwacha "
            " --std=gnu11 "
+           " -save-temps=obj "
 )
 
 LINKER_FLAGS = (" -T$LINKER_SCRIPT "
