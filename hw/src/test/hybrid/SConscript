@@ -1,26 +1,31 @@
 Import('turborav_program_env sim_env')
 
+import os
+
 env = sim_env.Clone(
     TOP_MODULE = "Soc"
 )
 
-c_firmwares = SConscript(
+programs = SConscript(
     "c/SConscript",
     exports = 'turborav_program_env'
 )
 
-# Just one program right now
-program = c_firmwares
+hybrid_tests = [
+    (programs['btn2_to_led1.c'], "GpioHybridtest"      ),
+    (programs['toggle_led.c']  , "GpioHybridToggletest"),
+]
 
-# Just one testbench right now
-module = "GpioHybridtest"
+for test_tuple in hybrid_tests:
+    program = test_tuple[0]
+    module = test_tuple[1]
 
-target_dir = "{}_{}_dir".format(program.path, module)
+    target_dir = Dir("result").Dir(module).Dir(os.path.basename(str(program)))
 
-env.Simulate(
-    "#" + target_dir + "/jenkins.xml",
-    [sim_env["TURBORAV_JAR"], program],
-    TARGET_DIR = target_dir,
-    ROM = program.path,
-    MODULE = module
-)
+    env.Simulate(
+        target_dir.File("jenkins.xml"),
+        [sim_env["TURBORAV_JAR"], program],
+        TARGET_DIR = target_dir,
+        ROM = program.path,
+        MODULE = module
+    )

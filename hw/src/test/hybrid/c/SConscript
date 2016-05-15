@@ -1,13 +1,23 @@
 Import('turborav_program_env')
 
-program = turborav_program_env.Program(
-    [
-        "btn2_to_led1.c",
+program_sources = [
+    "btn2_to_led1.c",
+    "toggle_led.c"
+]
+
+# Return a dict like {"btn2_to_led1.c" : elf_file}
+programs = {}
+for source in program_sources:
+    program = turborav_program_env.Program(
+        [
+            source,
         turborav_program_env["crt0_o"]
-    ]
-)[0]
-Depends(program, turborav_program_env["LINKER_SCRIPT"])
+        ]
+    )[0]
+    Depends(program, turborav_program_env["LINKER_SCRIPT"])
 
-turborav_program_env.Disassemble(str(program) + ".dis", program)
+    programs[source] = program
 
-Return('program')
+    turborav_program_env.Disassemble(program)
+
+Return('programs')

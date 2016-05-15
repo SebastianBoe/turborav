@@ -12,3 +12,5 @@ bool board_led_2_get(void);
 
 void board_led_1_set(bool);
 void board_led_2_set(bool);
+
+void board_led_1_toggle();

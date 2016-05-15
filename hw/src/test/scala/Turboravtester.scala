@@ -184,6 +184,15 @@ Options:
         ))){
           c => new GpioHybridTest(c, target_dir)
         }
+      case "GpioHybridToggletest" =>
+        chiselMainTest(test_args, () => Module(new Soc(
+          rom,
+          num_pin_inputs,
+          num_pin_outputs,
+          fpga
+        ))){
+          c => new GpioHybridToggleTest(c, target_dir)
+        }
       case "Gpiotest" =>
         chiselMainTest(test_args, () => Module(new Gpio(
           num_pin_inputs,
