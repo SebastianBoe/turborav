@@ -1,6 +1,6 @@
-Import('turborav_jar turborav_program_env')
+Import('turborav_jar env turborav_program_env')
 
-sim_env = DefaultEnvironment()
+sim_env = env.Clone()
 sim_env['CLASSPATH'] = "{}:{}".format(turborav_jar, get_classpath())
 sim_env.Append(
     TURBORAV_JAR = turborav_jar,

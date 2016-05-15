@@ -4,6 +4,7 @@ def sim_builder_generator(source, target, env, for_signature):
     cmd = " scala "
     cmd += " -classpath $CLASSPATH "
     cmd += " TurboRav.TurboRavTestRunner "
+    cmd += env['test_runner_args'].replace(",", " ")
     cmd += " --target-directory $TARGET_DIR "
     cmd += " --rom $ROM "
     cmd += " --no-fpga "

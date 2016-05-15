@@ -43,7 +43,10 @@ Options:
     Default $default_max_cycles
 """
   def main(args: Array[String]) {
-    if (args.length == 0) println(help)
+    if (args.length == 0) {
+      println(help)
+      sys.exit(1)
+    }
 
     type OptionMap = Map[Symbol, Any]
 

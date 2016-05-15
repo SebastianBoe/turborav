@@ -8,5 +8,5 @@ turborav_jar, sw_env = SConscript(
 turborav_program_env = sw_env
 SConscript(
     "test/SConscript",
-    exports = "turborav_jar turborav_program_env"
+    exports = "turborav_jar env turborav_program_env"
 )

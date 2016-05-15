@@ -10,6 +10,14 @@ vars.AddVariables(
         """Create a csmith test with the given seed in
         build/test/csmith/$csmith_seed/""",
         16
+    ),
+    (
+        'test_runner_args',
+        """A comma-separated list of options to give to the
+        TurboRavTestRunner chisel program. See
+        scala -classpath build/main/rtl/classes/TurboRav.jar TurboRav.TurboRavTestRunner
+        for available options.""",
+        ""
     )
 )
 
