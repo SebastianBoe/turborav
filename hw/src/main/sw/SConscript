@@ -40,7 +40,7 @@ riscv_program_env.Append(
     BUILDERS = {
         'Disassemble' : Builder(
             action = """riscv64-unknown-elf-objdump \
-            -DS -M no-aliases -M numeric $SOURCE > $TARGET""",
+            -D -M no-aliases -M numeric $SOURCE > $TARGET""",
             suffix = ".dis"
         )
     }
