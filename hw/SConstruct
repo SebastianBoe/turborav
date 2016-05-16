@@ -52,6 +52,12 @@ downwards.
 """ + vars.GenerateHelpText(env)
 )
 
+# Crash on unknown variables
+unknown = vars.UnknownVariables()
+if unknown:
+    print("ERROR: Unknown variables: {}".format(unknown.keys()))
+    exit(1)
+
 # Multi-threaded builds
 SetOption("num_jobs", multiprocessing.cpu_count() + 1)
 
