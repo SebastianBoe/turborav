@@ -166,8 +166,8 @@ class Decode extends Module {
   dec_exe.reg_reads.rs1.bits := rs1_addr
   dec_exe.reg_reads.rs2.bits := rs2_addr
 
-  val is_halfword = isLoad(opcode) && ( func3(0))
-  val is_byte     = isLoad(opcode) && (!func3(1) && !func3(0))
+  val is_halfword = (isStore(opcode) || isLoad(opcode)) && ( func3(0))
+  val is_byte     = (isStore(opcode) || isLoad(opcode)) && (!func3(1) && !func3(0))
   val sign_extend = isLoad(opcode) && (!func3(2))
 
   dec_exe.mem_ctrl.is_halfword := is_halfword
