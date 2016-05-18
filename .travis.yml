@@ -8,6 +8,7 @@ before_install:
 
 script:
   - docker run --user=root -v $TRAVIS_BUILD_DIR:/mnt/turborav travis scons build/test
+  - docker run --user=root -v $TRAVIS_BUILD_DIR:/mnt/turborav travis scons build/main
 
 # Auto-merge dev into master when travis is green.
 # https://chrisdown.name/2015/09/27/auto-merging-successful-builds-from-travis-ci.html
