@@ -76,7 +76,7 @@ RUN curl http://central.maven.org/maven2/edu/berkeley/cs/chisel_$SCALA_VERSION/$
     && install -Dm644 $CHISEL_JAR /usr/share/scala/chisel/chisel.jar
 
 # Build icestorm
-ENV ICESTORM_REVISION 6178dfbbd612d15a46c7d2a439b2252d6d0a87ba
+ENV ICESTORM_REVISION 4fbc8d20b65952eeef64a2e4c54b9b0ddfb7de07
 USER turbo
 RUN git clone https://aur.archlinux.org/icestorm-git.git \
     && cd icestorm-git \
@@ -87,7 +87,7 @@ RUN pacman -U --noconfirm icestorm-git/icestorm-git*pkg*
 
 # Build Arachne-pnr
 USER turbo
-ENV ARACHNE_PNR_REVISION eb7876bcfa20508075760723e7afc170e06abab6
+ENV ARACHNE_PNR_REVISION 6b8336497800782f2f69572d40702b60423ec67f
 RUN git clone https://aur.archlinux.org/arachne-pnr-git.git \
     && cd arachne-pnr-git \
     && sed -i "s arachne-pnr\.git arachne-pnr\.git#commit=$ARACHNE_PNR_REVISION " PKGBUILD \
