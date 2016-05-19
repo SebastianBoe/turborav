@@ -18,6 +18,24 @@ _crt0:
 
     add x28, gp, 0
 
+    /* Load the start and end address of the bss section into register
+	26 and 27. */
+	lui	x27,    %hi(bss_start)
+	add	x27,x27,%lo(bss_start)
+
+	lui	x26,    %hi(bss_end)
+	add	x26,x26,%lo(bss_end)
+
+    /* Skip bss clearing if the bss sections is empty. */
+    beq x27,x26, memclear_loop_end
+
+    /* Begin writing all zeros to the (s)bss sections. */
+memclear_loop:
+    sw  x0, 0(x27)
+    add x27, x27, 4
+    blt x27, x26, memclear_loop
+memclear_loop_end:
+
 	lui	x29,   %hi(initialized_data_load_start)
 	add	x29,x29,%lo(initialized_data_load_start)
 

@@ -81,11 +81,30 @@ SECTIONS
     .bss :
     {
         _fbss = .;
+
         *(.bss)
+        . = ALIGN(4);
+        *(.bss.*)
 
         . = ALIGN(4);
 
     } > REGION_BSS
+
+    .sbss :
+    {
+        sbss_start = .;
+
+        *(.sbss)
+        . = ALIGN(4);
+        *(.sbss.*)
+
+        . = ALIGN(4);
+
+    } > REGION_BSS
+
+    bss_size  = SIZEOF(.bss) + SIZEOF(.sbss) ;
+    bss_start = _fbss;
+    bss_end   = bss_start + bss_size;
 
     _end = . ;
 
