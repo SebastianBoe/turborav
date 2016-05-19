@@ -105,9 +105,10 @@ class Execute extends Module {
   }
 
   /* Stall as long as multiplication is executing */
-  io.hdu_exe.mult_busy :=
-    ((state === s_normal) && mult_enable)  ||
-    ((state === s_mult)   && !mult.io.done)
+  io.hdu_exe.mult_busy := Any(
+    (state === s_normal) && mult_enable,
+    (state === s_mult  ) && !mult.io.done
+  )
 
   io.exe_mem.alu_result := alu.io.out
   io.exe_mem.mult.valid := state === s_mult
