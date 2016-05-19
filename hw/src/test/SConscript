@@ -18,7 +18,7 @@ SConscript(
     exports = 'sim_env turborav_program_env'
 )
 
-csmith_seeds = set(range(8))
+csmith_seeds = {0, 1, 11, 35}
 csmith_seeds.add(int(turborav_program_env['csmith_seed']))
 
 for seed in csmith_seeds:
