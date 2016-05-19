@@ -19,6 +19,8 @@ import Chisel._
 class HazardDetectionUnit extends Module {
   val io = new HazardDetectionUnitIO()
 
+  // RPOTIP: If you find this on the critical path then you might be
+  // able  to pre-compute this in decode.
   val load_use = All(
     io.hdu_mem.mem_read,
     io.hdu_mem.rd_addr =/= UInt(0),
@@ -34,8 +36,8 @@ class HazardDetectionUnit extends Module {
   // when it is stalling.
   val stall_wrb = Bool(false)
   val stall_mem = stall_wrb
-  val stall_exe = stall_mem || mult_busy || load_use || mem_busy
-  val stall_dec = stall_exe
+  val stall_exe = stall_mem || load_use || mem_busy
+  val stall_dec = stall_exe || mult_busy
   val stall_fch = stall_dec
 
   io.hdu_wrb.stall := stall_wrb

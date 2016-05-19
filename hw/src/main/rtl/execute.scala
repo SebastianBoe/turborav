@@ -29,15 +29,13 @@ class Execute extends Module {
   val flushed_pipeline = new DecodeExecute()
   flushed_pipeline.exe_ctrl.bru_func := BNOT
 
-  when(io.hdu_exe.stall){
-    io.kill()
-  }
+  val stall = Wire(Bool())
 
   // Determine what should be written to the pipeline registers
   val dec_exe_next = MuxCase(
     io.dec_exe,
     Array(
-      io.hdu_exe.stall -> dec_exe,
+      stall            -> dec_exe,
       io.hdu_exe.flush -> flushed_pipeline
     )
   )
@@ -129,4 +127,13 @@ class Execute extends Module {
   io.hdu_exe.rs2_addr := dec_exe.reg_reads.rs2.bits
 
   io.exe_mem.rs2 := rs2
+
+  // We should stall either when the external Hazard Detection Unit
+  // says so, or when we internally detect that we are doing a
+  // multi-cycle multiply/divide operation.
+  stall := io.hdu_exe.stall || io.hdu_exe.mult_busy
+
+  when(io.hdu_exe.stall){
+    io.kill()
+  }
 }

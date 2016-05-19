@@ -82,6 +82,7 @@ class ExecuteIO() extends Bundle {
   def kill() {
     exe_mem.kill()
     exe_fch.kill()
+    hdu_exe.kill()
   }
 }
 
@@ -264,6 +265,11 @@ class HazardDetectionUnitExecute extends Bundle {
 
   val stall = Bool(OUTPUT)
   val flush = Bool(OUTPUT)
+
+  def kill() {
+    branch_taken := Bool(false)
+    mult_busy    := Bool(false)
+  }
 }
 
 class HazardDetectionUnitMemory extends Bundle {
