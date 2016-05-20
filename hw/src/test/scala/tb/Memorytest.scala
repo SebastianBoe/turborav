@@ -36,30 +36,6 @@ class MemoryTest(c: Memory) extends JUnitTester(c) {
 
   reset_all()
 
-  // Temporarily commented out because we are not going to do this any more I think,
-  // delete when sure.
-  // println("When mem is stalled, it will retain it's control signals until freed")
-
-  // val ctrl_signal_input  = c.io.exe_mem.wrb_ctrl.sign_extend
-  // val ctrl_signal_output = c.io.mem_wrb.wrb_ctrl.sign_extend
-
-  // poke  (ctrl_signal_input, 1) // Original control signal
-
-  // step(1)
-  // poke  (ctrl_signal_input, 0) // New control signal that should be ignored
-  // poke  (c.io.hdu_mem.stall, 1) // Stall and retain original signal
-
-  // step(1)
-  // expect(ctrl_signal_output, 0)
-
-  // step(1)
-  // expect(ctrl_signal_output, 0)
-  // poke  (c.io.hdu_mem.stall, 0)
-  // expect(ctrl_signal_output, 1)
-
-  // step(1)
-  // expect(ctrl_signal_output, 0)
-
   reset_all()
 
   println("Read control signals will comb. cause a memory request")
@@ -78,16 +54,6 @@ class MemoryTest(c: Memory) extends JUnitTester(c) {
   poke  (c.io.rr_io.response.valid, 1)
   poke  (c.io.rr_io.response.bits.word, 42)
   expect(c.io.mem_wrb.mem_read_data, 42)
-
-  reset_all()
-
-  // I don't think anything can stall mem, so doesn't make sense to
-  // test it.
-  // println("Create a bubble on stall")
-  // poke  (c.io.exe_mem.alu_result, ram_address)
-  // step(1) // Roam responds 1 cycle later with a valid flag and a word
-  // poke  (c.io.hdu_mem.stall, 1)
-  // expect(c.io.mem_wrb.alu_result, 0)
 
   reset_all()
 
@@ -136,53 +102,6 @@ class MemoryTest(c: Memory) extends JUnitTester(c) {
   expect(c.io.hdu_mem.mem_busy, 0, "Mem should no longer stall the pipeline.")
 
   expect(c.io.mem_wrb.wrb_ctrl.rd_wen, 0)
-
-  // println("Multi-cycle MMIO read scenario")
-  // poke  (c.io.exe_mem.wrb_ctrl.rd_wen, 1)
-  // poke  (c.io.exe_mem.mem_ctrl.read, 1)
-  // poke  (c.io.exe_mem.alu_result, apb_address)
-  // expect(c.io.rr_io.request.valid, 1)
-  // expect(c.io.hdu_mem.mem_busy, 0)
-  // step(1) // Roam does not give a valid response after the first cycle
-
-  // // exe sends a new instruction to mem, which should be ignored by mem
-  // poke  (c.io.exe_mem.wrb_ctrl.rd_wen, 0)
-  // poke  (c.io.exe_mem.mem_ctrl.read, 0)
-  // poke  (c.io.exe_mem.alu_result, ram_address)
-
-  // // HDU should have been signaled that we are doing a multi-cycle
-  // // operation, and should therefore signal to the mem stage that it
-  // // should stall.
-  // poke(c.io.hdu_mem.stall, 1)
-
-  // expect(c.io.mem_wrb.wrb_ctrl.rd_wen, 0,
-  //        """
-  //        mem is doing a multi-cycle memory transfer now so mem
-  //        should send bubbles down the pipeline until the operation is
-  //        done.
-  //        """
-  //      )
-
-  // // The memory request signals are a part of the multi-cycle
-  // // operation and should therefore not be bubbled like wrb's rd_wen
-  // // control signal, but instead be held until the transfer is
-  // // complete.
-  // expect(c.io.rr_io.request.valid, 1)
-
-  // expect(c.io.hdu_mem.mem_busy, 1)
-
-  // step(1) // After 1 busy-cycle the APB request goes through
-  // poke  (c.io.rr_io.response.valid, 1)
-  // poke  (c.io.rr_io.response.bits.word, 21)
-
-  // // Mem should no longer signal that it is busy.
-  // expect(c.io.hdu_mem.mem_busy, 0)
-  // // And in comb. response, HDU should stop stalling mem.
-  // poke(c.io.hdu_mem.stall, 0)
-
-  // expect(c.io.mem_wrb.wrb_ctrl.rd_wen, 1)
-  // expect(c.io.mem_wrb.alu_result, apb_address)
-  // expect(c.io.mem_wrb.mem_read_data, 21)
 
   reset_all()
 
