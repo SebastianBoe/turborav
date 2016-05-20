@@ -22,14 +22,14 @@ class Alu extends Module {
 
   val add  = io.in_a          +  io.in_b
   val sub  = io.in_a          -  io.in_b
-  val slt  = io.in_a.toSInt() <  io.in_b.toSInt()
   val sltu = io.in_a          <  io.in_b
   val and  = io.in_a          &  io.in_b
   val or   = io.in_a          |  io.in_b
   val xor  = io.in_a          ^  io.in_b
   val sll  = io.in_a          << shamt
   val srl  = io.in_a          >> shamt
-  val sra  = io.in_a.toSInt() >> shamt
+  val slt  = UInt( io.in_a.toSInt() <  io.in_b.toSInt() )
+  val sra  = UInt( io.in_a.toSInt() >> shamt )
 
   io.out := Lookup(
     io.func,

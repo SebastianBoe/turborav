@@ -26,7 +26,7 @@ class dvi_tmds_encoder extends Module {
   val majority = ((N1(io.d)  >  UInt(4))) ||
                   (N1(io.d) === N0(io.d) && (io.d(0) === UInt(0)))
 
-  val q_m_vec  = Vec.fill(9){ Bool() }
+  val q_m_vec  = Vec.fill(9){ Wire(Bool()) }
   q_m_vec(0) := io.d(0)
   q_m_vec(8) := !majority
 

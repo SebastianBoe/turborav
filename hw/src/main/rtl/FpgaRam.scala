@@ -47,13 +47,13 @@ class FpgaRam extends Module {
     )
   ) << byte_addr
 
-  val bytes_out  = Vec.fill(word_size_in_bytes) { UInt() }
+  val bytes_out = Vec.fill(word_size_in_bytes) { Wire(UInt()) }
   val write_word  = io.word_w << (byte_addr * UInt(8))
 
   for(i <- 0 until word_size_in_bytes){
     /* Ram is kept in RAID0 configuration for FPGA performance
        reasons. There is one ram module per byte in a word */
-    val ram_stripe = Mem(UInt(width = 8), num_words)
+    val ram_stripe = Mem(num_words, UInt(width = 8))
 
     when(mask(i)) {
       when(io.wen) {

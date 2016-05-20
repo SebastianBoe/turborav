@@ -31,7 +31,7 @@ class Memory extends Module {
 
   // 1 bit of state for keeping track of if we are doing a multi-cycle
   // memory transfer like a MMIO access.
-  val is_multi_cycle_transfer_next = Bool()
+  val is_multi_cycle_transfer_next = Wire(Bool())
   val is_multi_cycle_transfer = Reg(init = Bool(false), next = is_multi_cycle_transfer_next)
 
   // Usually we comb. use control signals from execute to do memory

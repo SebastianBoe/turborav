@@ -22,7 +22,7 @@ class RegBank extends Module {
     val rs2_data = UInt(OUTPUT, Config.xlen)
   }
 
-  val regs = Mem(UInt(width = Config.xlen), 32)
+  val regs = Mem(32, UInt(width = Config.xlen))
 
   when (io.write.valid && io.write.bits.addr =/= UInt(0)) {
     regs(io.write.bits.addr) := io.write.bits.data
