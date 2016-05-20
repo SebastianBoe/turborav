@@ -72,9 +72,10 @@ class FpgaRam extends Module {
 
   io.word_r := word_out >> RegNext(byte_addr * UInt(8))
 
-  assert(! is_word_access || is_word_access && byte_addr === UInt(0),
-         "Unaligned word access is not supported"
-       )
+  assert(
+    ! is_word_access || is_word_access && byte_addr === UInt(0),
+    "Unaligned word access is not supported"
+  )
 
   assert(
     ! is_halfword_access ||
