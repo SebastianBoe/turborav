@@ -90,6 +90,7 @@ Options:
 	  "--test",
 	  "--vcd",
 	  "--vcdMem",
+      "--minimumCompatibility", "3.0.0",
 	  "--debug"
     )
 
