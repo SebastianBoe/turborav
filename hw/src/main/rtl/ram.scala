@@ -27,7 +27,7 @@ class Ram extends Module {
   val addr_lsb         = log2Down(word_size_in_bytes)
   val addr_msb         = addr_lsb + log2Up(num_words)
 
-  val ram = Mem(UInt(width = Config.xlen), num_words)
+  val ram = Mem(num_words, UInt(width = Config.xlen))
 
   val ram_addr = io.addr(addr_msb, addr_lsb)
 
