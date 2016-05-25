@@ -14,7 +14,8 @@ object TurboRav {
       target_dir,
       rom,
       num_pin_inputs,
-      num_pin_outputs
+      num_pin_outputs,
+      fpga
     ) = args
 
     val res = chiselMain(
@@ -35,10 +36,11 @@ object TurboRav {
         case "Fetch"        => () => Module(new Fetch())
         case "Memory"       => () => Module(new Memory())
         case "Mult"         => () => Module(new Mult())
-        case "Ravv"         => () => Module(new RavV(rom))
+        case "Ram"          => () => Module(new Ram())
+        case "Ravv"         => () => Module(new RavV(rom, fpga.toBoolean))
         case "Regbank"      => () => Module(new RegBank())
         case "Rom"          => () => Module(new Rom(rom))
-        case "Soc"          => () => Module(new Soc(rom, num_pin_inputs.toInt, num_pin_outputs.toInt))
+        case "Soc"          => () => Module(new Soc(rom, num_pin_inputs.toInt, num_pin_outputs.toInt, fpga.toBoolean))
         case "Spi"          => () => Module(new Spi())
         case "Writeback"    => () => Module(new Writeback())
         case "apb"          => () => Module(new ApbController())
