@@ -12,7 +12,7 @@ yosys_env.ArachnePnr(
         yosys_env['PCF']
     ],
     # Bump this if the design isn't synthesizing ...
-    SEED = 4
+    SEED = 5
 )
 
 yosys_env.Command(
