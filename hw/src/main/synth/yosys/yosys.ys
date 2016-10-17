@@ -35,7 +35,7 @@ fine:
 map_ffs:
     dff2dffe -direct-match $_DFF_*
     techmap -map +/ice40/cells_map.v
-    opt_const -mux_undef
+    opt_expr -mux_undef
     simplemap
     ice40_ffinit
     ice40_ffssr

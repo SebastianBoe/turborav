@@ -20,7 +20,7 @@ RUN useradd -m -G wheel turbo
 WORKDIR /home/turbo
 
 # Build Yosys
-ENV YOSYS_REVISION ab0c44d3ed81f71cb0c6ff844679110cc27b38ad
+ENV YOSYS_REVISION 0bcc617a4f01d5810965e65b7a8d5013913175e7
 USER turbo
 RUN git clone https://aur.archlinux.org/yosys-git.git \
     && cd yosys-git \
