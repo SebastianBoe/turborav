@@ -26,7 +26,7 @@ class Execute extends Module {
   // Default to pipelining decode's values.
   io.exe_mem := dec_exe
 
-  val flushed_pipeline = new DecodeExecute()
+  val flushed_pipeline = Wire(new DecodeExecute())
   flushed_pipeline.exe_ctrl.bru_func := BNOT
 
   val stall = Wire(Bool())
