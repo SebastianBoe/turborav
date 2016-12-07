@@ -7,7 +7,7 @@ object TurboRavTestRunner {
 
   val default_gpio_input_pins  = 4
   val default_gpio_output_pins = 4
-  val default_max_cycles       = Int.MaxValue
+  val default_max_cycles       = 1000 * 100
 
   val help = s"""
 Usage: scala TurboRav.TurboRavTestRunner [OPTIONS] COMMAND
