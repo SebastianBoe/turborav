@@ -16,8 +16,7 @@ import Constants._
 class Soc(
   elf_path: String,
   num_pin_inputs: Int,
-  num_pin_outputs: Int,
-  fpga: Boolean
+  num_pin_outputs: Int
 ) extends Module {
 
   val io = new Bundle {
@@ -29,7 +28,7 @@ class Soc(
 
   val apbController = Module(new ApbController())
 
-  val ravv    = Module(new RavV(elf_path, fpga))
+  val ravv    = Module(new RavV(elf_path))
 
   val gpio    = Module(new Gpio(num_pin_inputs, num_pin_outputs))
   val dviPeri = Module(new DviPeri())

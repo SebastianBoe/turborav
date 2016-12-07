@@ -4,7 +4,7 @@ import Chisel._
 import Constants._
 
 /* The Rav V processor core */
-class RavV(elf_path: String, fpga: Boolean) extends Module {
+class RavV(elf_path: String) extends Module {
   val io = new RequestResponseIo()
 
   val fch  = Module(new Fetch())

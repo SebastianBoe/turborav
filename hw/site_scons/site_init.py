@@ -7,7 +7,6 @@ def sim_builder_generator(source, target, env, for_signature):
     cmd += env['test_runner_args'].replace(",", " ")
     cmd += " --target-directory $TARGET_DIR "
     cmd += " --rom $ROM "
-    cmd += " --no-fpga "
     cmd += " $MODULE "
     cmd += " &> $TARGET_DIR/log.txt || cat $TARGET_DIR/log.txt; "
 
