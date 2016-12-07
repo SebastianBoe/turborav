@@ -7,7 +7,6 @@ object TurboRavTestRunner {
 
   val default_gpio_input_pins  = 4
   val default_gpio_output_pins = 4
-  val default_fpga             = true
   val default_max_cycles       = Int.MaxValue
 
   val help = s"""
@@ -32,10 +31,6 @@ Options:
 
   -t <dir>, --target-directory <dir>
     Put generated files in <dir>.
-
-  --fpga, --no-fpga
-    Configure the build for FPGA synthesis.
-    Default: --fpga
 
   -m <int>, --max-cycles <int>
     The maximum number of cycles to be simulated. (Only applies to
@@ -64,8 +59,6 @@ Options:
         case "--rom"              :: value :: tail => nextOption(map ++ Map('rom        -> value       ), tail)
         case "-t"                 :: value :: tail => nextOption(map ++ Map('target_dir -> value       ), tail)
         case "--target-directory" :: value :: tail => nextOption(map ++ Map('target_dir -> value       ), tail)
-        case "--fpga"             ::          tail => nextOption(map ++ Map('fpga       -> true        ), tail)
-        case "--no-fpga"          ::          tail => nextOption(map ++ Map('fpga       -> false       ), tail)
         case string               :: Nil           => nextOption(map ++ Map('module     -> string      ), list.tail)
 
         case option               ::          tail => println(help + "Unknown option " + option); sys.exit(1)
@@ -80,7 +73,6 @@ Options:
     val num_pin_inputs  = options.getOrElse('i, default_gpio_input_pins ).asInstanceOf[Int]
     val num_pin_outputs = options.getOrElse('o, default_gpio_output_pins).asInstanceOf[Int]
     val max_cycles      = options.getOrElse('m, default_max_cycles      ).asInstanceOf[Int]
-    val fpga            = options.getOrElse('fpga, default_fpga).asInstanceOf[Boolean]
 
     val test_args = Array(
       "--genHarness",
@@ -158,8 +150,7 @@ Options:
         chiselMainTest(test_args, () => Module(new Soc(
           rom,
           num_pin_inputs,
-          num_pin_outputs,
-          fpga
+          num_pin_outputs
         ))){
           c => new SocTest(c)
         }
@@ -167,8 +158,7 @@ Options:
         chiselMainTest(test_args, () => Module(new Soc(
           rom,
           num_pin_inputs,
-          num_pin_outputs,
-          fpga
+          num_pin_outputs
         ))){
           c => new RiscvTest(c, target_dir, max_cycles)
         }
@@ -180,8 +170,7 @@ Options:
         chiselMainTest(test_args, () => Module(new Soc(
           rom,
           num_pin_inputs,
-          num_pin_outputs,
-          fpga
+          num_pin_outputs
         ))){
           c => new GpioHybridTest(c, target_dir)
         }
@@ -189,8 +178,7 @@ Options:
         chiselMainTest(test_args, () => Module(new Soc(
           rom,
           num_pin_inputs,
-          num_pin_outputs,
-          fpga
+          num_pin_outputs
         ))){
           c => new GpioHybridToggleTest(c, target_dir)
         }
@@ -203,8 +191,7 @@ Options:
         }
       case "Roamtest" =>
         chiselMainTest(test_args, () => Module(new Roam(
-          rom,
-          fpga
+          rom
         ))){
           c => new RoamTest(c)
         }
