@@ -13,7 +13,6 @@ class RavV(elf_path: String, fpga: Boolean) extends Module {
   val mem  = Module(new Memory())
   val wrb  = Module(new Writeback())
   val fwu  = Module(new ForwardingUnit())
-  val roam = Module(new Roam(elf_path, fpga))
   val hdu  = Module(new HazardDetectionUnit())
 
   fch.io.fch_dec <> dec.io.fch_dec
@@ -36,8 +35,14 @@ class RavV(elf_path: String, fpga: Boolean) extends Module {
   wrb.io.hdu_wrb <> hdu.io.hdu_wrb
 
   // Roam
-  mem.io.rr_io <> roam.io.mem.rr
+  val rom = Module(new Rom(elf_path))
+  val ram = Module(new FpgaRam())
 
-  fch.io.rr_io <> roam.io.fch
-  io           <> roam.io.rr_mmio
+  val wishbone_masters = List(fch, mem)
+  val wishbone_slaves = List(rom, ram)
+  wishbone.WishboneInterconnection(
+    wishbone.Crossbar,
+    wishbone_masters,
+    wishbone_slaves
+  )
 }
