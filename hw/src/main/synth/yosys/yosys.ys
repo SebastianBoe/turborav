@@ -6,9 +6,11 @@ flatten:
     proc
     flatten
     tribuf -logic
+    deminout
 
 coarse:
     proc
+    opt_expr
     opt_clean
     check
     opt
@@ -33,9 +35,10 @@ fine:
     ice40_opt
 
 map_ffs:
+    dffsr2dff
     dff2dffe -direct-match $_DFF_*
     techmap -map +/ice40/cells_map.v
-    opt_const -mux_undef
+    opt_expr -mux_undef
     simplemap
     ice40_ffinit
     ice40_ffssr
