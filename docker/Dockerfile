@@ -45,15 +45,20 @@ RUN pacman --noconfirm -S \
 # Install chisel from the AUR
 # Don't delete this code. It is handy for the times when it is
 # necessary to build chisel from source.
-# USER turbo
-# ENV CHISEL_REVISION 560d5f37ca60e629def7fc3cae7b3d343893b561
-# WORKDIR /home/turbo
-# RUN git clone https://aur.archlinux.org/chisel-git.git \
-#     && cd chisel-git \
-#     && sed -i "s chisel\.git chisel\.git#commit=$CHISEL_REVISION " PKGBUILD \
-#     && makepkg --clean
-# USER root
-# RUN pacman -U --noconfirm chisel-git/chisel-git*pkg*
+RUN pacman --noconfirm -S \
+    sbt \
+    && \
+    pacman --noconfirm -Scc # Clean pacman cache before committing
+
+USER turbo
+ENV CHISEL_REVISION 560d5f37ca60e629def7fc3cae7b3d343893b561
+WORKDIR /home/turbo
+RUN git clone https://aur.archlinux.org/chisel-git.git \
+    && cd chisel-git \
+    && sed -i "s chisel\.git chisel\.git#commit=$CHISEL_REVISION " PKGBUILD \
+    && makepkg --clean
+USER root
+RUN pacman -U --noconfirm chisel-git/chisel-git*pkg*
 
 # Install FPGA synthesis tools from the AUR
 WORKDIR /home/turbo
@@ -67,13 +72,13 @@ USER root
 RUN pacman -U --noconfirm csmith/csmith*pkg*
 
 # Install chisel from Maven
-USER root
-ENV CHISEL_VERSION 2.2.32
-ENV SCALA_VERSION 2.11
-ENV CHISEL_JAR chisel_$SCALA_VERSION-$CHISEL_VERSION.jar
-RUN curl http://central.maven.org/maven2/edu/berkeley/cs/chisel_$SCALA_VERSION/$CHISEL_VERSION/$CHISEL_JAR > \
-    $CHISEL_JAR \
-    && install -Dm644 $CHISEL_JAR /usr/share/scala/chisel/chisel.jar
+# USER root
+# ENV CHISEL_VERSION 2.2.32
+# ENV SCALA_VERSION 2.11
+# ENV CHISEL_JAR chisel_$SCALA_VERSION-$CHISEL_VERSION.jar
+# RUN curl http://central.maven.org/maven2/edu/berkeley/cs/chisel_$SCALA_VERSION/$CHISEL_VERSION/$CHISEL_JAR > \
+#     $CHISEL_JAR \
+#     && install -Dm644 $CHISEL_JAR /usr/share/scala/chisel/chisel.jar
 
 # Build icestorm
 ENV ICESTORM_REVISION 4fbc8d20b65952eeef64a2e4c54b9b0ddfb7de07
